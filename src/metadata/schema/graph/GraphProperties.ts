@@ -1,6 +1,8 @@
 import { GraphNodeMetadata } from './GraphNodeMetadata';
 import { GraphRelationshipMetadata } from './GraphRelationshipMetadata';
 import { GraphBranchMetadata } from './GraphBranchMetadata';
+import { GraphRelationship } from '../../../decorator/property/GraphRelationship';
+import { GraphNode } from '../../../decorator/property/GraphNode';
 
 type PropertyMetadata =
   | GraphNodeMetadata
@@ -37,5 +39,33 @@ export class GraphProperties {
       (propertyMetadata): propertyMetadata is GraphBranchMetadata =>
         propertyMetadata instanceof GraphBranchMetadata
     );
+  }
+
+  getNodeMetadata(key: string): GraphNodeMetadata {
+    const graphNodeMetadata = this.map.get(key);
+    if (!graphNodeMetadata) {
+      throw new Error(`${GraphNodeMetadata.name} with key "${key}" not found`);
+    }
+    if (!(graphNodeMetadata instanceof GraphNodeMetadata)) {
+      throw new Error(`Key "${key}" is not registered as ${GraphNode.name}`);
+    }
+
+    return graphNodeMetadata;
+  }
+
+  getRelationshipMetadata(key: string): GraphRelationshipMetadata {
+    const graphRelationshipMetadata = this.map.get(key);
+    if (!graphRelationshipMetadata) {
+      throw new Error(
+        `${GraphRelationshipMetadata.name} with key "${key}" not found`
+      );
+    }
+    if (!(graphRelationshipMetadata instanceof GraphRelationshipMetadata)) {
+      throw new Error(
+        `Key "${key}" is not registered as ${GraphRelationship.name}`
+      );
+    }
+
+    return graphRelationshipMetadata;
   }
 }

@@ -9,6 +9,11 @@ import { GraphNodeMetadata } from '../../schema/graph/GraphNodeMetadata';
 import { GraphRelationshipMetadata } from '../../schema/graph/GraphRelationshipMetadata';
 import { GraphBranchMetadata } from '../../schema/graph/GraphBranchMetadata';
 import { Depth } from '../../../domain/graph/branch/Depth';
+import { NodeLabel } from '../../../domain/node/NodeLabel';
+import { RelationshipType } from '../../../domain/relationship/RelationshipType';
+import { NodeEntityMetadata } from '../../schema/entity/NodeEntityMetadata';
+import { Properties } from '../../schema/entity/Properties';
+import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
 
 class GraphClass {}
 
@@ -32,6 +37,12 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     class RelationshipClass {}
 
     const m = new MetadataStore();
+    m.registerNode(NodeClass, new NodeLabel(NodeClass));
+    m.registerRelationship(
+      RelationshipClass,
+      new RelationshipType(RelationshipClass)
+    );
+
     m.addGraphNode(GraphClass, new GraphNodePropertyType('p1', NodeClass));
     m.addGraphRelationship(
       GraphClass,
@@ -47,11 +58,23 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
 
     const graphProperties = new GraphProperties();
     graphProperties.set(
-      new GraphNodeMetadata(new GraphNodePropertyType('p1', NodeClass))
+      new GraphNodeMetadata(
+        new GraphNodePropertyType('p1', NodeClass),
+        new NodeEntityMetadata(
+          NodeClass,
+          new NodeLabel(NodeClass),
+          new Properties()
+        )
+      )
     );
     graphProperties.set(
       new GraphRelationshipMetadata(
-        new GraphRelationshipPropertyType('p2', RelationshipClass)
+        new GraphRelationshipPropertyType('p2', RelationshipClass),
+        new RelationshipEntityMetadata(
+          RelationshipClass,
+          new RelationshipType(RelationshipClass),
+          new Properties()
+        )
       )
     );
     graphProperties.set(

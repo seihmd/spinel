@@ -91,11 +91,15 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     graphNodePropertyType: GraphNodePropertyType
   ): void {
+    const graphNodeMetadata = new GraphNodeMetadata(
+      graphNodePropertyType,
+      this.getNodeEntityMetadata(graphNodePropertyType.getType())
+    );
     this.graphPropertiesMap.update(cstr, (graphProperties) => {
       if (!graphProperties) {
         graphProperties = new GraphProperties();
       }
-      graphProperties.set(new GraphNodeMetadata(graphNodePropertyType));
+      graphProperties.set(graphNodeMetadata);
       return graphProperties;
     });
   }
@@ -104,13 +108,17 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     graphRelationshipPropertyType: GraphRelationshipPropertyType
   ): void {
+    const graphNodeMetadata = new GraphRelationshipMetadata(
+      graphRelationshipPropertyType,
+      this.getRelationshipEntityMetadata(
+        graphRelationshipPropertyType.getType()
+      )
+    );
     this.graphPropertiesMap.update(cstr, (graphProperties) => {
       if (!graphProperties) {
         graphProperties = new GraphProperties();
       }
-      graphProperties.set(
-        new GraphRelationshipMetadata(graphRelationshipPropertyType)
-      );
+      graphProperties.set(graphNodeMetadata);
       return graphProperties;
     });
   }

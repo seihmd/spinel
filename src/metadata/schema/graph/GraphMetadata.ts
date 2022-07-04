@@ -1,6 +1,8 @@
 import { PatternFormula } from '../../../domain/graph/pattern/formula/PatternFormula';
 import { GraphProperties } from './GraphProperties';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
+import { GraphNodeMetadata } from './GraphNodeMetadata';
+import { GraphRelationshipMetadata } from './GraphRelationshipMetadata';
 
 export class GraphMetadata {
   private readonly cstr: AnyClassConstructor;
@@ -19,5 +21,13 @@ export class GraphMetadata {
 
   getCstr(): AnyClassConstructor {
     return this.cstr;
+  }
+
+  getGraphNodeMetadata(key: string): GraphNodeMetadata {
+    return this.properties.getNodeMetadata(key);
+  }
+
+  getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
+    return this.properties.getRelationshipMetadata(key);
   }
 }
