@@ -1,6 +1,7 @@
 import { GraphRelationshipPropertyType } from './GraphRelationshipPropertyType';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { RelationshipEntityMetadata } from '../entity/RelationshipEntityMetadata';
+import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 
 export class GraphRelationshipMetadata {
   private readonly propertyType: GraphRelationshipPropertyType;
@@ -24,5 +25,9 @@ export class GraphRelationshipMetadata {
 
   getEntityMetadata(): RelationshipEntityMetadata {
     return this.entityMetadata;
+  }
+
+  getType(): RelationshipType {
+    return this.entityMetadata.getType();
   }
 }

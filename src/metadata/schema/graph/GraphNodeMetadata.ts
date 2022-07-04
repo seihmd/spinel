@@ -1,6 +1,7 @@
 import { GraphNodePropertyType } from './GraphNodePropertyType';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { NodeEntityMetadata } from '../entity/NodeEntityMetadata';
+import { NodeLabel } from '../../../domain/node/NodeLabel';
 
 export class GraphNodeMetadata {
   private readonly propertyType: GraphNodePropertyType;
@@ -24,5 +25,9 @@ export class GraphNodeMetadata {
 
   getEntityMetadata(): NodeEntityMetadata {
     return this.entityMetadata;
+  }
+
+  getLabel(): NodeLabel {
+    return this.entityMetadata.getLabel();
   }
 }
