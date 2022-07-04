@@ -12,7 +12,7 @@ export class GraphRelationshipMetadata {
     return this.propertyType.getKey();
   }
 
-  getType(): AnyClassConstructor {
+  getCstr(): AnyClassConstructor {
     return this.propertyType.getType();
   }
 }
