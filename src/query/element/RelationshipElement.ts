@@ -1,14 +1,14 @@
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { GraphRelationshipMetadata } from '../../metadata/schema/graph/GraphRelationshipMetadata';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { RelationshipTypeTerm } from '../../domain/graph/pattern/formula/RelationshipTypeTerm';
+import { RelationshipKeyTerm } from '../../domain/graph/pattern/formula/RelationshipKeyTerm';
 
 export class RelationshipElement {
-  private readonly term: RelationshipTypeTerm;
+  private readonly term: RelationshipKeyTerm;
   private readonly graphRelationshipMetadata: GraphRelationshipMetadata;
 
   constructor(
-    term: RelationshipTypeTerm,
+    term: RelationshipKeyTerm,
     graphRelationshipMetadata: GraphRelationshipMetadata
   ) {
     if (term.getValue() !== graphRelationshipMetadata.getKey()) {

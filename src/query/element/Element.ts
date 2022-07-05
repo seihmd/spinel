@@ -6,8 +6,23 @@ import { DirectionElement } from './DirectionElement';
 
 export type Element = DirectionElement | EntityElement;
 
-export type EntityElement =
-  | NodeElement
-  | NodeLabelElement
+export type AnyNodeElement = NodeElement | NodeLabelElement;
+export type AnyRelationshipElement =
   | RelationshipElement
   | RelationshipTypeElement;
+export type EntityElement = AnyNodeElement | AnyRelationshipElement;
+
+export const isAnyNodeElement = (
+  element: Element
+): element is AnyNodeElement => {
+  return element instanceof NodeElement || element instanceof NodeLabelElement;
+};
+
+export const isAnyRelationshipElement = (
+  element: Element
+): element is AnyRelationshipElement => {
+  return (
+    element instanceof RelationshipElement ||
+    element instanceof RelationshipTypeElement
+  );
+};
