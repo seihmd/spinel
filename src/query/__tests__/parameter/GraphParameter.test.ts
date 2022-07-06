@@ -51,6 +51,15 @@ describe(`${GraphParameter.name}`, () => {
   );
 
   test.each([
+    ['', 'key', 'key'],
+    ['root', 'key', 'root.key'],
+  ])('getKeyWithRoot', (root: string, key: string, expected: string) => {
+    expect(new GraphParameter(root, {}).getKeyWithRoot(key)).toStrictEqual(
+      expected
+    );
+  });
+
+  test.each([
     [{}, '', 'a', {}],
     [{ a: { id: 1 } }, '', 'a', { id: 1 }],
     [{ a: { id: 1 }, 'b.a': { id: 2 } }, 'b', 'a', { id: 2 }],

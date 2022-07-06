@@ -28,6 +28,10 @@ export class GraphParameter {
     return this.root;
   }
 
+  getKeyWithRoot(key: string): string {
+    return this.root === '' ? key : this.root + '.' + key;
+  }
+
   of(key: string): GraphParameter {
     const params = this.entries.reduce(
       (prev: GraphParameterType, current: GraphParameterEntry) => {
@@ -47,9 +51,8 @@ export class GraphParameter {
   }
 
   get(key: string): EntityParameter {
-    const keyWithRoot = this.root === '' ? key : this.root + '.' + key;
     for (const entry of this.entries) {
-      if (entry.getKey() === keyWithRoot) {
+      if (entry.getKey() === this.getKeyWithRoot(key)) {
         return new EntityParameter(entry.getValue());
       }
     }
