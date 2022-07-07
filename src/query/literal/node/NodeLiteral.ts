@@ -1,7 +1,19 @@
 import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { ParameterLiteral } from '../parameter/ParameterLiteral';
+import { AnyNodeElement } from '../../element/Element';
 
 export class NodeLiteral {
+  static new(
+    nodeElement: AnyNodeElement,
+    parameterLiteral: ParameterLiteral | null
+  ): NodeLiteral {
+    return new NodeLiteral(
+      nodeElement.getVariableName(),
+      nodeElement.getLabel(),
+      parameterLiteral
+    );
+  }
+
   private readonly nodeLabel: NodeLabel | null;
   private readonly variableName: string;
   private readonly parameterLiteral: ParameterLiteral | null;

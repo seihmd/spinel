@@ -27,6 +27,10 @@ export class RelationshipElement {
     return this.graphRelationshipMetadata.getCstr();
   }
 
+  getVariableName(): string {
+    return `r${this.term.getIndex().get()}`;
+  }
+
   getGraphKey(): string {
     return this.term.getValue();
   }

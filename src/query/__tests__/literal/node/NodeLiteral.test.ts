@@ -21,9 +21,13 @@ describe(`${NodeLiteral.name}`, () => {
       parameterLiteral: ParameterLiteral | null,
       expected: string
     ) => {
-      const n = new NodeLiteral(variableName, nodeLabel, parameterLiteral);
+      const nodeLiteral = new NodeLiteral(
+        variableName,
+        nodeLabel,
+        parameterLiteral
+      );
 
-      expect(n.get()).toBe(expected);
+      expect(nodeLiteral.get()).toBe(expected);
     }
   );
 });

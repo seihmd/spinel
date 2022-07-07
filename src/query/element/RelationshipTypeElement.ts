@@ -12,6 +12,10 @@ export class RelationshipTypeElement {
     return new RelationshipType(this.term.getValueWithoutModifier());
   }
 
+  getVariableName(): string {
+    return '';
+  }
+
   getGraphKey(): string {
     return '';
   }

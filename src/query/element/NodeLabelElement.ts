@@ -8,6 +8,10 @@ export class NodeLabelElement {
     this.term = term;
   }
 
+  getVariableName(): string {
+    return '';
+  }
+
   getGraphParameterKey(): string | null {
     const parameterModifier = this.term.getParameterModifier();
     if (parameterModifier !== null) {

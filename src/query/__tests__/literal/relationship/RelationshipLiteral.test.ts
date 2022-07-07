@@ -21,13 +21,13 @@ describe(`${RelationshipLiteral.name}`, () => {
       parameterLiteral: ParameterLiteral | null,
       expected: string
     ) => {
-      const n = new RelationshipLiteral(
+      const relationshipLiteral = new RelationshipLiteral(
         variableName,
         relationshipType,
         parameterLiteral
       );
 
-      expect(n.get()).toBe(expected);
+      expect(relationshipLiteral.get()).toBe(expected);
     }
   );
 });

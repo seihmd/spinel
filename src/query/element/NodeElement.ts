@@ -23,6 +23,10 @@ export class NodeElement {
     return this.graphNodeMetadata.getCstr();
   }
 
+  getVariableName(): string {
+    return `n${this.term.getIndex().get()}`;
+  }
+
   getGraphParameterKey(): string {
     return this.term.getValue();
   }
