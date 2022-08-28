@@ -4,24 +4,19 @@ import { Element } from '../../element/Element';
 
 describe(`${Path.name}`, () => {
   const f = new ElementFixture();
-  beforeEach(() => {
-    f.reIndex();
-  });
-
   test('single Node graph', () => {
-    expect(() => new Path([f.newNodeElement()])).not.toThrowError();
+    expect(() => Path.new([f.newNodeElement()])).not.toThrowError();
   });
 
   test('N-R-N graph', () => {
-    expect(
-      () =>
-        new Path([
-          f.newNodeElement(),
-          f.newDirectionElement('-'),
-          f.newRelationshipElement(),
-          f.newDirectionElement('-'),
-          f.newNodeElement(),
-        ])
+    expect(() =>
+      Path.new([
+        f.newNodeElement(),
+        f.newDirectionElement('-'),
+        f.newRelationshipElement(),
+        f.newDirectionElement('-'),
+        f.newNodeElement(),
+      ])
     ).not.toThrowError();
   });
 
@@ -52,6 +47,6 @@ describe(`${Path.name}`, () => {
     [[f.newDirectionElement('-')]],
     [[f.newRelationshipElement()]],
   ])('invalid ordered elements', (elements: Element[]) => {
-    expect(() => new Path(elements)).toThrowError();
+    expect(() => Path.new(elements)).toThrowError();
   });
 });

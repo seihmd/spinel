@@ -3,8 +3,12 @@ import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from './EntityPropertyMetadata';
 import { Properties } from './Properties';
+import { BranchEndMetadata } from '../graph/BranchEndMetadata';
+import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
+import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
+import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
 
-export class NodeEntityMetadata {
+export class NodeEntityMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
   private readonly label: NodeLabel;
   private readonly properties: Properties;
@@ -33,5 +37,17 @@ export class NodeEntityMetadata {
 
   getProperties(): EntityPropertyMetadata[] {
     return this.properties.getProperties();
+  }
+
+  getGraphNodeMetadata(key: string): GraphNodeMetadata {
+    throw new Error();
+  }
+
+  getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
+    throw new Error();
+  }
+
+  getFormula(): GraphPatternFormula {
+    return new GraphPatternFormula('*');
   }
 }

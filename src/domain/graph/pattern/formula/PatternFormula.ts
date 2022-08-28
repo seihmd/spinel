@@ -1,58 +1,63 @@
-import { LabelPrefix, PatternTerm } from './PatternTerm';
-import { PatternIndex } from './PatternIndex';
-import { RelationshipKeyTerm } from './RelationshipKeyTerm';
-import { DirectionTerm } from './DirectionTerm';
-import { NodeLabelTerm } from './NodeLabelTerm';
-import { RelationshipTypeTerm } from './RelationshipTypeTerm';
-import { LEFT, NONE, RIGHT } from '../../Direction';
-import { NodeKeyTerm } from './NodeKeyTerm';
+import { NodeTerm, Term } from '../term/Term';
+import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
+import { NodeKeyTerm } from '../term/NodeKeyTerm';
+import { parseFormula } from './parseFormula';
+import { normalizeFormula } from './normalizeFormula';
+import { reverseFormula } from './reverseFormula';
 
-export class PatternFormula {
-  private readonly terms: PatternTerm[];
+export abstract class PatternFormula {
+  protected readonly terms: Term[];
+  protected readonly formula: string;
 
-  constructor(value: string) {
-    const normalized = this.normalize(value);
-    const terms = this.parse(normalized);
-
+  constructor(formula: string) {
+    const terms = this.parse(formula);
     this.assert(terms);
 
     this.terms = terms;
+    this.formula = formula;
   }
 
-  get(): PatternTerm[] {
+  get(): Term[] {
     return this.terms;
   }
 
-  private parse(description: string): PatternTerm[] {
-    const values = description.split(
-      new RegExp(`(${LEFT}|${RIGHT}|${NONE})`, 'g')
-    );
-
-    return values.map((value, index) => {
-      const patternIndex = new PatternIndex(index);
-      if (patternIndex.isNode()) {
-        if (value.startsWith(LabelPrefix)) {
-          return new NodeLabelTerm(value, patternIndex);
-        }
-
-        return new NodeKeyTerm(value, patternIndex);
-      } else if (patternIndex.isRelationship()) {
-        if (value.startsWith(LabelPrefix)) {
-          return new RelationshipTypeTerm(value, patternIndex);
-        }
-
-        return new RelationshipKeyTerm(value, patternIndex);
-      } else {
-        return new DirectionTerm(value, patternIndex);
-      }
-    });
+  isRootKey(key: string): boolean {
+    return this.getRootTerm().getKey() === key;
   }
 
-  private normalize(description: string): string {
-    return description.replace(/( |\r\n|\n|\r)/gm, '');
+  isTerminalKey(key: string): boolean {
+    return this.getTerminalTerm().getKey() === key;
   }
 
-  private assert(terms: PatternTerm[]) {
+  getRootTerm(): NodeTerm {
+    return this.terms[0] as NodeTerm;
+  }
+
+  getTerminalTerm(): Term {
+    return this.terms[this.terms.length - 1];
+  }
+
+  protected getTermsString(): string {
+    return this.terms.map((term) => term.getValue()).join('');
+  }
+
+  protected parse(formula: string): Term[] {
+    return parseFormula(normalizeFormula(formula), this.getParseStartIndex());
+  }
+
+  protected abstract getParseStartIndex(): 0 | 1;
+
+  protected abstract reverse(): PatternFormula;
+
+  getFormula(): string {
+    return this.formula;
+  }
+
+  reverseFormula(): string {
+    return reverseFormula(this.formula, this.getParseStartIndex());
+  }
+
+  protected assert(terms: Term[]) {
     const keys = terms
       .filter(
         (term): boolean =>

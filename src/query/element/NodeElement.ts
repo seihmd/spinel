@@ -1,18 +1,27 @@
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { NodeKeyTerm } from '../../domain/graph/pattern/formula/NodeKeyTerm';
+import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetadata';
+import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
+import { BranchIndexes } from '../meterial/BranchIndexes';
+import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
+import { EntityElementInterface } from './EntityElementInterface';
+import { ElementContext } from './ElementContext';
 
-export class NodeElement {
-  private readonly term: NodeKeyTerm;
-  private readonly graphNodeMetadata: GraphNodeMetadata;
+export class NodeElement implements EntityElementInterface {
+  private readonly term: NodeKeyTerm | BranchEndTerm;
+  private readonly graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata;
+  private readonly context: ElementContext;
 
-  constructor(term: NodeKeyTerm, graphNodeMetadata: GraphNodeMetadata) {
-    if (term.getValue() !== graphNodeMetadata.getKey()) {
-      throw new Error();
-    }
+  constructor(
+    term: NodeKeyTerm | BranchEndTerm,
+    graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata,
+    context: ElementContext
+  ) {
     this.term = term;
     this.graphNodeMetadata = graphNodeMetadata;
+    this.context = context;
   }
 
   getLabel(): NodeLabel {
@@ -24,7 +33,11 @@ export class NodeElement {
   }
 
   getVariableName(): string {
-    return `n${this.term.getIndex().get()}`;
+    return `${this.getVariablePrefix()}n${this.context.getIndex()}`;
+  }
+
+  private getVariablePrefix(): string {
+    return new BranchIndexesLiteral(this.context.getBranchIndexes()).get();
   }
 
   getGraphParameterKey(): string {
@@ -33,5 +46,24 @@ export class NodeElement {
 
   getGraphKey(): string {
     return this.term.getValue();
+  }
+
+  getWhereVariableName(): string {
+    if (this.term instanceof BranchEndTerm) {
+      return '*';
+    }
+    return `${this.context.isOnBranch() ? '*.' : ''}${this.term.getValue()}`;
+  }
+
+  getIndex(): number {
+    return this.context.getIndex();
+  }
+
+  withContext(newContext: ElementContext): NodeElement {
+    return new NodeElement(this.term, this.graphNodeMetadata, newContext);
+  }
+
+  equalsBranchIndexes(branchIndexes: BranchIndexes) {
+    return this.context.equalsBranchIndexes(branchIndexes);
   }
 }

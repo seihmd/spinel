@@ -10,6 +10,8 @@ import { PropertyType } from '../schema/entity/PropertyType';
 import { GraphBranchPropertyType } from '../schema/graph/GraphBranchPropertyType';
 import { GraphNodePropertyType } from '../schema/graph/GraphNodePropertyType';
 import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationshipPropertyType';
+import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
+import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 
 export interface MetadataStoreInterface {
   setPrimary(
@@ -39,7 +41,7 @@ export interface MetadataStoreInterface {
   addGraphBranch(
     cstr: AnyClassConstructor,
     graphBranchPropertyType: GraphBranchPropertyType,
-    keyMapping: [string, string],
+    associationPatternFormula: AssociationPatternFormula,
     depth: number
   ): void;
 
@@ -49,11 +51,23 @@ export interface MetadataStoreInterface {
 
   registerGraph(cstr: AnyClassConstructor, formula: string): void;
 
+  registerGraphFragment(cstr: AnyClassConstructor, formula: string): void;
+
   getNodeEntityMetadata(cstr: AnyClassConstructor): NodeEntityMetadata;
+
+  findNodeEntityMetadata(cstr: AnyClassConstructor): NodeEntityMetadata | null;
 
   getRelationshipEntityMetadata(
     cstr: AnyClassConstructor
   ): RelationshipEntityMetadata;
 
   getGraphMetadata(cstr: AnyClassConstructor): GraphMetadata;
+
+  findGraphMetadata(cstr: AnyClassConstructor): GraphMetadata | null;
+
+  getGraphFragmentMetadata(cstr: AnyClassConstructor): GraphFragmentMetadata;
+
+  findGraphFragmentMetadata(
+    cstr: AnyClassConstructor
+  ): GraphFragmentMetadata | null;
 }

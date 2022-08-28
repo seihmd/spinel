@@ -1,11 +1,14 @@
 import { GraphParameterKey } from './GraphParameterKey';
-import { EntityParameterType } from './ParameterType';
+import { EntityParameterType, EntityParameterValueType } from './ParameterType';
 
 export class GraphParameterEntry {
   private readonly key: GraphParameterKey;
-  private readonly value: EntityParameterType;
+  private readonly value: EntityParameterType | EntityParameterValueType;
 
-  constructor(key: GraphParameterKey, value: EntityParameterType) {
+  constructor(
+    key: GraphParameterKey,
+    value: EntityParameterType | EntityParameterValueType
+  ) {
     this.key = key;
     this.value = value;
   }
@@ -18,7 +21,7 @@ export class GraphParameterEntry {
     return this.key.getExceptRoot();
   }
 
-  getValue(): EntityParameterType {
+  getValue(): EntityParameterType | EntityParameterValueType {
     return this.value;
   }
 

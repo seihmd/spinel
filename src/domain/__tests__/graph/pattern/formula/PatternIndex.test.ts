@@ -1,4 +1,4 @@
-import { PatternIndex } from '../../../../graph/pattern/formula/PatternIndex';
+import { PatternIndex } from '../../../../graph/pattern/term/PatternIndex';
 
 describe(`${PatternIndex.name}`, () => {
   test.each([[-1], [-0.1], [0.1]])(

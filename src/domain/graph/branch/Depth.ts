@@ -1,23 +1,41 @@
 const defaultDepth = 1;
 
+const DEFAULT = 2;
+const MIN = 0;
+
 export class Depth {
-  private readonly value: number;
+  static withDefault(): Depth {
+    return new Depth(DEFAULT);
+  }
+
+  private readonly level: number;
 
   constructor(value = defaultDepth) {
     this.assert(value);
-    this.value = value;
+    this.level = value;
   }
 
   private assert(value: number): void {
     if (!Number.isInteger(value)) {
       throw new Error('GraphBranch depth must be integer');
     }
-    if (value < 1) {
-      throw new Error('GraphBranch depth must be >= 1');
+    if (value < MIN) {
+      throw new Error(`GraphBranch depth must be >= ${MIN}`);
     }
   }
 
   get(): number {
-    return this.value;
+    return this.level;
+  }
+
+  canReduce(): boolean {
+    return this.level > MIN;
+  }
+
+  reduce(): Depth {
+    if (!this.canReduce()) {
+      throw new Error('Depth cannot be reduced < 0');
+    }
+    return new Depth(this.level - 1);
   }
 }

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "npm run test:unit && npm run test:functional",
+    "test:unit": "jest --testMatch '<rootDir>/src/**/*.test.ts'",
+    "test:functional": "jest --testMatch '<rootDir>/test/functional/**/*.test.ts' --runInBand",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
@@ -31,6 +33,7 @@
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
+    "date-fns": "^2.28.0",
     "eslint": "^8.18.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.23.4",
@@ -45,6 +48,7 @@
   "dependencies": {
     "class-transformer": "^0.5.1",
     "lodash": "^4.17.21",
+    "neo4j-driver": "^4.4.6",
     "reflect-metadata": "^0.1.13",
     "snake-case": "^3.0.4"
   }

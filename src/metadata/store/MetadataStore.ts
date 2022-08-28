@@ -11,7 +11,7 @@ import { GraphBranchMetadata } from '../schema/graph/GraphBranchMetadata';
 import { GraphBranchPropertyType } from '../schema/graph/GraphBranchPropertyType';
 import { Depth } from '../../domain/graph/branch/Depth';
 import { ClassMetadataMap } from './ClassMetadataMap';
-import { PatternFormula } from '../../domain/graph/pattern/formula/PatternFormula';
+import { GraphPatternFormula } from '../../domain/graph/pattern/formula/GraphPatternFormula';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { MetadataStoreInterface } from './MetadataStoreInterface';
 import { EntityPrimaryMetadata } from '../schema/entity/EntityPrimaryMetadata';
@@ -25,6 +25,10 @@ import { RelationshipEntityMetadata } from '../schema/entity/RelationshipEntityM
 import { Graph } from '../../decorator/class/Graph';
 import { PropertyType } from '../schema/entity/PropertyType';
 import { EntityPropertyMetadata } from '../schema/entity/EntityPropertyMetadata';
+import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
+import { GraphFragment } from '../../decorator/class/GraphFragment';
+import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
+import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -37,6 +41,8 @@ export class MetadataStore implements MetadataStoreInterface {
   private graphPropertiesMap: PropertyMetadataMap<GraphProperties> =
     new PropertyMetadataMap();
   private graphMap: ClassMetadataMap<GraphMetadata> = new ClassMetadataMap();
+  private graphFragmentMap: ClassMetadataMap<GraphFragmentMetadata> =
+    new ClassMetadataMap();
 
   setPrimary(
     cstr: AnyClassConstructor,
@@ -126,7 +132,7 @@ export class MetadataStore implements MetadataStoreInterface {
   addGraphBranch(
     cstr: AnyClassConstructor,
     graphBranchPropertyType: GraphBranchPropertyType,
-    keyMapping: [string, string],
+    associationPatternFormula: AssociationPatternFormula,
     depth: number
   ): void {
     this.graphPropertiesMap.update(cstr, (graphProperties) => {
@@ -136,7 +142,7 @@ export class MetadataStore implements MetadataStoreInterface {
       graphProperties.set(
         new GraphBranchMetadata(
           graphBranchPropertyType,
-          keyMapping,
+          associationPatternFormula,
           new Depth(depth)
         )
       );
@@ -149,19 +155,34 @@ export class MetadataStore implements MetadataStoreInterface {
       cstr,
       new GraphMetadata(
         cstr,
-        new PatternFormula(formula),
+        new GraphPatternFormula(formula),
+        this.graphPropertiesMap.get(cstr) || new GraphProperties()
+      )
+    );
+  }
+
+  registerGraphFragment(cstr: AnyClassConstructor, formula: string): void {
+    this.graphFragmentMap.register(
+      cstr,
+      new GraphFragmentMetadata(
+        cstr,
+        new FragmentPatternFormula(formula),
         this.graphPropertiesMap.get(cstr) || new GraphProperties()
       )
     );
   }
 
   getNodeEntityMetadata(cstr: AnyClassConstructor): NodeEntityMetadata {
-    const metadata = this.nodeEntityMap.get(cstr);
+    const metadata = this.findNodeEntityMetadata(cstr);
     if (!metadata) {
       throw new Error(`${cstr.name} is not registered as ${NodeEntity.name}`);
     }
 
     return metadata;
+  }
+
+  findNodeEntityMetadata(cstr: AnyClassConstructor): NodeEntityMetadata | null {
+    return this.nodeEntityMap.get(cstr);
   }
 
   getRelationshipEntityMetadata(
@@ -178,12 +199,33 @@ export class MetadataStore implements MetadataStoreInterface {
   }
 
   getGraphMetadata(cstr: AnyClassConstructor): GraphMetadata {
-    const metadata = this.graphMap.get(cstr);
+    const metadata = this.findGraphMetadata(cstr);
     if (!metadata) {
       throw new Error(`${cstr.name} is not registered as ${Graph.name}`);
     }
 
     return metadata;
+  }
+
+  findGraphMetadata(cstr: AnyClassConstructor): GraphMetadata | null {
+    return this.graphMap.get(cstr);
+  }
+
+  getGraphFragmentMetadata(cstr: AnyClassConstructor): GraphFragmentMetadata {
+    const metadata = this.findGraphFragmentMetadata(cstr);
+    if (!metadata) {
+      throw new Error(
+        `${cstr.name} is not registered as ${GraphFragment.name}`
+      );
+    }
+
+    return metadata;
+  }
+
+  findGraphFragmentMetadata(
+    cstr: AnyClassConstructor
+  ): GraphFragmentMetadata | null {
+    return this.graphFragmentMap.get(cstr);
   }
 }
 

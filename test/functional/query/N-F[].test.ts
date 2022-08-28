@@ -1,0 +1,123 @@
+import 'reflect-metadata';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
+import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
+import { Primary } from '../../../src/decorator/property/Primary';
+import { GraphNode } from '../../../src/decorator/property/GraphNode';
+import { Graph } from '../../../src/decorator/class/Graph';
+import { QueryPlan } from '../../../src/query/builder/QueryPlan';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { GraphParameter } from '../../../src/query/parameter/GraphParameter';
+import { StemBuilder } from '../../../src/query/builder/StemBuilder';
+import { getMetadataStore } from '../../../src/metadata/store/MetadataStore';
+import { GraphFragment } from '../../../src/decorator/class/GraphFragment';
+import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
+import { IdFixture } from '../fixtures/IdFixture';
+import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
+
+const neo4jFixture = Neo4jFixture.new();
+
+@NodeEntity()
+class Shop {
+  @Primary() private id: string;
+
+  constructor(id: string) {
+    this.id = id;
+  }
+}
+
+@NodeEntity()
+class Item {
+  @Primary() private id: string;
+
+  constructor(id: string) {
+    this.id = id;
+  }
+}
+
+@GraphFragment('-:HAS_FAVORITE@hasFavorite->item')
+class FavoriteItem {
+  @GraphNode() private item: Item;
+
+  constructor(item: Item) {
+    this.item = item;
+  }
+}
+
+@Graph('shop')
+class ShopCustomerFavorites {
+  @GraphNode() private shop: Shop;
+  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer')
+  private favoriteItems: FavoriteItem[];
+
+  constructor(shop: Shop, favoriteItems: FavoriteItem[]) {
+    this.shop = shop;
+    this.favoriteItems = favoriteItems;
+  }
+}
+
+const id = new IdFixture();
+
+describe('map Neo4j Record into N-F[] Graph class', () => {
+  beforeAll(async () => {
+    const shop = await neo4jFixture.addNode('Shop', { id: id.get('shop') });
+    const customer = await neo4jFixture.addNode('Customer', {
+      id: id.get('customer'),
+    });
+    const item = await neo4jFixture.addNode('Item', { id: id.get('item1') });
+    const item2 = await neo4jFixture.addNode('Item', { id: id.get('item2') });
+
+    await neo4jFixture.addRelationship('IS_CUSTOMER', {}, shop, customer, '<-');
+    await neo4jFixture.addRelationship(
+      'HAS_FAVORITE',
+      {},
+      customer,
+      item,
+      '->'
+    );
+    await neo4jFixture.addRelationship(
+      'HAS_FAVORITE',
+      {},
+      customer,
+      item2,
+      '->'
+    );
+  });
+
+  afterAll(async () => {
+    await neo4jFixture.teardown();
+  });
+
+  test('QueryBuilder', () => {
+    const stemBuilder = new StemBuilder(getMetadataStore());
+    const queryBuilder = new QueryBuilder(stemBuilder);
+    const query = queryBuilder.build(
+      ShopCustomerFavorites,
+      new WhereQueries([]),
+      new GraphParameter('', {})
+    );
+    expect(query.get('_')).toBe(
+      'MATCH (n0:Shop) ' +
+        'RETURN {shop:n0{.*},' +
+        'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item)' +
+        '|{item:b0_n8{.*}}]} AS _'
+    );
+  });
+
+  test('QueryPlan', async () => {
+    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
+
+    const results = await queryPlan.execute(
+      ShopCustomerFavorites,
+      new WhereQueries([]),
+      {
+        shop: { id: id.get('shop') },
+      }
+    );
+    expect(results).toStrictEqual([
+      new ShopCustomerFavorites(new Shop(id.get('shop')), [
+        new FavoriteItem(new Item(id.get('item2'))),
+        new FavoriteItem(new Item(id.get('item1'))),
+      ]),
+    ]);
+  });
+});

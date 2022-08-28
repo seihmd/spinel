@@ -1,7 +1,7 @@
 import { MetadataStore } from '../../store/MetadataStore';
 import { GraphMetadata } from '../../schema/graph/GraphMetadata';
 import { GraphProperties } from '../../schema/graph/GraphProperties';
-import { PatternFormula } from '../../../domain/graph/pattern/formula/PatternFormula';
+import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
 import { GraphNodePropertyType } from '../../schema/graph/GraphNodePropertyType';
 import { GraphRelationshipPropertyType } from '../../schema/graph/GraphRelationshipPropertyType';
 import { GraphBranchPropertyType } from '../../schema/graph/GraphBranchPropertyType';
@@ -14,6 +14,7 @@ import { RelationshipType } from '../../../domain/relationship/RelationshipType'
 import { NodeEntityMetadata } from '../../schema/entity/NodeEntityMetadata';
 import { Properties } from '../../schema/entity/Properties';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
+import { AssociationPatternFormula } from '../../../domain/graph/pattern/formula/AssociationPatternFormula';
 
 class GraphClass {}
 
@@ -25,7 +26,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     expect(m.getGraphMetadata(GraphClass)).toStrictEqual(
       new GraphMetadata(
         GraphClass,
-        new PatternFormula('formula'),
+        new GraphPatternFormula('formula'),
         new GraphProperties()
       )
     );
@@ -51,7 +52,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     m.addGraphBranch(
       GraphClass,
       new GraphBranchPropertyType('p3', GraphClass),
-      ['p1', 'p4'],
+      new AssociationPatternFormula('p1-:R->*'),
       1
     );
     m.registerGraph(GraphClass, 'formula');
@@ -80,7 +81,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     graphProperties.set(
       new GraphBranchMetadata(
         new GraphBranchPropertyType('p3', GraphClass),
-        ['p1', 'p4'],
+        new AssociationPatternFormula('p1-:R->*'),
         new Depth(1)
       )
     );
@@ -88,7 +89,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     expect(m.getGraphMetadata(GraphClass)).toStrictEqual(
       new GraphMetadata(
         GraphClass,
-        new PatternFormula('formula'),
+        new GraphPatternFormula('formula'),
         graphProperties
       )
     );

@@ -4,21 +4,17 @@ import { PathStep } from '../../path/PathStep';
 
 describe(`${PathStep.name}`, () => {
   const f = new ElementFixture();
-  beforeEach(() => {
-    f.reIndex();
-  });
-
   test.each([
     [
       [
-        f.reIndex(1).newDirectionElement('-'),
+        f.newDirectionElement('-'),
         f.newRelationshipElement(),
         f.newDirectionElement('-'),
         f.newNodeElement(),
       ],
       [
         new PathStep(
-          f.reIndex(1).newDirectionElement('-'),
+          f.newDirectionElement('-'),
           f.newRelationshipElement(),
           f.newDirectionElement('-'),
           f.newNodeElement()
@@ -27,7 +23,7 @@ describe(`${PathStep.name}`, () => {
     ],
     [
       [
-        f.reIndex(1).newDirectionElement('<-'),
+        f.newDirectionElement('<-'),
         f.newRelationshipElement(),
         f.newDirectionElement('-'),
         f.newNodeElement(),
@@ -38,7 +34,7 @@ describe(`${PathStep.name}`, () => {
       ],
       [
         new PathStep(
-          f.reIndex(1).newDirectionElement('<-'),
+          f.newDirectionElement('<-'),
           f.newRelationshipElement(),
           f.newDirectionElement('-'),
           f.newNodeElement()

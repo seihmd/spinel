@@ -1,17 +1,16 @@
 import { Branch } from './Branch';
 import { PathStep } from './PathStep';
-import { AnyNodeElement, Element } from '../element/Element';
+import { AnyNodeElement, EntityElement } from '../element/Element';
 import { Path } from './Path';
+import { WhereQuery } from '../builder/where/WhereQuery';
 
 export class Stem {
-  static new(elements: Element[], branches: Branch[]): Stem {
-    return new Stem(new Path(elements), branches);
-  }
-
   private readonly path: Path;
+  private readonly whereQuery: WhereQuery | null;
   private readonly branches: Branch[];
 
-  constructor(path: Path, branches: Branch[]) {
+  constructor(path: Path, whereQuery: WhereQuery | null, branches: Branch[]) {
+    this.whereQuery = whereQuery;
     this.path = path;
     this.branches = branches;
   }
@@ -24,7 +23,19 @@ export class Stem {
     return this.path.getSteps();
   }
 
+  getPath(): Path {
+    return this.path;
+  }
+
   getBranches(): Branch[] {
     return this.branches;
+  }
+
+  getEntityElements(): EntityElement[] {
+    return this.path.getEntityElements();
+  }
+
+  getWhereQuery(): WhereQuery | null {
+    return this.whereQuery;
   }
 }

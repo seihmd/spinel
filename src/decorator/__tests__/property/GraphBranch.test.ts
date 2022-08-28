@@ -18,7 +18,7 @@ describe('GraphBranch', () => {
     [
       () => {
         class GraphClass {
-          @GraphBranch(NodeClass, ['prop', 'branchProp'])
+          @GraphBranch(NodeClass, 'n-:r->*')
           nodes: NodeClass[] = [];
         }
       },
@@ -26,7 +26,7 @@ describe('GraphBranch', () => {
     [
       () => {
         class GraphClass {
-          @GraphBranch(NodeClass, ['prop', 'branchProp'], 2)
+          @GraphBranch(NodeClass, 'n-:r->*', 2)
           nodes: NodeClass[] = [];
         }
       },

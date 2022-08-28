@@ -1,17 +1,19 @@
-import { PatternFormula } from '../../../domain/graph/pattern/formula/PatternFormula';
+import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
 import { GraphProperties } from './GraphProperties';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { GraphNodeMetadata } from './GraphNodeMetadata';
 import { GraphRelationshipMetadata } from './GraphRelationshipMetadata';
+import { GraphBranchMetadata } from './GraphBranchMetadata';
+import { BranchEndMetadata } from './BranchEndMetadata';
 
-export class GraphMetadata {
+export class GraphMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
-  private readonly formula: PatternFormula;
+  private readonly formula: GraphPatternFormula;
   private readonly properties: GraphProperties;
 
   constructor(
     cstr: AnyClassConstructor,
-    formula: PatternFormula,
+    formula: GraphPatternFormula,
     properties: GraphProperties
   ) {
     this.cstr = cstr;
@@ -29,5 +31,21 @@ export class GraphMetadata {
 
   getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
     return this.properties.getRelationshipMetadata(key);
+  }
+
+  getBranchesMetadata(): GraphBranchMetadata[] {
+    return this.properties.getBranchesMetadata();
+  }
+
+  getFormula(): GraphPatternFormula {
+    return this.formula;
+  }
+
+  getRootKey(): string | null {
+    return this.formula.getRootTerm().getKey();
+  }
+
+  getTerminalKey(): string | null {
+    return this.formula.getTerminalTerm().getKey();
   }
 }
