@@ -1,7 +1,9 @@
 {
   "include": [
-    "./src/**/*.ts",
-    "./test/**/*.ts"
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ],
   "compilerOptions": {
     "target": "esnext",
@@ -16,7 +18,7 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "moduleResolution": "node",
     "esModuleInterop": true,

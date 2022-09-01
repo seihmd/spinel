@@ -39,10 +39,14 @@ export class NodeEntityMetadata implements BranchEndMetadata {
     return this.properties.getProperties();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
+  // @ts-ignore
   getGraphNodeMetadata(key: string): GraphNodeMetadata {
     throw new Error();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
+  // @ts-ignore
   getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
     throw new Error();
   }
