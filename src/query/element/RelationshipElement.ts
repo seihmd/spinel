@@ -7,6 +7,7 @@ import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
 import { BranchIndexes } from '../meterial/BranchIndexes';
+import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
 
 export class RelationshipElement implements EntityElementInterface {
   private readonly term: RelationshipKeyTerm;
@@ -69,5 +70,13 @@ export class RelationshipElement implements EntityElementInterface {
 
   equalsBranchIndexes(branchIndexes: BranchIndexes): boolean {
     return this.context.equalsBranchIndexes(branchIndexes);
+  }
+
+  getPrimaries(): EntityPrimaryMetadata[] {
+    if (this.graphRelationshipMetadata instanceof GraphRelationshipMetadata) {
+      return [this.graphRelationshipMetadata.getEntityMetadata().getPrimary()];
+    }
+
+    return [this.graphRelationshipMetadata.getPrimary()];
   }
 }

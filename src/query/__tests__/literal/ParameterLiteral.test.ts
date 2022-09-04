@@ -1,13 +1,15 @@
-import { EntityParameter } from '../../parameter/EntityParameter';
+import {
+  EntityParameter,
+  PlainEntityParameter,
+} from '../../parameter/EntityParameter';
 import { ParameterLiteral } from '../../literal/ParameterLiteral';
-import { EntityParameterType } from '../../parameter/ParameterType';
 
 describe(`${ParameterLiteral.name}`, () => {
   test.each([
     [{}, ''],
-    [{ s: 'string', n: 1, b: false }, '{s:$name.s,n:$name.n,b:$name.b}'],
-  ])('get()', (value: EntityParameterType, expected: string) => {
-    const p = new ParameterLiteral('name', new EntityParameter(value));
+    [{ s: 'string', n: 1, b: false }, '{s:$s,n:$n,b:$b}'],
+  ])('get()', (value: PlainEntityParameter, expected: string) => {
+    const p = new ParameterLiteral(EntityParameter.withPlain(value, null));
     expect(p.get()).toBe(expected);
   });
 });

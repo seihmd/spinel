@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import { Property } from '../../property/Property';
-import { instanceToPlain, plainToClass } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { instance, mock } from 'ts-mockito';
 import {
   injectMetadataStore,
   MetadataStore,
 } from '../../../metadata/store/MetadataStore';
+import { toPlain } from '../../../util/toPlain';
 
 describe('Property', () => {
   beforeEach(() => {
@@ -48,7 +49,7 @@ describe('Property', () => {
       new NodeClass('a')
     );
 
-    expect(instanceToPlain(new NodeClass('a'))).toStrictEqual({ name: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ name: 'a' });
   });
 
   test('aliased class-transform', () => {
@@ -65,8 +66,6 @@ describe('Property', () => {
       new NodeClass('a')
     );
 
-    expect(
-      instanceToPlain(new NodeClass('a'), { excludeExtraneousValues: true })
-    ).toStrictEqual({ title: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ title: 'a' });
   });
 });

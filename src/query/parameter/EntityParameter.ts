@@ -1,13 +1,53 @@
-import { EntityParameterType, EntityParameterValueType } from './ParameterType';
+import { Parameter } from './Parameter';
+
+type Value = { [key: string]: Parameter };
+type Schema<T> = { [key: string]: T };
+export type PlainEntityParameter = Schema<unknown>;
+export type ParameterizedEntityParameter = Schema<string>;
 
 export class EntityParameter {
-  private readonly value: EntityParameterType | EntityParameterValueType;
+  static withPlain(
+    plain: PlainEntityParameter,
+    graphKey: string | null
+  ): EntityParameter {
+    const value = Object.entries(plain).reduce(
+      (prev: Value, [key, value]: [string, unknown]) => {
+        const parameterName = graphKey !== null ? `${graphKey}.${key}` : key;
+        prev[key] = Parameter.new(parameterName, value);
+        return prev;
+      },
+      {}
+    );
 
-  constructor(value: EntityParameterType | EntityParameterValueType) {
+    return new EntityParameter(value);
+  }
+
+  private readonly value: Value;
+
+  constructor(value: Value) {
     this.value = value;
   }
 
-  get(): EntityParameterType | EntityParameterValueType {
-    return this.value;
+  toParameter(): ParameterizedEntityParameter {
+    return Object.entries(this.value).reduce(
+      (
+        prev: ParameterizedEntityParameter,
+        [key, parameter]: [string, Parameter]
+      ) => {
+        prev[key] = parameter.get$name();
+        return prev;
+      },
+      {}
+    );
+  }
+
+  toPlain(): PlainEntityParameter {
+    return Object.entries(this.value).reduce(
+      (prev: PlainEntityParameter, [key, parameter]: [string, Parameter]) => {
+        prev[key] = parameter.getValue();
+        return prev;
+      },
+      {}
+    );
   }
 }

@@ -1,16 +1,20 @@
 import { ParameterLiteral } from './ParameterLiteral';
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { AnyRelationshipElement } from '../element/Element';
+import { EntityLiteralOption } from './EntityLiteralOption';
+import { EntityLiteral } from './EntityLiteral';
+import { EntityParameter } from '../parameter/EntityParameter';
+import { RelationshipInstanceElement } from '../element/RelationshipInstanceElement';
 
-export class RelationshipLiteral {
+export class RelationshipLiteral extends EntityLiteral {
   static new(
-    relationshipElement: AnyRelationshipElement,
-    parameterLiteral: ParameterLiteral | null
+    relationshipElement: AnyRelationshipElement | RelationshipInstanceElement,
+    entityParameter: EntityParameter | null = null
   ): RelationshipLiteral {
     return new RelationshipLiteral(
       relationshipElement.getVariableName(),
       relationshipElement.getType(),
-      parameterLiteral
+      entityParameter ? new ParameterLiteral(entityParameter) : null
     );
   }
 
@@ -23,18 +27,30 @@ export class RelationshipLiteral {
     relationshipType: RelationshipType | null,
     parameterLiteral: ParameterLiteral | null = null
   ) {
+    super();
     this.variableName = variableName;
     this.relationshipType = relationshipType;
     this.parameterLiteral = parameterLiteral;
   }
 
-  get(): string {
-    return `[${
-      this.variableName
-    }${this.createType()}${this.createParameter()}]`;
+  get(partial: Partial<EntityLiteralOption> = {}): string {
+    const option = this.getOption(partial);
+    return `[${this.createVariableName(option)}${this.createType(
+      option
+    )}${this.createParameter(option)}]`;
   }
 
-  private createType(): string {
+  private createVariableName(option: EntityLiteralOption): string {
+    if (!option.variable) {
+      return '';
+    }
+    return this.variableName;
+  }
+
+  private createType(option: EntityLiteralOption): string {
+    if (!option.labelType) {
+      return '';
+    }
     if (this.relationshipType === null) {
       return '';
     }
@@ -42,7 +58,10 @@ export class RelationshipLiteral {
     return ':' + this.relationshipType.toString();
   }
 
-  private createParameter(): string {
+  private createParameter(option: EntityLiteralOption): string {
+    if (!option.parameter) {
+      return '';
+    }
     if (this.parameterLiteral === null) {
       return '';
     }

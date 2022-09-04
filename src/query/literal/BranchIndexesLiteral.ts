@@ -8,14 +8,18 @@ export class BranchIndexesLiteral {
   }
 
   get(): string {
-    const indexes = this.branchIndexes.getIndexes();
-    if (indexes.length === 0) {
+    if (this.branchIndexes.size() === 0) {
       return '';
     }
+
     return (
-      indexes
-        .map((index) => {
-          return `b${index.toString()}`;
+      this.branchIndexes
+        .map((branchIndex) => {
+          const subIndex = branchIndex.getSubIndex();
+
+          return `b${branchIndex.getIndex()}${
+            subIndex === null ? '' : `_${subIndex}`
+          }`;
         })
         .join('_') + '_'
     );

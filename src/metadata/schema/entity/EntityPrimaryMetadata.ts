@@ -14,6 +14,14 @@ export class EntityPrimaryMetadata {
     return this.propertyType.getKey();
   }
 
+  getNeo4jKey(): string {
+    if (this.alias) {
+      return this.alias.get();
+    }
+
+    return this.propertyType.getKey();
+  }
+
   getType(): typeof String | typeof Number {
     return this.propertyType.getType();
   }

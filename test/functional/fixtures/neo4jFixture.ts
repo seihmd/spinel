@@ -102,6 +102,57 @@ export class Neo4jFixture {
     return relationship;
   }
 
+  async findNode(label: string, id: string): Promise<Record<string, unknown>> {
+    const q = await this.session().run(
+      `MATCH (n:${label} {id: "${id}"}) RETURN n`
+    );
+
+    const node = q.records[0].get('n') as Node;
+    if (!(node instanceof Node)) {
+      throw new Error();
+    }
+
+    this.nodes.push(node);
+
+    return node.properties;
+  }
+
+  async findGraph(pattern: string): Promise<{ [key: string]: unknown }> {
+    const q = await this.session().run(pattern);
+
+    const result: { [key: string]: unknown } = {};
+    for (const [key, entry] of q.records[0].entries()) {
+      if (entry instanceof Node) {
+        this.nodes.push(entry);
+        result[key] = entry.properties;
+        continue;
+      }
+      if (entry instanceof Relationship) {
+        this.relationships.push(entry);
+        result[key] = entry.properties;
+        continue;
+      }
+      if (Array.isArray(entry)) {
+        result[key] = entry.map((entryItem) => {
+          if (entryItem instanceof Node) {
+            this.nodes.push(entryItem);
+            return entryItem.properties;
+          }
+          if (entryItem instanceof Relationship) {
+            this.relationships.push(entryItem);
+            return entryItem.properties;
+          }
+
+          return entryItem;
+        });
+        continue;
+      }
+
+      throw new Error();
+    }
+    return result;
+  }
+
   async teardown(): Promise<void> {
     const ids: number[] = [
       ...this.nodes.map((n) => n.identity.toNumber()),

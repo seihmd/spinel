@@ -7,15 +7,27 @@ export class BranchIndexes {
     this.branchIndexes = indexes;
   }
 
-  append(index: number, graphKey: string): BranchIndexes {
+  append(
+    index: number,
+    graphKey: string,
+    subIndex: number | null = null
+  ): BranchIndexes {
     return new BranchIndexes([
       ...this.branchIndexes,
-      new BranchIndex(index, graphKey),
+      new BranchIndex(index, graphKey, subIndex),
     ]);
   }
 
-  isStem(): boolean {
-    return this.branchIndexes.length === 0;
+  get(): BranchIndex[] {
+    return this.branchIndexes;
+  }
+
+  map<T>(callback: (branchIndex: BranchIndex) => T) {
+    return this.branchIndexes.map(callback);
+  }
+
+  size(): number {
+    return this.branchIndexes.length;
   }
 
   getIndexes(): number[] {

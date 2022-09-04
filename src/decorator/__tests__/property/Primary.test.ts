@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import { Primary } from '../../property/Primary';
-import { instanceToPlain, plainToClass } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { instance, mock } from 'ts-mockito';
 import {
   injectMetadataStore,
   MetadataStore,
 } from '../../../metadata/store/MetadataStore';
+import { toPlain } from '../../../util/toPlain';
 
 describe('Primary', () => {
   beforeEach(() => {
@@ -56,7 +57,7 @@ describe('Primary', () => {
       new NodeClass('a')
     );
 
-    expect(instanceToPlain(new NodeClass('a'))).toStrictEqual({ id: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ id: 'a' });
   });
 
   test('aliased class-transform', () => {
@@ -73,8 +74,6 @@ describe('Primary', () => {
       new NodeClass('a')
     );
 
-    expect(
-      instanceToPlain(new NodeClass('a'), { excludeExtraneousValues: true })
-    ).toStrictEqual({ aliasedId: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ aliasedId: 'a' });
   });
 });

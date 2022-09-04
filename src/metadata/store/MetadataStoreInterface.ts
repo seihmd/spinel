@@ -61,6 +61,10 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor
   ): RelationshipEntityMetadata;
 
+  findRelationshipEntityMetadata(
+    cstr: AnyClassConstructor
+  ): RelationshipEntityMetadata | null;
+
   getGraphMetadata(cstr: AnyClassConstructor): GraphMetadata;
 
   findGraphMetadata(cstr: AnyClassConstructor): GraphMetadata | null;

@@ -7,7 +7,7 @@ import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/As
 
 export function GraphBranch(
   type: AnyClassConstructor,
-  associationPatternFormula: string,
+  pattern: string,
   depth = 1
 ): PropertyDecorator {
   return function (target: Object, propertyKey: string | symbol) {
@@ -15,7 +15,7 @@ export function GraphBranch(
     getMetadataStore().addGraphBranch(
       target.constructor as AnyClassConstructor,
       GraphBranchPropertyType.new(reflectedType, type),
-      new AssociationPatternFormula(associationPatternFormula),
+      new AssociationPatternFormula(pattern),
       depth
     );
 

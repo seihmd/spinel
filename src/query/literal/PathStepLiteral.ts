@@ -1,22 +1,15 @@
 import { PathStep } from '../path/PathStep';
 import { RelationshipLiteral } from './RelationshipLiteral';
-import { ParameterLiteral } from './ParameterLiteral';
-import { GraphParameter } from '../parameter/GraphParameter';
 import { NodeLiteral } from './NodeLiteral';
 import { Direction } from '../../domain/graph/Direction';
+import { EntityLiteralOption } from './EntityLiteralOption';
 
 export class PathStepLiteral {
-  static new(pathStep: PathStep, graphParameter: GraphParameter) {
+  static new(pathStep: PathStep) {
     const d1 = pathStep.getDirection1().getValue();
-    const relationship = RelationshipLiteral.new(
-      pathStep.getRelationship(),
-      ParameterLiteral.new(pathStep.getRelationship(), graphParameter)
-    );
+    const relationship = RelationshipLiteral.new(pathStep.getRelationship());
     const d2 = pathStep.getDirection2().getValue();
-    const node = NodeLiteral.new(
-      pathStep.getNode(),
-      ParameterLiteral.new(pathStep.getNode(), graphParameter)
-    );
+    const node = NodeLiteral.new(pathStep.getNode());
 
     return new PathStepLiteral(d1, relationship, d2, node);
   }
@@ -38,9 +31,12 @@ export class PathStepLiteral {
     this.nodeLiteral = nodeLiteral;
   }
 
-  get(): string {
-    return `${this.direction1}${this.relationshipLiteral.get()}${
-      this.direction2
-    }${this.nodeLiteral.get()}`;
+  get(
+    relationshipOption: Partial<EntityLiteralOption> = {},
+    nodeOption: Partial<EntityLiteralOption> = {}
+  ): string {
+    return `${this.direction1}${this.relationshipLiteral.get(
+      relationshipOption
+    )}${this.direction2}${this.nodeLiteral.get(nodeOption)}`;
   }
 }

@@ -1,16 +1,20 @@
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { ParameterLiteral } from './ParameterLiteral';
 import { AnyNodeElement } from '../element/Element';
+import { EntityLiteralOption } from './EntityLiteralOption';
+import { EntityLiteral } from './EntityLiteral';
+import { EntityParameter } from '../parameter/EntityParameter';
+import { NodeInstanceElement } from '../element/NodeInstanceElement';
 
-export class NodeLiteral {
+export class NodeLiteral extends EntityLiteral {
   static new(
-    nodeElement: AnyNodeElement,
-    parameterLiteral: ParameterLiteral | null
+    nodeElement: AnyNodeElement | NodeInstanceElement,
+    entityParameter: EntityParameter | null = null
   ): NodeLiteral {
     return new NodeLiteral(
       nodeElement.getVariableName(),
       nodeElement.getLabel(),
-      parameterLiteral
+      entityParameter ? new ParameterLiteral(entityParameter) : null
     );
   }
 
@@ -23,18 +27,31 @@ export class NodeLiteral {
     nodeLabel: NodeLabel | null,
     parameterLiteral: ParameterLiteral | null
   ) {
+    super();
     this.variableName = variableName;
     this.nodeLabel = nodeLabel;
     this.parameterLiteral = parameterLiteral;
   }
 
-  get(): string {
-    return `(${
-      this.variableName
-    }${this.createLabel()}${this.createParameter()})`;
+  get(partial: Partial<EntityLiteralOption> = {}): string {
+    const option = this.getOption(partial);
+    return `(${this.createVariableName(option)}${this.createLabel(
+      option
+    )}${this.createParameter(option)})`;
   }
 
-  private createLabel(): string {
+  private createVariableName(option: EntityLiteralOption): string {
+    if (!option.variable) {
+      return '';
+    }
+
+    return this.variableName;
+  }
+
+  private createLabel(option: EntityLiteralOption): string {
+    if (!option.labelType) {
+      return '';
+    }
     if (this.nodeLabel === null) {
       return '';
     }
@@ -42,7 +59,10 @@ export class NodeLiteral {
     return ':' + this.nodeLabel.toString();
   }
 
-  private createParameter(): string {
+  private createParameter(option: EntityLiteralOption): string {
+    if (!option.parameter) {
+      return '';
+    }
     if (this.parameterLiteral === null) {
       return '';
     }

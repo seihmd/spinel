@@ -1,6 +1,17 @@
 import { MapEntryLiteral } from './MapEntryLiteral';
+import { EntityParameter } from '../parameter/EntityParameter';
 
 export class MapLiteral {
+  static withEntityParameter(entityParameter: EntityParameter): MapLiteral {
+    return new MapLiteral(
+      Object.entries(entityParameter.toParameter()).map(
+        ([key, parameterName]): MapEntryLiteral => {
+          return new MapEntryLiteral([key, parameterName]);
+        }
+      )
+    );
+  }
+
   private readonly as: string;
   private readonly mapEntryLiterals: MapEntryLiteral[];
 

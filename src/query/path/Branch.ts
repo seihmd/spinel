@@ -2,20 +2,20 @@ import { PatternComprehensionLiteral } from '../literal/PatternComprehensionLite
 import { PathLiteral } from '../literal/PathLiteral';
 import { NodeLiteral } from '../literal/NodeLiteral';
 import { PathStepLiteral } from '../literal/PathStepLiteral';
-import { GraphParameter } from '../parameter/GraphParameter';
-import { BranchMaterial } from '../meterial/BranchMaterial';
 import { EntityElement } from '../element/Element';
 import { WhereQuery } from '../builder/where/WhereQuery';
 import { WhereClause } from '../clause/WhereClause';
 import { WhereLiteral } from '../literal/WhereLiteral';
+import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
+import { Path } from './Path';
 
 export class Branch {
-  private readonly branchMaterial: BranchMaterial;
+  private readonly branchMaterial: BranchMaterialInterface;
   private readonly whereQuery: WhereQuery | null;
   private readonly branches: Branch[];
 
   constructor(
-    branchMaterial: BranchMaterial,
+    branchMaterial: BranchMaterialInterface,
     whereQuery: WhereQuery | null,
     branches: Branch[]
   ) {
@@ -24,14 +24,12 @@ export class Branch {
     this.whereQuery = whereQuery;
   }
 
-  toPatternComprehensionLiteral(
-    graphParameter: GraphParameter
-  ): PatternComprehensionLiteral {
+  toPatternComprehensionLiteral(): PatternComprehensionLiteral {
     return new PatternComprehensionLiteral(
       new PathLiteral(
         new NodeLiteral(this.branchMaterial.getRootVariableName(), null, null),
         this.branchMaterial.getSteps().map((step) => {
-          return PathStepLiteral.new(step, graphParameter);
+          return PathStepLiteral.new(step);
         })
       ),
       this.getWhereClause(),
@@ -39,7 +37,16 @@ export class Branch {
     );
   }
 
-  getGraphKey() {
+  getPaths(): Path[] {
+    let paths: Path[] = [this.branchMaterial.getPath()];
+    this.getBranches().forEach((branch) => {
+      paths = [...paths, ...branch.getPaths()];
+    });
+
+    return paths;
+  }
+
+  getGraphKey(): string {
     return this.branchMaterial.getGraphKey();
   }
 

@@ -6,11 +6,9 @@ import { GraphNode } from '../../../src/decorator/property/GraphNode';
 import { Graph } from '../../../src/decorator/class/Graph';
 import { QueryPlan } from '../../../src/query/builder/QueryPlan';
 import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { GraphParameter } from '../../../src/query/parameter/GraphParameter';
 import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
 import { Depth } from '../../../src/domain/graph/branch/Depth';
 import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { getMetadataStore } from '../../../src/metadata/store/MetadataStore';
 import { IdFixture } from '../fixtures/IdFixture';
 import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
 import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
@@ -86,6 +84,7 @@ describe('map Neo4j Record into N-:R-G[] Graph class with where', () => {
   });
 
   const whereQueries = new WhereQueries([
+    new WhereQuery(null, '{shop}.id=$shop.id'),
     new WhereQuery(
       'itemTags',
       '{shop}.id=$shop.id AND [{hasStock}] AND {*.item}.id=$itemId'
@@ -94,16 +93,11 @@ describe('map Neo4j Record into N-:R-G[] Graph class with where', () => {
   ]);
 
   test('QueryBuilder', () => {
-    const stemBuilder = new StemBuilder(getMetadataStore());
-    const queryBuilder = new QueryBuilder(stemBuilder);
-    const query = queryBuilder.build(
-      ShopItemTags,
-      whereQueries,
-      new GraphParameter('', {}),
-      new Depth(3)
-    );
+    const queryBuilder = new QueryBuilder(StemBuilder.new());
+    const query = queryBuilder.build(ShopItemTags, whereQueries, new Depth(3));
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
         'RETURN {shop:n0{.*},' +
         'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item) ' +
         'WHERE n0.id=$shop.id AND [b0_r2] AND b0_n4.id=$itemId|{item:b0_n4{.*},' +
@@ -115,11 +109,16 @@ describe('map Neo4j Record into N-:R-G[] Graph class with where', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(ShopItemTags, whereQueries, {
-      shop: { id: id.get('shop') },
-      itemId: id.get('item'),
-      tagId: id.get('tag1'),
-    });
+    const results = await queryPlan.execute(
+      ShopItemTags,
+      whereQueries,
+      Depth.withDefault(),
+      {
+        shop: { id: id.get('shop') },
+        itemId: id.get('item'),
+        tagId: id.get('tag1'),
+      }
+    );
     expect(results).toStrictEqual([
       new ShopItemTags(new Shop(id.get('shop')), [
         new ItemTags(new Item(id.get('item')), [new Tag(id.get('tag1'))]),

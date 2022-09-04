@@ -1,6 +1,6 @@
-import { WhereClause } from './WhereClause';
-import { WhereLiteral } from '../literal/WhereLiteral';
 import { instance, mock, when } from 'ts-mockito';
+import { WhereLiteral } from '../../literal/WhereLiteral';
+import { WhereClause } from '../../clause/WhereClause';
 
 describe(`${WhereClause.name}`, () => {
   test('get', () => {

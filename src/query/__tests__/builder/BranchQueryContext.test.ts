@@ -1,10 +1,9 @@
-import { GraphParameter } from '../../parameter/GraphParameter';
 import { ElementFixture } from './ElementFixture';
 import { BranchQueryContext } from '../../builder/BranchQueryContext';
 
 import { Path } from '../../path/Path';
 import { Branch } from '../../path/Branch';
-import { BranchGraphMaterial } from '../../meterial/BranchGraphMaterial';
+import { GraphBranchMaterial } from '../../meterial/branch/GraphBranchMaterial';
 
 describe(`${BranchQueryContext.name}`, () => {
   test('-R-N', () => {
@@ -12,7 +11,7 @@ describe(`${BranchQueryContext.name}`, () => {
 
     const branchQueryContext = new BranchQueryContext(
       new Branch(
-        new BranchGraphMaterial(
+        new GraphBranchMaterial(
           Path.new([
             ef.newNodeElement('User', 'user'),
             ef.newDirectionElement('-'),
@@ -24,8 +23,7 @@ describe(`${BranchQueryContext.name}`, () => {
         ),
         null,
         []
-      ),
-      new GraphParameter('', {})
+      )
     );
     expect(branchQueryContext.getMapEntries()).toStrictEqual([
       ['key', '[(n0)-[r2:LIKES]->(n0:Item)|{likes:r2{.*},item:n0{.*}}]'],
@@ -37,7 +35,7 @@ describe(`${BranchQueryContext.name}`, () => {
 
     const branchQueryContext = new BranchQueryContext(
       new Branch(
-        new BranchGraphMaterial(
+        new GraphBranchMaterial(
           Path.new([
             ef.newNodeElement('User', 'user'),
             ef.newDirectionElement('-'),
@@ -53,8 +51,7 @@ describe(`${BranchQueryContext.name}`, () => {
         ),
         null,
         []
-      ),
-      new GraphParameter('', {})
+      )
     );
     expect(branchQueryContext.getMapEntries()).toStrictEqual([
       [
@@ -69,7 +66,7 @@ describe(`${BranchQueryContext.name}`, () => {
 
     const branchQueryContext = new BranchQueryContext(
       new Branch(
-        new BranchGraphMaterial(
+        new GraphBranchMaterial(
           Path.new([
             ef.newNodeElement('User', 'user'),
             ef.newDirectionElement('-'),
@@ -81,19 +78,10 @@ describe(`${BranchQueryContext.name}`, () => {
         ),
         null,
         []
-      ),
-      new GraphParameter('', {
-        user: { id: '1' },
-        likes: { date: '2022-01-01' },
-        item: { id: '2' },
-      })
+      )
     );
     expect(branchQueryContext.getMapEntries()).toStrictEqual([
-      [
-        'key',
-        '[(n0)-[r2:LIKES{date:$likes.date}]->(n0:Item{id:$item.id})' +
-          '|{likes:r2{.*},item:n0{.*}}]',
-      ],
+      ['key', '[(n0)-[r2:LIKES]->(n0:Item)' + '|{likes:r2{.*},item:n0{.*}}]'],
     ]);
   });
 });

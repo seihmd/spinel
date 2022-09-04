@@ -188,7 +188,7 @@ export class MetadataStore implements MetadataStoreInterface {
   getRelationshipEntityMetadata(
     cstr: AnyClassConstructor
   ): RelationshipEntityMetadata {
-    const metadata = this.relationshipEntityMap.get(cstr);
+    const metadata = this.findRelationshipEntityMetadata(cstr);
     if (!metadata) {
       throw new Error(
         `${cstr.name} is not registered as ${RelationshipEntity.name}`
@@ -196,6 +196,12 @@ export class MetadataStore implements MetadataStoreInterface {
     }
 
     return metadata;
+  }
+
+  findRelationshipEntityMetadata(
+    cstr: AnyClassConstructor
+  ): RelationshipEntityMetadata | null {
+    return this.relationshipEntityMap.get(cstr);
   }
 
   getGraphMetadata(cstr: AnyClassConstructor): GraphMetadata {

@@ -1,62 +1,59 @@
-import { GraphParameterEntry } from './GraphParameterEntry';
-import { GraphParameterKey } from './GraphParameterKey';
-import { GraphParameterType } from './ParameterType';
 import { EntityParameter } from './EntityParameter';
-import { merge } from 'lodash';
+
+type Value = { [key: string]: EntityParameter };
+type Schema<T> = { [p: string]: { [p: string]: T } };
+export type PlainGraphParameter = Schema<unknown>;
+export type ParameterizedGraphParameter = Schema<string>;
 
 export class GraphParameter {
-  private readonly entries: GraphParameterEntry[];
-  private readonly root: string;
-
-  constructor(root: string, value: GraphParameterType) {
-    this.root = root;
-    this.entries = Object.entries(value).map(
-      ([k, v]) => new GraphParameterEntry(new GraphParameterKey(k), v)
-    );
-  }
-
-  asPlain(): GraphParameterType {
-    return this.entries.reduce(
-      (prev: GraphParameterType, current: GraphParameterEntry) => {
-        return merge(prev, current.asPlain());
-      },
-      {}
-    );
-  }
-
-  getRoot(): string {
-    return this.root;
-  }
-
-  getKeyWithRoot(key: string): string {
-    return this.root === '' ? key : this.root + '.' + key;
-  }
-
-  of(key: string): GraphParameter {
-    const params = this.entries.reduce(
-      (prev: GraphParameterType, current: GraphParameterEntry) => {
-        const rootKey = current.getRoot();
-        if (rootKey !== key) {
-          return prev;
-        }
-        prev[current.getKey()] = current.getValue();
-
+  static withPlain(plain: PlainGraphParameter): GraphParameter {
+    const value = Object.entries(plain).reduce(
+      (
+        prev: Value,
+        [graphKey, plainProperties]: [string, { [key: string]: unknown }]
+      ) => {
+        prev[graphKey] = EntityParameter.withPlain(plainProperties, graphKey);
         return prev;
       },
       {}
     );
 
-    const newRoot = this.root === '' ? key : `${this.root}.${key}`;
-    return new GraphParameter(newRoot, params);
+    return new GraphParameter(value);
   }
 
-  get(key: string): EntityParameter {
-    for (const entry of this.entries) {
-      if (entry.getKey() === this.getKeyWithRoot(key)) {
-        return new EntityParameter(entry.getValue());
-      }
-    }
+  private readonly value: Value;
 
-    return new EntityParameter({});
+  constructor(value: Value) {
+    this.value = value;
+  }
+
+  getEntityParameter(key: string): EntityParameter | null {
+    return this.value[key] ?? null;
+  }
+
+  toParameter(): Schema<string> {
+    return Object.entries(this.value).reduce(
+      (
+        prev: Schema<string>,
+        [key, entityParameter]: [string, EntityParameter]
+      ) => {
+        prev[key] = entityParameter.toParameter();
+        return prev;
+      },
+      {}
+    );
+  }
+
+  toPlain(): Schema<unknown> {
+    return Object.entries(this.value).reduce(
+      (
+        prev: Schema<unknown>,
+        [key, entityParameter]: [string, EntityParameter]
+      ) => {
+        prev[key] = entityParameter.toPlain();
+        return prev;
+      },
+      {}
+    );
   }
 }

@@ -7,13 +7,13 @@ import { RelationshipEntity } from '../../../src/decorator/class/RelationshipEnt
 import { GraphNode } from '../../../src/decorator/property/GraphNode';
 import { GraphRelationship } from '../../../src/decorator/property/GraphRelationship';
 import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { GraphParameter } from '../../../src/query/parameter/GraphParameter';
-import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { getMetadataStore } from '../../../src/metadata/store/MetadataStore';
 import { IdFixture } from '../fixtures/IdFixture';
 import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
+import { StemBuilder } from '../../../src/query/builder/StemBuilder';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryPlan } from '../../../src/query/builder/QueryPlan';
+import { Depth } from '../../../src/domain/graph/branch/Depth';
+import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -28,7 +28,7 @@ class Shop {
   }
 }
 
-@NodeEntity({ label: 'Customer' })
+@NodeEntity({label: 'Customer'})
 class User {
   @Primary() private id: string;
   @Property() private birthday: Date;
@@ -77,7 +77,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     });
     await neo4jFixture.addRelationship(
       'IS_CUSTOMER',
-      { id: id.get('isCustomer'), visited: '2022-01-01' },
+      {id: id.get('isCustomer'), visited: '2022-01-01'},
       node1,
       node2,
       '<-'
@@ -89,36 +89,36 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
   });
 
   test('QueryBuilder', () => {
-    const stemBuilder = new StemBuilder(getMetadataStore());
-    const queryBuilder = new QueryBuilder(stemBuilder);
+    const queryBuilder = new QueryBuilder(StemBuilder.new());
     const query = queryBuilder.build(
       ShopCustomer,
       new WhereQueries([]),
-      new GraphParameter('', {
-        shop: { id: id.get('shop') },
-        isCustomer: { visited: '2022-01-01' },
-        customer: { birthday: '2000-01-01' },
-      })
+      Depth.withDefault()
     );
     expect(query.get('_')).toBe(
-      'MATCH (n0:Shop{id:$shop.id})' +
-        '<-[r2:IS_CUSTOMER{visited:$isCustomer.visited}]' +
-        '-(n4:Customer{birthday:$customer.birthday}) ' +
-        'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
+      'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+      'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
     );
   });
 
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
+
+    const whereQueries = new WhereQueries([
+      new WhereQuery(null, '{shop}.id = $shop.id'),
+    ]);
+
     const results = await queryPlan.execute(
       ShopCustomer,
-      new WhereQueries([]),
+      whereQueries,
+      Depth.withDefault(),
       {
-        shop: { id: id.get('shop') },
-        isCustomer: { visited: '2022-01-01' },
-        customer: { birthday: '2000-01-01' },
+        shop: {id: id.get('shop')},
+        isCustomer: {visited: '2022-01-01'},
+        customer: {birthday: '2000-01-01'},
       }
     );
+
     expect(results).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop'), 'MyShop'),

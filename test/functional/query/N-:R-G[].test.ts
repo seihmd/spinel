@@ -6,13 +6,12 @@ import { GraphNode } from '../../../src/decorator/property/GraphNode';
 import { Graph } from '../../../src/decorator/class/Graph';
 import { QueryPlan } from '../../../src/query/builder/QueryPlan';
 import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { GraphParameter } from '../../../src/query/parameter/GraphParameter';
 import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
 import { Depth } from '../../../src/domain/graph/branch/Depth';
 import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { getMetadataStore } from '../../../src/metadata/store/MetadataStore';
 import { IdFixture } from '../fixtures/IdFixture';
 import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
+import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -85,12 +84,10 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
   });
 
   test('QueryBuilder', () => {
-    const stemBuilder = new StemBuilder(getMetadataStore());
-    const queryBuilder = new QueryBuilder(stemBuilder);
+    const queryBuilder = new QueryBuilder(StemBuilder.new());
     const query = queryBuilder.build(
       ShopItemTags,
       new WhereQueries([]),
-      new GraphParameter('', {}),
       new Depth(3)
     );
     expect(query.get('_')).toBe(
@@ -106,10 +103,9 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
 
     const results = await queryPlan.execute(
       ShopItemTags,
-      new WhereQueries([]),
-      {
-        shop: { id: id.get('shop') },
-      }
+      new WhereQueries([new WhereQuery(null, '{shop}.id = $shopId')]),
+      Depth.withDefault(),
+      { shopId: id.get('shop') }
     );
     expect(results).toStrictEqual([
       new ShopItemTags(new Shop(id.get('shop')), [

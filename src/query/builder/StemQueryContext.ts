@@ -1,7 +1,5 @@
 import { NodeLiteral } from '../literal/NodeLiteral';
-import { GraphParameter } from '../parameter/GraphParameter';
 import { Stem } from '../path/Stem';
-import { ParameterLiteral } from '../literal/ParameterLiteral';
 import { PathLiteral } from '../literal/PathLiteral';
 import { PathStepLiteral } from '../literal/PathStepLiteral';
 import { Depth } from '../../domain/graph/branch/Depth';
@@ -9,23 +7,18 @@ import { WhereLiteral } from '../literal/WhereLiteral';
 
 export class StemQueryContext {
   private readonly stem: Stem;
-  private readonly graphParameter: GraphParameter;
   private readonly depth: Depth;
 
-  constructor(stem: Stem, parameter: GraphParameter, depth: Depth) {
+  constructor(stem: Stem, depth: Depth) {
     this.stem = stem;
-    this.graphParameter = parameter;
     this.depth = depth;
   }
 
   getPathLiteral(): PathLiteral {
     return new PathLiteral(
-      NodeLiteral.new(
-        this.stem.getRoot(),
-        ParameterLiteral.new(this.stem.getRoot(), this.graphParameter)
-      ),
+      NodeLiteral.new(this.stem.getRoot()),
       this.stem.getSteps().map((step) => {
-        return PathStepLiteral.new(step, this.graphParameter);
+        return PathStepLiteral.new(step);
       })
     );
   }

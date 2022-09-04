@@ -7,7 +7,7 @@ export class RelationshipKeyTerm extends PatternTerm {
     this.assert();
   }
 
-  getKey(): string | null {
+  getKey(): string {
     return this.value;
   }
 

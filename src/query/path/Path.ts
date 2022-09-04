@@ -2,7 +2,9 @@ import {
   AnyNodeElement,
   Element,
   EntityElement,
+  InstanceElement,
   isAnyNodeElement,
+  isInstanceElement,
 } from '../element/Element';
 import { PathStep } from './PathStep';
 import { reverseElement } from '../element/reverseElement';
@@ -75,13 +77,19 @@ export class Path {
     return null;
   }
 
-  getEntityElements(): EntityElement[] {
+  getEntityElements(includesRoot = true): EntityElement[] {
     return [
-      this.getRoot(),
+      ...(includesRoot ? [this.getRoot()] : []),
       ...this.getSteps()
         .map((step) => [step.getNode(), step.getRelationship()])
         .flat(),
     ];
+  }
+
+  getInstanceElements(includesRoot = true): InstanceElement[] {
+    return this.getEntityElements(includesRoot).filter(
+      (element): element is InstanceElement => isInstanceElement(element)
+    );
   }
 
   private static parse(elements: Element[]): [AnyNodeElement, PathStep[]] {

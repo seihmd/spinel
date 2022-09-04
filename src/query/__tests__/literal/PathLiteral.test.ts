@@ -1,5 +1,5 @@
 import { PathStepLiteral } from '../../literal/PathStepLiteral';
-import { instance, mock, when } from 'ts-mockito';
+import { anything, instance, mock, when } from 'ts-mockito';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { PathLiteral } from '../../literal/PathLiteral';
 
@@ -26,12 +26,14 @@ describe(`${PathLiteral.name}`, () => {
 
 function stubNodeLiteral(value: string): NodeLiteral {
   const nodeLiteralStub = mock(NodeLiteral);
-  when(nodeLiteralStub.get()).thenReturn(value);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  when(nodeLiteralStub.get(anything())).thenReturn(value);
   return instance(nodeLiteralStub);
 }
 
 function stubPathStepLiteral(value: string): PathStepLiteral {
   const pathStepLiteralStub = mock(PathStepLiteral);
-  when(pathStepLiteralStub.get()).thenReturn(value);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  when(pathStepLiteralStub.get(anything())).thenReturn(value);
   return instance(pathStepLiteralStub);
 }

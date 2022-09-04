@@ -1,6 +1,5 @@
 import { StemQueryContext } from '../../builder/StemQueryContext';
 import { Stem } from '../../path/Stem';
-import { GraphParameter } from '../../parameter/GraphParameter';
 import { Path } from '../../path/Path';
 import { ElementFixture } from './ElementFixture';
 import { Depth } from '../../../domain/graph/branch/Depth';
@@ -21,7 +20,6 @@ describe(`${StemQueryContext.name}`, () => {
         null,
         []
       ),
-      new GraphParameter('', {}),
       new Depth(2)
     );
 
@@ -50,7 +48,6 @@ describe(`${StemQueryContext.name}`, () => {
         null,
         []
       ),
-      new GraphParameter('', {}),
       new Depth(2)
     );
 
@@ -79,7 +76,6 @@ describe(`${StemQueryContext.name}`, () => {
         null,
         []
       ),
-      new GraphParameter('', {}),
       new Depth(2)
     );
 
@@ -108,15 +104,11 @@ describe(`${StemQueryContext.name}`, () => {
         null,
         []
       ),
-      new GraphParameter('', {
-        user: { id: '1' },
-        likes: { date: '2022-01-01' },
-      }),
       new Depth(2)
     );
 
     expect(stemQueryContext.getPathLiteral().get()).toBe(
-      '(n0:User{id:$user.id})-[r2:LIKES{date:$likes.date}]->(n0:Item)'
+      '(n0:User)-[r2:LIKES]->(n0:Item)'
     );
     expect(stemQueryContext.getMapEntries()).toStrictEqual([
       ['user', 'n0{.*}'],

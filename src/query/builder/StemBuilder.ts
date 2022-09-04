@@ -2,23 +2,48 @@ import { Stem } from '../path/Stem';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { GraphMetadata } from '../../metadata/schema/graph/GraphMetadata';
 import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
-import { GraphMaterial } from '../meterial/GraphMaterial';
 import { GraphBranchMetadata } from '../../metadata/schema/graph/GraphBranchMetadata';
-import { BranchGraphMaterial } from '../meterial/BranchGraphMaterial';
-import { BranchFragmentMaterial } from '../meterial/BranchFragmentMaterial';
-import { BranchNodeMaterial } from '../meterial/BranchNodeMaterial';
 import { Branch } from '../path/Branch';
 import { Depth } from '../../domain/graph/branch/Depth';
-import { BranchMaterial } from '../meterial/BranchMaterial';
 import { GraphFragmentMetadata } from '../../metadata/schema/graph/GraphFragmentMetadata';
 import { BranchIndexes } from '../meterial/BranchIndexes';
 import { WhereQueries } from './where/WhereQueries';
+import { StemMaterialBuilder } from '../meterial/stem/StemMaterialBuilder';
+import { StemMaterial } from '../meterial/stem/StemMaterial';
+import { getMetadataStore } from '../../metadata/store/MetadataStore';
+import { TermElementBuilder } from '../meterial/stem/TermElementBuilder';
+import { TermElementBuilder as BranchTermElementBuilder } from '../meterial/branch/TermElementBuilder';
+import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
+import { BranchMaterialBuilder } from '../meterial/branch/BranchMaterialBuilder';
+import { GraphBranchMaterialBuilder } from '../meterial/branch/GraphBranchMaterialBuilder';
+import { NodeBranchMaterialBuilder } from '../meterial/branch/NodeBranchMaterialBuilder';
+import { FragmentBranchMaterialBuilder } from '../meterial/branch/FragmentBranchMaterialBuilder';
 
 export class StemBuilder {
-  private readonly metadataStore: MetadataStoreInterface;
+  static new(): StemBuilder {
+    return new StemBuilder(
+      getMetadataStore(),
+      new StemMaterialBuilder(new TermElementBuilder()),
+      new BranchMaterialBuilder(
+        new NodeBranchMaterialBuilder(new BranchTermElementBuilder()),
+        new GraphBranchMaterialBuilder(new BranchTermElementBuilder()),
+        new FragmentBranchMaterialBuilder(new BranchTermElementBuilder())
+      )
+    );
+  }
 
-  constructor(metadataStore: MetadataStoreInterface) {
+  private readonly metadataStore: MetadataStoreInterface;
+  private readonly stemMaterialBuilder: StemMaterialBuilder;
+  private readonly branchMaterialBuilder: BranchMaterialBuilder;
+
+  constructor(
+    metadataStore: MetadataStoreInterface,
+    stemMaterialBuilder: StemMaterialBuilder,
+    branchMaterialBuilder: BranchMaterialBuilder
+  ) {
     this.metadataStore = metadataStore;
+    this.stemMaterialBuilder = stemMaterialBuilder;
+    this.branchMaterialBuilder = branchMaterialBuilder;
   }
 
   build(
@@ -27,14 +52,14 @@ export class StemBuilder {
     depth: Depth
   ): Stem {
     const graphMetadata = this.metadataStore.getGraphMetadata(cstr);
-    const graphMaterial = GraphMaterial.new(graphMetadata);
+    const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
 
     return new Stem(
-      graphMaterial.getPath(),
+      stemMaterial.getPath(),
       whereQueries.ofStem(),
       this.buildBranches(
         graphMetadata,
-        graphMaterial,
+        stemMaterial,
         whereQueries,
         depth,
         new BranchIndexes([])
@@ -44,7 +69,7 @@ export class StemBuilder {
 
   private buildBranches(
     graphMetadata: GraphMetadata | GraphFragmentMetadata,
-    stemGraphMaterial: GraphMaterial | BranchMaterial,
+    stemMaterial: StemMaterial | BranchMaterialInterface,
     whereQueries: WhereQueries,
     depth: Depth,
     branchIndexes: BranchIndexes
@@ -55,7 +80,7 @@ export class StemBuilder {
     return graphMetadata.getBranchesMetadata().map((branchMetadata, i) => {
       return this.buildBranch(
         branchMetadata,
-        stemGraphMaterial,
+        stemMaterial,
         whereQueries,
         depth,
         branchIndexes.append(i, branchMetadata.getKey())
@@ -65,7 +90,7 @@ export class StemBuilder {
 
   private buildBranch(
     graphBranchMetadata: GraphBranchMetadata,
-    stemGraphMaterial: GraphMaterial | BranchMaterial,
+    stemMaterial: StemMaterial | BranchMaterialInterface,
     whereQueries: WhereQueries,
     depth: Depth,
     branchIndexes: BranchIndexes
@@ -75,12 +100,14 @@ export class StemBuilder {
     );
     const reducedDepth = depth.reduce();
     if (branchGraphMetadata) {
-      const branchMaterial = BranchGraphMaterial.new(
-        graphBranchMetadata,
-        stemGraphMaterial,
-        branchGraphMetadata,
-        branchIndexes
-      );
+      const branchMaterial =
+        this.branchMaterialBuilder.buildGraphBranchMaterial(
+          graphBranchMetadata,
+          stemMaterial,
+          branchGraphMetadata,
+          branchIndexes
+        );
+
       return new Branch(
         branchMaterial,
         whereQueries.of(branchIndexes),
@@ -98,12 +125,14 @@ export class StemBuilder {
       graphBranchMetadata.getBranchCstr()
     );
     if (graphFragmentMetadata) {
-      const branchFragmentMaterial = BranchFragmentMaterial.new(
-        graphBranchMetadata,
-        stemGraphMaterial,
-        graphFragmentMetadata,
-        branchIndexes
-      );
+      const branchFragmentMaterial =
+        this.branchMaterialBuilder.buildFragmentBranchMaterial(
+          graphBranchMetadata,
+          stemMaterial,
+          graphFragmentMetadata,
+          branchIndexes
+        );
+
       return new Branch(
         branchFragmentMaterial,
         whereQueries.of(branchIndexes),
@@ -122,10 +151,10 @@ export class StemBuilder {
     );
     if (nodeEntityMetadata) {
       return new Branch(
-        BranchNodeMaterial.new(
+        this.branchMaterialBuilder.buildNodeBranchMaterial(
           graphBranchMetadata,
+          stemMaterial,
           nodeEntityMetadata,
-          stemGraphMaterial,
           branchIndexes
         ),
         whereQueries.of(branchIndexes),

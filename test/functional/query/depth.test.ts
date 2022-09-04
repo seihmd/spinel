@@ -10,6 +10,7 @@ import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
 import { Node } from 'neo4j-driver-core';
 import { Depth } from '../../../src/domain/graph/branch/Depth';
 import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
+import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -115,11 +116,11 @@ describe('map Neo4j Record into Graph class with depth', () => {
 
     const results = await queryPlan.execute(
       SimilarItems,
-      new WhereQueries([]),
+      new WhereQueries([new WhereQuery(null, '{item}.id=$item.id')]),
+      depth,
       {
         item: { id: id.get('item') },
-      },
-      depth
+      }
     );
     expect(results).toStrictEqual([expected]);
   });

@@ -8,6 +8,7 @@ import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
 import { EntityElementInterface } from './EntityElementInterface';
 import { ElementContext } from './ElementContext';
+import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
 
 export class NodeElement implements EntityElementInterface {
   private readonly term: NodeKeyTerm | BranchEndTerm;
@@ -65,5 +66,13 @@ export class NodeElement implements EntityElementInterface {
 
   equalsBranchIndexes(branchIndexes: BranchIndexes) {
     return this.context.equalsBranchIndexes(branchIndexes);
+  }
+
+  getPrimaries(): EntityPrimaryMetadata[] {
+    if (this.graphNodeMetadata instanceof GraphNodeMetadata) {
+      return [this.graphNodeMetadata.getEntityMetadata().getPrimary()];
+    }
+
+    return [this.graphNodeMetadata.getPrimary()];
   }
 }

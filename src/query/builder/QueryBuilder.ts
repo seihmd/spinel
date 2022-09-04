@@ -1,5 +1,4 @@
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { GraphParameter } from '../parameter/GraphParameter';
 import { StemQueryContext } from './StemQueryContext';
 import { BranchQueryContext } from './BranchQueryContext';
 import { Query } from './Query';
@@ -17,16 +16,12 @@ export class QueryBuilder {
   build(
     cstr: AnyClassConstructor,
     whereQueries: WhereQueries,
-    graphParameter: GraphParameter,
     depth: Depth = Depth.withDefault()
   ) {
     const stem = this.stemBuilder.build(cstr, whereQueries, depth);
-    const stemQueryContext = new StemQueryContext(stem, graphParameter, depth);
+    const stemQueryContext = new StemQueryContext(stem, depth);
     const branchQueryContexts = stem.getBranches().map((branch) => {
-      return new BranchQueryContext(
-        branch,
-        graphParameter.of(branch.getGraphKey())
-      );
+      return new BranchQueryContext(branch);
     });
 
     return new Query(stemQueryContext, branchQueryContexts);

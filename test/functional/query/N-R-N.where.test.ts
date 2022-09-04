@@ -9,12 +9,11 @@ import { GraphRelationship } from '../../../src/decorator/property/GraphRelation
 import { Graph } from '../../../src/decorator/class/Graph';
 import { QueryPlan } from '../../../src/query/builder/QueryPlan';
 import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { GraphParameter } from '../../../src/query/parameter/GraphParameter';
 import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { getMetadataStore } from '../../../src/metadata/store/MetadataStore';
 import { IdFixture } from '../fixtures/IdFixture';
 import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
 import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
+import { Depth } from '../../../src/domain/graph/branch/Depth';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -118,20 +117,15 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
   ]);
 
   test('QueryBuilder', () => {
-    const stemBuilder = new StemBuilder(getMetadataStore());
-    const queryBuilder = new QueryBuilder(stemBuilder);
+    const queryBuilder = new QueryBuilder(StemBuilder.new());
     const query = queryBuilder.build(
       ShopCustomer,
       whereQueries,
-      new GraphParameter('', {
-        shop: { id: id.get('shop') },
-        visitedFrom: '2020-01-01',
-        emailPattern: '^customer3@',
-      })
+      Depth.withDefault()
     );
 
     expect(query.get('_')).toBe(
-      'MATCH (n0:Shop{id:$shop.id})<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+      'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
         'WHERE r2.visited >= $visitedFrom AND n4.email =~ $emailPattern ' +
         'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
     );
@@ -139,11 +133,16 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
 
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-    const results = await queryPlan.execute(ShopCustomer, whereQueries, {
-      shop: { id: id.get('shop') },
-      visitedFrom: '2020-01-01',
-      emailPattern: 'customer3@.*',
-    });
+    const results = await queryPlan.execute(
+      ShopCustomer,
+      whereQueries,
+      Depth.withDefault(),
+      {
+        shop: { id: id.get('shop') },
+        visitedFrom: '2020-01-01',
+        emailPattern: 'customer3@.*',
+      }
+    );
     expect(results).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop')),
