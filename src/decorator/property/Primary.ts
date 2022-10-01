@@ -4,9 +4,11 @@ import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { Alias } from '../../metadata/schema/entity/Alias';
 import { PrimaryType } from '../../metadata/schema/entity/PrimaryType';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
+import { Neo4jPropertyType } from '../../metadata/schema/entity/Neo4jPropertyType';
 
 interface PrimaryOption {
   alias?: string;
+  type?: Neo4jPropertyType;
 }
 
 export function Primary(option?: PrimaryOption): PropertyDecorator {
@@ -14,7 +16,8 @@ export function Primary(option?: PrimaryOption): PropertyDecorator {
     getMetadataStore().setPrimary(
       target.constructor as AnyClassConstructor,
       PrimaryType.new(new ReflectedType(target, propertyKey)),
-      option?.alias !== undefined ? new Alias(option.alias) : null
+      option?.alias !== undefined ? new Alias(option.alias) : null,
+      option?.type ?? null
     );
 
     Type()(target, propertyKey);

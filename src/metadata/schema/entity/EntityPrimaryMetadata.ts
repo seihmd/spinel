@@ -1,11 +1,18 @@
 import { Alias } from './Alias';
 import { PrimaryType } from './PrimaryType';
+import { Neo4jPropertyType } from './Neo4jPropertyType';
 
 export class EntityPrimaryMetadata {
-  propertyType: PrimaryType;
-  alias: Alias | null;
+  private readonly propertyType: PrimaryType;
+  private readonly alias: Alias | null;
+  private readonly type: Neo4jPropertyType | null;
 
-  constructor(propertyType: PrimaryType, alias: Alias | null) {
+  constructor(
+    propertyType: PrimaryType,
+    alias: Alias | null,
+    type: Neo4jPropertyType | null
+  ) {
+    this.type = type;
     this.propertyType = propertyType;
     this.alias = alias;
   }
@@ -24,5 +31,9 @@ export class EntityPrimaryMetadata {
 
   getType(): typeof String | typeof Number {
     return this.propertyType.getType();
+  }
+
+  getNeo4jPropertyType(): Neo4jPropertyType | null {
+    return this.type;
   }
 }
