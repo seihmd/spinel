@@ -20,9 +20,10 @@ import {
 import { DurationTransformer } from './DurationTransformer';
 import { PointTransformer } from './PointTransformer';
 import { DummyTransformer } from './DummyTransformer';
+import { EntityPrimaryMetadata } from '../../entity/EntityPrimaryMetadata';
 
 export class TransformationRule {
-  static new(propertyMetadata: EntityPropertyMetadata) {
+  static new(propertyMetadata: EntityPropertyMetadata | EntityPrimaryMetadata) {
     if (propertyMetadata.getNeo4jPropertyType() === 'integer') {
       return new TransformationRule(propertyMetadata, new IntegerTransformer());
     }
@@ -90,11 +91,13 @@ export class TransformationRule {
     return new TransformationRule(propertyMetadata, new DummyTransformer());
   }
 
-  private readonly propertyMetadata: EntityPropertyMetadata;
+  private readonly propertyMetadata:
+    | EntityPropertyMetadata
+    | EntityPrimaryMetadata;
   private readonly transformer: TransformerInterface<any>;
 
   constructor(
-    propertyMetadata: EntityPropertyMetadata,
+    propertyMetadata: EntityPropertyMetadata | EntityPrimaryMetadata,
     transformer: TransformerInterface<any>
   ) {
     this.propertyMetadata = propertyMetadata;
