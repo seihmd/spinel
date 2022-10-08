@@ -49,10 +49,10 @@ export class EntityParameter {
     return Object.entries(this.value).reduce(
       (prev: PlainEntityParameter, [key, parameter]: [string, Parameter]) => {
         const transformationRule = this.transformationRules.get(
-          parameter.getName()
+          parameter.getPropertyName()
         );
         if (transformationRule) {
-          prev[key] = transformationRule.unparameterize(parameter.getValue());
+          prev[key] = transformationRule.parameterize(parameter.getValue());
         } else {
           prev[key] = parameter.getValue();
         }

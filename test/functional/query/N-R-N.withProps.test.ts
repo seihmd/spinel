@@ -28,7 +28,7 @@ class Shop {
   }
 }
 
-@NodeEntity({label: 'Customer'})
+@NodeEntity({ label: 'Customer' })
 class User {
   @Primary() private id: string;
   @Property() private birthday: Date;
@@ -77,7 +77,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     });
     await neo4jFixture.addRelationship(
       'IS_CUSTOMER',
-      {id: id.get('isCustomer'), visited: '2022-01-01'},
+      { id: id.get('isCustomer'), visited: '2022-01-01' },
       node1,
       node2,
       '<-'
@@ -97,7 +97,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
-      'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
+        'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
     );
   });
 
@@ -113,9 +113,9 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
       whereQueries,
       Depth.withDefault(),
       {
-        shop: {id: id.get('shop')},
-        isCustomer: {visited: '2022-01-01'},
-        customer: {birthday: '2000-01-01'},
+        shop: { id: id.get('shop') },
+        isCustomer: { visited: new Date('2022-01-01') },
+        customer: { birthday: new Date('2000-01-01') },
       }
     );
 

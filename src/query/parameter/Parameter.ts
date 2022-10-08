@@ -18,6 +18,10 @@ export class Parameter {
     return this.name.get();
   }
 
+  getPropertyName(): string {
+    return this.name.getPropertyName();
+  }
+
   get$name(): string {
     return '$' + this.name.get();
   }

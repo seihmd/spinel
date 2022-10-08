@@ -15,9 +15,12 @@ interface PropertyOption {
 
 export function Property(option?: PropertyOption): PropertyDecorator {
   return function (target: Object, propertyKey: string | symbol) {
+    const propertyType = PropertyType.new(
+      new ReflectedType(target, propertyKey)
+    );
     getMetadataStore().addProperty(
       target.constructor as AnyClassConstructor,
-      PropertyType.new(new ReflectedType(target, propertyKey)),
+      propertyType,
       option?.alias ? new Alias(option.alias) : null,
       option?.type ?? null
     );

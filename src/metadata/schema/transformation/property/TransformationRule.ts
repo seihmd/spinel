@@ -21,6 +21,7 @@ import { DurationTransformer } from './DurationTransformer';
 import { PointTransformer } from './PointTransformer';
 import { DummyTransformer } from './DummyTransformer';
 import { EntityPrimaryMetadata } from '../../entity/EntityPrimaryMetadata';
+import { NumberTransformer } from './NumberTransformer';
 
 export class TransformationRule {
   static new(propertyMetadata: EntityPropertyMetadata | EntityPrimaryMetadata) {
@@ -51,40 +52,46 @@ export class TransformationRule {
         new LocalDateTimeTransformer()
       );
     }
-    if (propertyMetadata.getType() instanceof Integer) {
+    if (propertyMetadata.getType() === Integer) {
       return new TransformationRule(propertyMetadata, new IntegerTransformer());
     }
-    if (propertyMetadata.getType() instanceof Neo4jDate) {
+    if (propertyMetadata.getType() === Number) {
+      return new TransformationRule(propertyMetadata, new NumberTransformer());
+    }
+    if (propertyMetadata.getType() === Date) {
       return new TransformationRule(propertyMetadata, new DateTransformer());
     }
-    if (propertyMetadata.getType() instanceof Time) {
+    if (propertyMetadata.getType() === Neo4jDate) {
+      return new TransformationRule(propertyMetadata, new DateTransformer());
+    }
+    if (propertyMetadata.getType() === Time) {
       return new TransformationRule(propertyMetadata, new TimeTransformer());
     }
-    if (propertyMetadata.getType() instanceof DateTime) {
+    if (propertyMetadata.getType() === DateTime) {
       return new TransformationRule(
         propertyMetadata,
         new DateTimeTransformer()
       );
     }
-    if (propertyMetadata.getType() instanceof LocalTime) {
+    if (propertyMetadata.getType() === LocalTime) {
       return new TransformationRule(
         propertyMetadata,
         new LocalTimeTransformer()
       );
     }
-    if (propertyMetadata.getType() instanceof LocalDateTime) {
+    if (propertyMetadata.getType() === LocalDateTime) {
       return new TransformationRule(
         propertyMetadata,
         new LocalDateTimeTransformer()
       );
     }
-    if (propertyMetadata.getType() instanceof Duration) {
+    if (propertyMetadata.getType() === Duration) {
       return new TransformationRule(
         propertyMetadata,
         new DurationTransformer()
       );
     }
-    if (propertyMetadata.getType() instanceof Point) {
+    if (propertyMetadata.getType() === Point) {
       return new TransformationRule(propertyMetadata, new PointTransformer());
     }
 
