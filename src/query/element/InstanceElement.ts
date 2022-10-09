@@ -6,7 +6,7 @@ import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetad
 import { RelationshipEntityMetadata } from '../../metadata/schema/entity/RelationshipEntityMetadata';
 import { toPlain } from '../../util/toPlain';
 import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
-import { TransformationRules } from '../../metadata/schema/transformation/property/TransformationRules';
+import { TransformationRules } from '../../metadata/schema/transformation/TransformationRules';
 
 export abstract class InstanceElement<
   T extends NodeEntityMetadata | GraphNodeMetadata | RelationshipEntityMetadata

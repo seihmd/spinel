@@ -1,6 +1,6 @@
-import { TransformerInterface } from '../transformer/TransformerInterface';
-import { EntityPropertyMetadata } from '../../entity/EntityPropertyMetadata';
-import { EntityPrimaryMetadata } from '../../entity/EntityPrimaryMetadata';
+import { TransformerInterface } from './transformer/TransformerInterface';
+import { EntityPropertyMetadata } from '../entity/EntityPropertyMetadata';
+import { EntityPrimaryMetadata } from '../entity/EntityPrimaryMetadata';
 
 export class TransformationRule {
   static new(propertyMetadata: EntityPropertyMetadata | EntityPrimaryMetadata) {

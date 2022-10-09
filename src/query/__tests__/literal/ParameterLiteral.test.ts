@@ -3,7 +3,7 @@ import {
   PlainEntityParameter,
 } from '../../parameter/EntityParameter';
 import { ParameterLiteral } from '../../literal/ParameterLiteral';
-import { TransformationRules } from '../../../metadata/schema/transformation/property/TransformationRules';
+import { TransformationRules } from '../../../metadata/schema/transformation/TransformationRules';
 
 describe(`${ParameterLiteral.name}`, () => {
   test.each([

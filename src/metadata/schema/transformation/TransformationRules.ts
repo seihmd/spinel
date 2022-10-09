@@ -1,6 +1,6 @@
 import { TransformationRule } from './TransformationRule';
-import { NodeEntityMetadata } from '../../entity/NodeEntityMetadata';
-import { RelationshipEntityMetadata } from '../../entity/RelationshipEntityMetadata';
+import { NodeEntityMetadata } from '../entity/NodeEntityMetadata';
+import { RelationshipEntityMetadata } from '../entity/RelationshipEntityMetadata';
 
 export class TransformationRules {
   static new(entityMetadata: NodeEntityMetadata | RelationshipEntityMetadata) {

@@ -1,5 +1,5 @@
 import { Parameter } from './Parameter';
-import { TransformationRules } from '../../metadata/schema/transformation/property/TransformationRules';
+import { TransformationRules } from '../../metadata/schema/transformation/TransformationRules';
 
 type Value = { [key: string]: Parameter };
 type Schema<T> = { [key: string]: T };

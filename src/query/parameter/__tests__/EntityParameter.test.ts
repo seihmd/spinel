@@ -1,6 +1,6 @@
 import { Parameter } from '../Parameter';
 import { EntityParameter } from '../EntityParameter';
-import { TransformationRules } from '../../../metadata/schema/transformation/property/TransformationRules';
+import { TransformationRules } from '../../../metadata/schema/transformation/TransformationRules';
 
 describe(`${EntityParameter.name}`, () => {
   test('withPlain', () => {
