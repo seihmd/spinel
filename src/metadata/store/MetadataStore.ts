@@ -29,6 +29,7 @@ import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
 import { GraphFragment } from '../../decorator/class/GraphFragment';
 import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
+import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -47,11 +48,14 @@ export class MetadataStore implements MetadataStoreInterface {
   setPrimary(
     cstr: AnyClassConstructor,
     primaryType: PrimaryType,
-    alias: Alias | null
+    alias: Alias | null,
+    transformer: TransformerInterface | null
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
-      properties.set(new EntityPrimaryMetadata(primaryType, alias));
+      properties.set(
+        new EntityPrimaryMetadata(primaryType, alias, transformer ?? null)
+      );
       return properties;
     });
   }
@@ -59,11 +63,14 @@ export class MetadataStore implements MetadataStoreInterface {
   addProperty(
     cstr: AnyClassConstructor,
     propertyType: PropertyType,
-    alias: Alias | null
+    alias: Alias | null,
+    transformer: TransformerInterface | null
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
-      properties.set(new EntityPropertyMetadata(propertyType, alias));
+      properties.set(
+        new EntityPropertyMetadata(propertyType, alias, transformer ?? null)
+      );
       return properties;
     });
   }

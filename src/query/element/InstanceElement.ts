@@ -6,6 +6,7 @@ import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetad
 import { RelationshipEntityMetadata } from '../../metadata/schema/entity/RelationshipEntityMetadata';
 import { toPlain } from '../../util/toPlain';
 import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
+import { TransformationRules } from '../../metadata/schema/transformation/TransformationRules';
 
 export abstract class InstanceElement<
   T extends NodeEntityMetadata | GraphNodeMetadata | RelationshipEntityMetadata
@@ -26,7 +27,7 @@ export abstract class InstanceElement<
   abstract getVariableName(): string;
 
   getPrimaries(): EntityParameter {
-    const properties = this.getProperties().toPlain();
+    const properties = this.getProperties().parameterize();
     const primaryKeys = [this.getEntityMetadata().getPrimary().getNeo4jKey()];
 
     const primaries: Record<string, unknown> = {};
@@ -34,18 +35,26 @@ export abstract class InstanceElement<
       primaries[primaryKey] = properties[primaryKey];
     });
 
-    return EntityParameter.withPlain(primaries, this.getVariableName());
+    return EntityParameter.withPlain(
+      primaries,
+      this.getVariableName(),
+      TransformationRules.new(this.getEntityMetadata())
+    );
   }
 
   getProperties(): EntityParameter {
     const value = toPlain(this.instance);
-    return EntityParameter.withPlain(value, this.getVariableName());
+    return EntityParameter.withPlain(
+      value,
+      this.getVariableName(),
+      TransformationRules.new(this.getEntityMetadata())
+    );
   }
 
   getPropertiesParameter(): Parameter {
     return Parameter.new(
       this.getVariableName(),
-      new ParameterValue(this.getProperties().toPlain())
+      new ParameterValue(this.getProperties().parameterize())
     );
   }
 

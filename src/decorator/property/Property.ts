@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 
@@ -6,19 +6,35 @@ import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { ReflectedType } from '../../metadata/reflection/ReflectedType';
 import { Alias } from '../../metadata/schema/entity/Alias';
 import { PropertyType } from '../../metadata/schema/entity/PropertyType';
+import { TransformerInterface } from '../../metadata/schema/transformation/transformer/TransformerInterface';
+import { getDefaultTransformer } from '../../metadata/schema/transformation/transformer/getDefaultTransformer';
 
 interface PropertyOption {
   alias?: string;
+  transformer?: TransformerInterface;
 }
 
 export function Property(option?: PropertyOption): PropertyDecorator {
   return function (target: Object, propertyKey: string | symbol) {
+    const propertyType = PropertyType.new(
+      new ReflectedType(target, propertyKey)
+    );
+    const transformer =
+      option?.transformer ?? getDefaultTransformer(propertyType);
+
     getMetadataStore().addProperty(
       target.constructor as AnyClassConstructor,
-      PropertyType.new(new ReflectedType(target, propertyKey)),
-      option?.alias !== undefined ? new Alias(option.alias) : null
+      propertyType,
+      option?.alias ? new Alias(option.alias) : null,
+      transformer
     );
 
+    Transform(
+      ({ value }): unknown => {
+        return transformer.restore(value);
+      },
+      { toClassOnly: true }
+    )(target, propertyKey);
     Type()(target, propertyKey);
     Expose({ name: option?.alias })(target, propertyKey);
   };

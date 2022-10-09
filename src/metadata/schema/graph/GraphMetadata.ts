@@ -37,6 +37,18 @@ export class GraphMetadata implements BranchEndMetadata {
     return this.properties.getBranchesMetadata();
   }
 
+  findBranchMetadata(key: string): GraphBranchMetadata | null {
+    return this.properties.findBranchMetadata(key);
+  }
+
+  findGraphNodeMetadata(key: string): GraphNodeMetadata | null {
+    return this.properties.findNodeMetadata(key);
+  }
+
+  findGraphRelationshipMetadata(key: string): GraphRelationshipMetadata | null {
+    return this.properties.findRelationshipMetadata(key);
+  }
+
   getFormula(): GraphPatternFormula {
     return this.formula;
   }

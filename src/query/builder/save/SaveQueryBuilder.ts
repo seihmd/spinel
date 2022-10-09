@@ -72,7 +72,7 @@ export class SaveQueryBuilder {
         parameterBag.add(
           Parameter.new(
             instanceElement.getVariableName(),
-            instanceElement.getProperties().toPlain()
+            instanceElement.getProperties().parameterize()
           )
         );
       });
@@ -90,7 +90,7 @@ export class SaveQueryBuilder {
             parameterBag.add(
               Parameter.new(
                 instanceElement.getVariableName(),
-                instanceElement.getProperties().toPlain()
+                instanceElement.getProperties().parameterize()
               )
             );
           });
@@ -121,7 +121,7 @@ export class SaveQueryBuilder {
       parameterBag.add(
         Parameter.new(
           nodeInstanceElement.getVariableName(),
-          nodeInstanceElement.getProperties().toPlain()
+          nodeInstanceElement.getProperties().parameterize()
         )
       );
       return [

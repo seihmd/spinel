@@ -23,22 +23,37 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
 
   test('with properties', () => {
     const m = new MetadataStore();
-    m.setPrimary(NodeClass, new PrimaryType('p1', String), new Alias('_p1'));
-    m.addProperty(NodeClass, new PropertyType('p2', Number), null);
-    m.addProperty(NodeClass, new PropertyType('p3', Boolean), new Alias('_p3'));
+    m.setPrimary(
+      NodeClass,
+      new PrimaryType('p1', String),
+      new Alias('_p1'),
+      null
+    );
+    m.addProperty(NodeClass, new PropertyType('p2', Number), null, null);
+    m.addProperty(
+      NodeClass,
+      new PropertyType('p3', Boolean),
+      new Alias('_p3'),
+      null
+    );
     m.registerNode(NodeClass, new NodeLabel('User'));
 
     const properties = new Properties();
     properties.set(
-      new EntityPrimaryMetadata(new PrimaryType('p1', String), new Alias('_p1'))
+      new EntityPrimaryMetadata(
+        new PrimaryType('p1', String),
+        new Alias('_p1'),
+        null
+      )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null)
+      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
-        new Alias('_p3')
+        new Alias('_p3'),
+        null
       )
     );
 

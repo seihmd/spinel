@@ -10,6 +10,7 @@ import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { SaveQueryBuilder } from '../../../../src/query/builder/save/SaveQueryBuilder';
 import { SaveQueryPlan } from '../../../../src/query/builder/save/SaveQueryPlan';
 import { Property } from '../../../../src/decorator/property/Property';
+import { Integer } from 'neo4j-driver';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -115,7 +116,7 @@ describe('save N-R-N Graph class', () => {
       },
       user: {
         id: id.get('user'),
-        age: 20,
+        age: Integer.fromValue(20),
       },
     });
   });

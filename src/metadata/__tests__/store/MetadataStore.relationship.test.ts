@@ -30,27 +30,39 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
     m.setPrimary(
       RelationshipClass,
       new PrimaryType('p1', String),
-      new Alias('_p1')
+      new Alias('_p1'),
+      null
     );
-    m.addProperty(RelationshipClass, new PropertyType('p2', Number), null);
+    m.addProperty(
+      RelationshipClass,
+      new PropertyType('p2', Number),
+      null,
+      null
+    );
     m.addProperty(
       RelationshipClass,
       new PropertyType('p3', Boolean),
-      new Alias('_p3')
+      new Alias('_p3'),
+      null
     );
     m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
 
     const properties = new Properties();
     properties.set(
-      new EntityPrimaryMetadata(new PrimaryType('p1', String), new Alias('_p1'))
+      new EntityPrimaryMetadata(
+        new PrimaryType('p1', String),
+        new Alias('_p1'),
+        null
+      )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null)
+      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
-        new Alias('_p3')
+        new Alias('_p3'),
+        null
       )
     );
 

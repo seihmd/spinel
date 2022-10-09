@@ -30,6 +30,7 @@ export class SaveQueryPlan {
     this.driver.session().beginTransaction();
     const [query, parameterBag] = this.queryBuilder.build(instance);
 
+    const p = parameterBag.toPlain();
     await this.driver.session().run(query.get(), parameterBag.toPlain());
   }
 }

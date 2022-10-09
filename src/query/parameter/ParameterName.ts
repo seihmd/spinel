@@ -22,6 +22,10 @@ export class ParameterName {
     return this.values.join(SEPARATOR);
   }
 
+  getPropertyName(): string {
+    return this.values[this.values.length - 1];
+  }
+
   getSplit(): string[] {
     return this.values;
   }
