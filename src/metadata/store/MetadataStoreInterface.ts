@@ -12,21 +12,21 @@ import { GraphNodePropertyType } from '../schema/graph/GraphNodePropertyType';
 import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationshipPropertyType';
 import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
-import { Neo4jPropertyType } from '../schema/entity/Neo4jPropertyType';
+import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
 
 export interface MetadataStoreInterface {
   setPrimary(
     cstr: AnyClassConstructor,
     primaryType: PrimaryType,
     alias: Alias | null,
-    type: Neo4jPropertyType | null
+    transformer: TransformerInterface | null
   ): void;
 
   addProperty(
     cstr: AnyClassConstructor,
     propertyType: PropertyType,
     alias: Alias | null,
-    type: Neo4jPropertyType | null
+    transformer: TransformerInterface | null
   ): void;
 
   addGraphNode(

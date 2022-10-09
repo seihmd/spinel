@@ -52,7 +52,7 @@ export class EntityParameter {
           parameter.getPropertyName()
         );
         if (transformationRule) {
-          prev[key] = transformationRule.parameterize(parameter.getValue());
+          prev[key] = transformationRule.preserve(parameter.getValue());
         } else {
           prev[key] = parameter.getValue();
         }

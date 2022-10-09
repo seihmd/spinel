@@ -4,6 +4,7 @@ import { EntityPropertyMetadata } from '../../../schema/entity/EntityPropertyMet
 import { Properties } from '../../../schema/entity/Properties';
 import { PropertyType } from '../../../schema/entity/PropertyType';
 import { PrimaryType } from '../../../schema/entity/PrimaryType';
+import { NothingTransformer } from '../../../schema/transformation/transformer/NothingTransformer';
 
 function createPropertyStub(key: string): EntityPropertyMetadata {
   const propertyType = mock(PropertyType);
@@ -14,7 +15,11 @@ function createPropertyStub(key: string): EntityPropertyMetadata {
 function createPrimaryStub(key: string): EntityPrimaryMetadata {
   const primaryType = mock(PrimaryType);
   when(primaryType.getKey()).thenReturn(key);
-  return new EntityPrimaryMetadata(instance(primaryType), null, null);
+  return new EntityPrimaryMetadata(
+    instance(primaryType),
+    null,
+    new NothingTransformer()
+  );
 }
 
 describe(`${Properties.name}`, () => {

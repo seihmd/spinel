@@ -1,20 +1,21 @@
 import { Alias } from './Alias';
 import { PropertyType } from './PropertyType';
-import { Neo4jPropertyType } from './Neo4jPropertyType';
+import { TransformerInterface } from '../transformation/transformer/TransformerInterface';
+import { NothingTransformer } from '../transformation/transformer/NothingTransformer';
 
 export class EntityPropertyMetadata {
   private readonly propertyType: PropertyType;
+  private readonly transformer: TransformerInterface | null;
   private readonly alias: Alias | null;
-  private readonly type: Neo4jPropertyType | null;
 
   constructor(
     propertyType: PropertyType,
     alias: Alias | null,
-    type: Neo4jPropertyType | null
+    transformer: TransformerInterface | null
   ) {
-    this.type = type;
     this.propertyType = propertyType;
     this.alias = alias;
+    this.transformer = transformer;
   }
 
   getKey(): string {
@@ -25,7 +26,7 @@ export class EntityPropertyMetadata {
     return this.propertyType.getType();
   }
 
-  getNeo4jPropertyType(): Neo4jPropertyType | null {
-    return this.type;
+  getTransformer(): TransformerInterface {
+    return this.transformer || new NothingTransformer();
   }
 }

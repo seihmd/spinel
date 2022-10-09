@@ -42,11 +42,8 @@ export class GraphProperties {
   }
 
   getNodeMetadata(key: string): GraphNodeMetadata {
-    const graphNodeMetadata = this.map.get(key);
+    const graphNodeMetadata = this.findNodeMetadata(key);
     if (!graphNodeMetadata) {
-      throw new Error(`${GraphNodeMetadata.name} with key "${key}" not found`);
-    }
-    if (!(graphNodeMetadata instanceof GraphNodeMetadata)) {
       throw new Error(`Key "${key}" is not registered as ${GraphNode.name}`);
     }
 
@@ -54,18 +51,40 @@ export class GraphProperties {
   }
 
   getRelationshipMetadata(key: string): GraphRelationshipMetadata {
-    const graphRelationshipMetadata = this.map.get(key);
+    const graphRelationshipMetadata = this.findRelationshipMetadata(key);
     if (!graphRelationshipMetadata) {
-      throw new Error(
-        `${GraphRelationshipMetadata.name} with key "${key}" not found`
-      );
-    }
-    if (!(graphRelationshipMetadata instanceof GraphRelationshipMetadata)) {
       throw new Error(
         `Key "${key}" is not registered as ${GraphRelationship.name}`
       );
     }
 
     return graphRelationshipMetadata;
+  }
+
+  findBranchMetadata(key: string): GraphBranchMetadata | null {
+    const metadata = this.map.get(key);
+    if (metadata instanceof GraphBranchMetadata) {
+      return metadata;
+    }
+
+    return null;
+  }
+
+  findNodeMetadata(key: string): GraphNodeMetadata | null {
+    const metadata = this.map.get(key);
+    if (metadata instanceof GraphNodeMetadata) {
+      return metadata;
+    }
+
+    return null;
+  }
+
+  findRelationshipMetadata(key: string): GraphRelationshipMetadata | null {
+    const metadata = this.map.get(key);
+    if (metadata instanceof GraphRelationshipMetadata) {
+      return metadata;
+    }
+
+    return null;
   }
 }
