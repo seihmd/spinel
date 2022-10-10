@@ -8,8 +8,8 @@ import { PropertyType } from '../../schema/entity/PropertyType';
 import { Alias } from '../../schema/entity/Alias';
 import { MetadataStore } from '../../store/MetadataStore';
 import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
-import { NodePropertyExistenceConstraintMetadata } from '../../schema/constraint/NodePropertyExistenceConstraintMetadata';
-import { UniquenessConstraintMetadata } from '../../schema/constraint/UniquenessConstraintMetadata';
+import { NodePropertyExistenceConstraint } from '../../../../test/functional/query/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../../test/functional/query/constraint/UniquenessConstraint';
 
 class NodeClass {}
 
@@ -85,26 +85,8 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
         properties,
         new NodeConstraints(
           [],
-          [
-            new NodePropertyExistenceConstraintMetadata(
-              new NodeLabel('User'),
-              new EntityPrimaryMetadata(
-                new PrimaryType('p1', String),
-                new Alias('_p1'),
-                null
-              )
-            ),
-          ],
-          [
-            new UniquenessConstraintMetadata(
-              new NodeLabel('User'),
-              new EntityPrimaryMetadata(
-                new PrimaryType('p1', String),
-                new Alias('_p1'),
-                null
-              )
-            ),
-          ]
+          [new NodePropertyExistenceConstraint(new NodeLabel('User'), '_p1')],
+          [new UniquenessConstraint(new NodeLabel('User'), '_p1')]
         )
       )
     );

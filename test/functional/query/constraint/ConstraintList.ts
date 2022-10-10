@@ -11,30 +11,36 @@ type Constraint =
   | UniquenessConstraint;
 
 export class ConstraintList {
-  private readonly constraints: Constraint[];
+  private readonly constraintMap: Map<string, Constraint> = new Map();
 
-  static new(objects: ConstraintData[]) {
-    return new ConstraintList(
-      objects.map((object) => {
-        if (object.type === 'UNIQUENESS') {
-          return UniquenessConstraint.withData(object);
-        }
-
-        if (object.type === 'NODE_PROPERTY_EXISTENCE') {
-        }
-
-        if (object.type === 'RELATIONSHIP_PROPERTY_EXISTENCE') {
-        }
-
-        if (object.type === 'NODE_KEY') {
-        }
-
-        throw new Error(`Unexpected constraint type "${object.type}"`);
-      })
+  constructor(constraints: Constraint[]) {
+    this.constraintMap = new Map(
+      constraints.map((constraint) => [constraint.getName(), constraint])
     );
   }
 
-  constructor(constraints: Constraint[]) {
-    this.constraints = constraints;
+  diff(constraintDataList: ConstraintData[]): [Constraint[], string[]] {
+    const toCreates: Constraint[] = [];
+    const toDrops: string[] = [];
+
+    const dataNames = constraintDataList.map(data => data.name);
+
+    dataNames.forEach(name => {
+      if (this.constraintMap.has(name)) {
+        return;
+      }
+
+      toDrops.push(name);
+    });
+
+    [...this.constraintMap.entries()].forEach(([name, constraint]) => {
+      if (dataNames.includes(name)) {
+        return;
+      }
+
+      toCreates.push(constraint);
+    });
+
+    return [toCreates, toDrops];
   }
 }

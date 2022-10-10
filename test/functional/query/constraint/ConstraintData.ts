@@ -5,7 +5,7 @@ import { EntityType } from './EntityType';
 export type ConstraintData = {
   id: Integer;
   name: string;
-  type: ConstraintType;
+  type: ConstraintType | string;
   entityType: EntityType;
   labelsOrTypes: string[];
   properties: string[];

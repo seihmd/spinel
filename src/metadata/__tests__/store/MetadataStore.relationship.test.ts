@@ -8,7 +8,7 @@ import { RelationshipType } from '../../../domain/relationship/RelationshipType'
 import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
-import { RelationshipPropertyExistenceConstraintMetadata } from '../../schema/constraint/RelationshipPropertyExistenceConstraintMetadata';
+import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
 
 class RelationshipClass {}
 
@@ -84,13 +84,9 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
         new RelationshipType('HAS'),
         properties,
         new RelationshipConstraints([
-          new RelationshipPropertyExistenceConstraintMetadata(
+          new RelationshipPropertyExistenceConstraint(
             new RelationshipType('HAS'),
-            new EntityPrimaryMetadata(
-              new PrimaryType('p1', String),
-              new Alias('_p1'),
-              null
-            )
+            '_p1'
           ),
         ])
       )

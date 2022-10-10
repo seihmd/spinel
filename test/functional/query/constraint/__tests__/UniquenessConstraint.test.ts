@@ -1,26 +1,10 @@
-import { ConstraintData } from '../ConstraintData';
 import { UniquenessConstraint } from '../UniquenessConstraint';
-import {
-  nodeKeyConstraintData,
-  nodePropertyExistenceConstraintData,
-  relationshipPropertyExistenceConstraintData,
-  uniquenessConstraintData,
-} from './ConstraintDataFixture';
+import { NodeLabel } from '../../../../../src/domain/node/NodeLabel';
 
 describe(`${UniquenessConstraint.name}`, () => {
-  test.each([
-    [nodeKeyConstraintData, false],
-    [nodePropertyExistenceConstraintData, false],
-    [relationshipPropertyExistenceConstraintData, false],
-    [uniquenessConstraintData, true],
-  ])('withData', (constraintData: ConstraintData, isValid: boolean) => {
-    const exp = expect(() => {
-      UniquenessConstraint.withData(constraintData);
-    });
-    if (isValid) {
-      exp.not.toThrowError();
-    } else {
-      exp.toThrowError();
-    }
+  test('getName', () => {
+    expect(
+      new UniquenessConstraint(new NodeLabel('User'), 'email').getName()
+    ).toBe('SPNL-u-User-email');
   });
 });

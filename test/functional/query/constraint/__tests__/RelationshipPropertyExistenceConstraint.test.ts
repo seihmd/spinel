@@ -1,26 +1,13 @@
-import {
-  nodeKeyConstraintData,
-  nodePropertyExistenceConstraintData,
-  relationshipPropertyExistenceConstraintData,
-  uniquenessConstraintData,
-} from './ConstraintDataFixture';
-import { ConstraintData } from '../ConstraintData';
 import { RelationshipPropertyExistenceConstraint } from '../RelationshipPropertyExistenceConstraint';
+import { RelationshipType } from '../../../../../src/domain/relationship/RelationshipType';
 
 describe(`${RelationshipPropertyExistenceConstraint.name}`, () => {
-  test.each([
-    [nodeKeyConstraintData, false],
-    [nodePropertyExistenceConstraintData, false],
-    [relationshipPropertyExistenceConstraintData, true],
-    [uniquenessConstraintData, false],
-  ])('withData', (constraintData: ConstraintData, isValid: boolean) => {
-    const exp = expect(() => {
-      RelationshipPropertyExistenceConstraint.withData(constraintData);
-    });
-    if (isValid) {
-      exp.not.toThrowError();
-    } else {
-      exp.toThrowError();
-    }
+  test('getName', () => {
+    expect(
+      new RelationshipPropertyExistenceConstraint(
+        new RelationshipType('HAS'),
+        'userId'
+      ).getName()
+    ).toBe('SPNL-rpe-HAS-userId');
   });
 });

@@ -1,31 +1,31 @@
-import { NodeKeyConstraintMetadata } from './NodeKeyConstraintMetadata';
-import { NodePropertyExistenceConstraintMetadata } from './NodePropertyExistenceConstraintMetadata';
-import { UniquenessConstraintMetadata } from './UniquenessConstraintMetadata';
+import { NodeKeyConstraint } from '../../../../test/functional/query/constraint/NodeKeyConstraint';
+import { NodePropertyExistenceConstraint } from '../../../../test/functional/query/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../../test/functional/query/constraint/UniquenessConstraint';
 
 export class NodeConstraints {
-  private readonly nodeKeys: NodeKeyConstraintMetadata[];
-  private readonly existences: NodePropertyExistenceConstraintMetadata[];
-  private readonly uniques: UniquenessConstraintMetadata[];
+  private readonly nodeKeys: NodeKeyConstraint[];
+  private readonly existences: NodePropertyExistenceConstraint[];
+  private readonly uniques: UniquenessConstraint[];
 
   constructor(
-    nodeKeys: NodeKeyConstraintMetadata[],
-    existences: NodePropertyExistenceConstraintMetadata[],
-    uniques: UniquenessConstraintMetadata[]
+    nodeKeys: NodeKeyConstraint[],
+    existences: NodePropertyExistenceConstraint[],
+    uniques: UniquenessConstraint[]
   ) {
     this.nodeKeys = nodeKeys;
     this.existences = existences;
     this.uniques = uniques;
   }
 
-  getNodeKeys(): NodeKeyConstraintMetadata[] {
+  getNodeKeys(): NodeKeyConstraint[] {
     return this.nodeKeys;
   }
 
-  getExistences(): NodePropertyExistenceConstraintMetadata[] {
+  getExistences(): NodePropertyExistenceConstraint[] {
     return this.existences;
   }
 
-  getUniques(): UniquenessConstraintMetadata[] {
+  getUniques(): UniquenessConstraint[] {
     return this.uniques;
   }
 }

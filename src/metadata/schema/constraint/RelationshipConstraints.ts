@@ -1,13 +1,13 @@
-import { RelationshipPropertyExistenceConstraintMetadata } from './RelationshipPropertyExistenceConstraintMetadata';
+import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
 
 export class RelationshipConstraints {
-  private readonly existences: RelationshipPropertyExistenceConstraintMetadata[];
+  private readonly existences: RelationshipPropertyExistenceConstraint[];
 
-  constructor(existences: RelationshipPropertyExistenceConstraintMetadata[]) {
+  constructor(existences: RelationshipPropertyExistenceConstraint[]) {
     this.existences = existences;
   }
 
-  getExistences(): RelationshipPropertyExistenceConstraintMetadata[] {
+  getExistences(): RelationshipPropertyExistenceConstraint[] {
     return this.existences;
   }
 }

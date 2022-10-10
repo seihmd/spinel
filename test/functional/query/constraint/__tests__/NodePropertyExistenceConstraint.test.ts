@@ -1,26 +1,13 @@
-import { ConstraintData } from '../ConstraintData';
 import { NodePropertyExistenceConstraint } from '../NodePropertyExistenceConstraint';
-import {
-  nodeKeyConstraintData,
-  nodePropertyExistenceConstraintData,
-  relationshipPropertyExistenceConstraintData,
-  uniquenessConstraintData,
-} from './ConstraintDataFixture';
+import { NodeLabel } from '../../../../../src/domain/node/NodeLabel';
 
 describe(`${NodePropertyExistenceConstraint.name}`, () => {
-  test.each([
-    [nodeKeyConstraintData, false],
-    [nodePropertyExistenceConstraintData, true],
-    [relationshipPropertyExistenceConstraintData, false],
-    [uniquenessConstraintData, false],
-  ])('withData', (constraintData: ConstraintData, isValid: boolean) => {
-    const exp = expect(() => {
-      NodePropertyExistenceConstraint.withData(constraintData);
-    });
-    if (isValid) {
-      exp.not.toThrowError();
-    } else {
-      exp.toThrowError();
-    }
+  test('getName', () => {
+    expect(
+      new NodePropertyExistenceConstraint(
+        new NodeLabel('User'),
+        'email'
+      ).getName()
+    ).toBe('SPNL-npe-User-email');
   });
 });

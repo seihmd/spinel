@@ -1,23 +1,16 @@
 import { EntityPropertyMetadata } from '../entity/EntityPropertyMetadata';
 import { EntityPrimaryMetadata } from '../entity/EntityPrimaryMetadata';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
-import { NodeKeyConstraintMetadata } from './NodeKeyConstraintMetadata';
-import { NodePropertyExistenceConstraintMetadata } from './NodePropertyExistenceConstraintMetadata';
-import { UniquenessConstraintMetadata } from './UniquenessConstraintMetadata';
 import { NodeLabel } from '../../../domain/node/NodeLabel';
-import { RelationshipPropertyExistenceConstraintMetadata } from './RelationshipPropertyExistenceConstraintMetadata';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { NodeConstraints } from './NodeConstraints';
 import { RelationshipConstraints } from './RelationshipConstraints';
+import { NodeKeyConstraint } from '../../../../test/functional/query/constraint/NodeKeyConstraint';
+import { NodePropertyExistenceConstraint } from '../../../../test/functional/query/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../../test/functional/query/constraint/UniquenessConstraint';
+import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
 
 type PropertyMetadata = EntityPropertyMetadata | EntityPrimaryMetadata;
-export type NodeConstraintMetadata =
-  | NodeKeyConstraintMetadata
-  | NodePropertyExistenceConstraintMetadata
-  | UniquenessConstraintMetadata;
-
-export type RelationshipConstraintMetadata =
-  RelationshipPropertyExistenceConstraintMetadata;
 
 export class Constraints {
   private readonly cstr: AnyClassConstructor;
@@ -51,13 +44,19 @@ export class Constraints {
   toNodeConstraints(label: NodeLabel): NodeConstraints {
     return new NodeConstraints(
       [...this.nodeKeyMap.entries()].map(([_, properties]) => {
-        return new NodeKeyConstraintMetadata(label, properties);
+        return new NodeKeyConstraint(
+          label,
+          properties.map((p) => p.getNeo4jKey())
+        );
       }),
       this.existenceProperties.map((property) => {
-        return new NodePropertyExistenceConstraintMetadata(label, property);
+        return new NodePropertyExistenceConstraint(
+          label,
+          property.getNeo4jKey()
+        );
       }),
       this.uniqueProperties.map((property) => {
-        return new UniquenessConstraintMetadata(label, property);
+        return new UniquenessConstraint(label, property.getNeo4jKey());
       })
     );
   }
@@ -75,9 +74,9 @@ export class Constraints {
 
     return new RelationshipConstraints(
       this.existenceProperties.map((property) => {
-        return new RelationshipPropertyExistenceConstraintMetadata(
+        return new RelationshipPropertyExistenceConstraint(
           relationshipType,
-          property
+          property.getNeo4jKey()
         );
       })
     );
