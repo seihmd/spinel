@@ -1,31 +1,24 @@
 import { ConstraintData } from './ConstraintData';
-import { NodeKeyConstraint } from './NodeKeyConstraint';
-import { NodePropertyExistenceConstraint } from './NodePropertyExistenceConstraint';
-import { RelationshipPropertyExistenceConstraint } from './RelationshipPropertyExistenceConstraint';
-import { UniquenessConstraint } from './UniquenessConstraint';
-
-type Constraint =
-  | NodeKeyConstraint
-  | NodePropertyExistenceConstraint
-  | RelationshipPropertyExistenceConstraint
-  | UniquenessConstraint;
+import { ConstraintInterface } from './ConstraintInterface';
 
 export class ConstraintList {
-  private readonly constraintMap: Map<string, Constraint> = new Map();
+  private readonly constraintMap: Map<string, ConstraintInterface> = new Map();
 
-  constructor(constraints: Constraint[]) {
+  constructor(constraints: ConstraintInterface[]) {
     this.constraintMap = new Map(
       constraints.map((constraint) => [constraint.getName(), constraint])
     );
   }
 
-  diff(constraintDataList: ConstraintData[]): [Constraint[], string[]] {
-    const toCreates: Constraint[] = [];
+  diff(
+    constraintDataList: ConstraintData[]
+  ): [ConstraintInterface[], string[]] {
+    const toCreates: ConstraintInterface[] = [];
     const toDrops: string[] = [];
 
-    const dataNames = constraintDataList.map(data => data.name);
+    const dataNames = constraintDataList.map((data) => data.name);
 
-    dataNames.forEach(name => {
+    dataNames.forEach((name) => {
       if (this.constraintMap.has(name)) {
         return;
       }

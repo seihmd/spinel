@@ -1,6 +1,9 @@
 import { RelationshipType } from '../../../../src/domain/relationship/RelationshipType';
+import { ConstraintInterface } from './ConstraintInterface';
 
-export class RelationshipPropertyExistenceConstraint {
+export class RelationshipPropertyExistenceConstraint
+  implements ConstraintInterface
+{
   private readonly type: RelationshipType;
   private readonly property: string;
 
@@ -11,5 +14,17 @@ export class RelationshipPropertyExistenceConstraint {
 
   getName(): string {
     return `SPNL-rpe-${this.type.toString()}-${this.property}`;
+  }
+
+  getLabelOrType(): RelationshipType {
+    return this.type;
+  }
+
+  getProperties(): string[] {
+    return [this.property];
+  }
+
+  getRequire(): string {
+    return 'NOT NULL';
   }
 }

@@ -1,6 +1,7 @@
 import { NodeLabel } from '../../../../src/domain/node/NodeLabel';
+import { ConstraintInterface } from './ConstraintInterface';
 
-export class NodePropertyExistenceConstraint {
+export class NodePropertyExistenceConstraint implements ConstraintInterface {
   private readonly label: NodeLabel;
   private readonly property: string;
 
@@ -11,5 +12,17 @@ export class NodePropertyExistenceConstraint {
 
   getName(): string {
     return `SPNL-npe-${this.label.toString()}-${this.property}`;
+  }
+
+  getLabelOrType(): NodeLabel {
+    return this.label;
+  }
+
+  getProperties(): string[] {
+    return [this.property];
+  }
+
+  getRequire(): string {
+    return 'NOT NULL';
   }
 }

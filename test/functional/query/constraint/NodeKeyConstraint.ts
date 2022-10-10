@@ -1,6 +1,7 @@
 import { NodeLabel } from '../../../../src/domain/node/NodeLabel';
+import { ConstraintInterface } from './ConstraintInterface';
 
-export class NodeKeyConstraint {
+export class NodeKeyConstraint implements ConstraintInterface {
   private readonly label: NodeLabel;
   private readonly properties: string[];
 
@@ -13,5 +14,17 @@ export class NodeKeyConstraint {
     const keys = this.properties.sort().join('-');
 
     return `SPNL-nk-${this.label.toString()}-${keys}`;
+  }
+
+  getLabelOrType(): NodeLabel {
+    return this.label;
+  }
+
+  getProperties(): string[] {
+    return this.properties;
+  }
+
+  getRequire(): string {
+    return 'NODE KEY';
   }
 }
