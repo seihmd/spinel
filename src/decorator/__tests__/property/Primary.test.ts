@@ -26,8 +26,8 @@ describe('Primary', () => {
     [
       () => {
         class NodeClass {
-          @Primary()
-          id?: number;
+          @Primary({})
+          id?: string;
         }
       },
     ],
@@ -35,6 +35,14 @@ describe('Primary', () => {
       () => {
         class NodeClass {
           @Primary({ alias: 'aliasedId' })
+          id?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
+          @Primary({ constraint: { nodeKey: 'keyName' } })
           id?: string;
         }
       },

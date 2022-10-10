@@ -19,14 +19,18 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor,
     primaryType: PrimaryType,
     alias: Alias | null,
-    transformer: TransformerInterface | null
+    transformer: TransformerInterface | null,
+    nodeKey: string | null
   ): void;
 
   addProperty(
     cstr: AnyClassConstructor,
     propertyType: PropertyType,
     alias: Alias | null,
-    transformer: TransformerInterface | null
+    transformer: TransformerInterface | null,
+    unique: boolean,
+    existence: boolean,
+    nodeKey: string | null
   ): void;
 
   addGraphNode(

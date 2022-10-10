@@ -7,6 +7,9 @@ import { EntityPropertyMetadata } from '../../schema/entity/EntityPropertyMetada
 import { PropertyType } from '../../schema/entity/PropertyType';
 import { Alias } from '../../schema/entity/Alias';
 import { MetadataStore } from '../../store/MetadataStore';
+import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
+import { NodePropertyExistenceConstraintMetadata } from '../../schema/constraint/NodePropertyExistenceConstraintMetadata';
+import { UniquenessConstraintMetadata } from '../../schema/constraint/UniquenessConstraintMetadata';
 
 class NodeClass {}
 
@@ -17,7 +20,12 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
 
     const n = m.getNodeEntityMetadata(NodeClass);
     expect(n).toStrictEqual(
-      new NodeEntityMetadata(NodeClass, new NodeLabel('User'), new Properties())
+      new NodeEntityMetadata(
+        NodeClass,
+        new NodeLabel('User'),
+        new Properties(),
+        new NodeConstraints([], [], [])
+      )
     );
   });
 
@@ -27,13 +35,25 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       NodeClass,
       new PrimaryType('p1', String),
       new Alias('_p1'),
+      null,
       null
     );
-    m.addProperty(NodeClass, new PropertyType('p2', Number), null, null);
+    m.addProperty(
+      NodeClass,
+      new PropertyType('p2', Number),
+      null,
+      null,
+      false,
+      false,
+      null
+    );
     m.addProperty(
       NodeClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
+      null,
+      false,
+      false,
       null
     );
     m.registerNode(NodeClass, new NodeLabel('User'));
@@ -58,8 +78,35 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
     );
 
     const nodeEntityMetadata = m.getNodeEntityMetadata(NodeClass);
-    expect(nodeEntityMetadata).toStrictEqual(
-      new NodeEntityMetadata(NodeClass, new NodeLabel('User'), properties)
+    expect(nodeEntityMetadata).toMatchObject(
+      new NodeEntityMetadata(
+        NodeClass,
+        new NodeLabel('User'),
+        properties,
+        new NodeConstraints(
+          [],
+          [
+            new NodePropertyExistenceConstraintMetadata(
+              new NodeLabel('User'),
+              new EntityPrimaryMetadata(
+                new PrimaryType('p1', String),
+                new Alias('_p1'),
+                null
+              )
+            ),
+          ],
+          [
+            new UniquenessConstraintMetadata(
+              new NodeLabel('User'),
+              new EntityPrimaryMetadata(
+                new PrimaryType('p1', String),
+                new Alias('_p1'),
+                null
+              )
+            ),
+          ]
+        )
+      )
     );
   });
 

@@ -26,7 +26,26 @@ describe('Property', () => {
     [
       () => {
         class NodeClass {
+          @Property({})
+          name?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
           @Property({ alias: 'title' })
+          name?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
+          @Property({
+            alias: 'hoge',
+            constraint: { unique: true, nodeKey: 'keyName', existence: true },
+          })
           name?: string;
         }
       },

@@ -7,6 +7,8 @@ import { Alias } from '../../schema/entity/Alias';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
+import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
+import { RelationshipPropertyExistenceConstraintMetadata } from '../../schema/constraint/RelationshipPropertyExistenceConstraintMetadata';
 
 class RelationshipClass {}
 
@@ -20,7 +22,8 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       new RelationshipEntityMetadata(
         RelationshipClass,
         new RelationshipType('HAS'),
-        new Properties()
+        new Properties(),
+        new RelationshipConstraints([])
       )
     );
   });
@@ -31,18 +34,25 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       RelationshipClass,
       new PrimaryType('p1', String),
       new Alias('_p1'),
+      null,
       null
     );
     m.addProperty(
       RelationshipClass,
       new PropertyType('p2', Number),
       null,
+      null,
+      false,
+      false,
       null
     );
     m.addProperty(
       RelationshipClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
+      null,
+      false,
+      false,
       null
     );
     m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
@@ -72,7 +82,17 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       new RelationshipEntityMetadata(
         RelationshipClass,
         new RelationshipType('HAS'),
-        properties
+        properties,
+        new RelationshipConstraints([
+          new RelationshipPropertyExistenceConstraintMetadata(
+            new RelationshipType('HAS'),
+            new EntityPrimaryMetadata(
+              new PrimaryType('p1', String),
+              new Alias('_p1'),
+              null
+            )
+          ),
+        ])
       )
     );
   });

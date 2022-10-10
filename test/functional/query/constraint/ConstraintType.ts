@@ -1,0 +1,5 @@
+export type ConstraintType =
+  | 'UNIQUENESS'
+  | 'NODE_PROPERTY_EXISTENCE'
+  | 'RELATIONSHIP_PROPERTY_EXISTENCE'
+  | 'NODE_KEY';
