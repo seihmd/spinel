@@ -11,7 +11,7 @@ export class ConstraintList {
   }
 
   diff(
-    constraintDataList: ConstraintData[]
+    constraintDataList: Pick<ConstraintData, 'name'>[]
   ): [ConstraintInterface[], string[]] {
     const toCreates: ConstraintInterface[] = [];
     const toDrops: string[] = [];
