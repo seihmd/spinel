@@ -30,6 +30,8 @@ import { GraphFragment } from '../../decorator/class/GraphFragment';
 import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
+import { NodeConstraints } from '../schema/constraint/NodeConstraints';
+import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -53,9 +55,13 @@ export class MetadataStore implements MetadataStoreInterface {
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
-      properties.set(
-        new EntityPrimaryMetadata(primaryType, alias, transformer ?? null)
+      const primaryMetadata = new EntityPrimaryMetadata(
+        primaryType,
+        alias,
+        transformer ?? null
       );
+      properties.set(primaryMetadata);
+
       return properties;
     });
   }
@@ -64,24 +70,37 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     propertyType: PropertyType,
     alias: Alias | null,
-    transformer: TransformerInterface | null
+    transformer: TransformerInterface | null,
+    notNull: boolean
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
-      properties.set(
-        new EntityPropertyMetadata(propertyType, alias, transformer ?? null)
+      const propertyMetadata = new EntityPropertyMetadata(
+        propertyType,
+        alias,
+        transformer ?? null,
+        notNull
       );
+      properties.set(propertyMetadata);
+
       return properties;
     });
   }
 
-  registerNode(cstr: AnyClassConstructor, label: NodeLabel): void {
+  registerNode(
+    cstr: AnyClassConstructor,
+    label: NodeLabel,
+    unique: string[],
+    key: string[][]
+  ): void {
+    const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.nodeEntityMap.register(
       cstr,
       new NodeEntityMetadata(
         cstr,
         label,
-        this.propertiesMap.get(cstr) ?? new Properties()
+        properties,
+        NodeConstraints.new(key, unique, label, properties)
       )
     );
   }
@@ -90,12 +109,14 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     type: RelationshipType
   ): void {
+    const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.relationshipEntityMap.register(
       cstr,
       new RelationshipEntityMetadata(
         cstr,
         type,
-        this.propertiesMap.get(cstr) ?? new Properties()
+        properties,
+        RelationshipConstraints.new(type, properties)
       )
     );
   }
@@ -239,6 +260,13 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor
   ): GraphFragmentMetadata | null {
     return this.graphFragmentMap.get(cstr);
+  }
+
+  getAllConstraints(): (NodeConstraints | RelationshipConstraints)[] {
+    return [
+      ...this.nodeEntityMap.getAll().map((n) => n.getConstraints()),
+      ...this.relationshipEntityMap.getAll().map((r) => r.getConstraints()),
+    ];
   }
 }
 

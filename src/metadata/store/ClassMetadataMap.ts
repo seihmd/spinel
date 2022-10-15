@@ -13,4 +13,8 @@ export class ClassMetadataMap<T> {
   get(cstr: AnyClassConstructor): T | null {
     return this.map.get(cstr) ?? null;
   }
+
+  getAll(): T[] {
+    return [...this.map.values()];
+  }
 }

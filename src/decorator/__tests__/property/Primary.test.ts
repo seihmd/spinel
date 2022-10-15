@@ -26,8 +26,8 @@ describe('Primary', () => {
     [
       () => {
         class NodeClass {
-          @Primary()
-          id?: number;
+          @Primary({})
+          id?: string;
         }
       },
     ],

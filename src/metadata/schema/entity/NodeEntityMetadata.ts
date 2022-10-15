@@ -7,20 +7,24 @@ import { BranchEndMetadata } from '../graph/BranchEndMetadata';
 import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
 import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
 import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
+import { NodeConstraints } from '../constraint/NodeConstraints';
 
 export class NodeEntityMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
   private readonly label: NodeLabel;
   private readonly properties: Properties;
+  private readonly constraints: NodeConstraints;
 
   constructor(
     cstr: AnyClassConstructor,
     label: NodeLabel,
-    properties: Properties
+    properties: Properties,
+    constraints: NodeConstraints
   ) {
     this.cstr = cstr;
     this.label = label;
     this.properties = properties;
+    this.constraints = constraints;
   }
 
   getCstr(): AnyClassConstructor {
@@ -32,7 +36,11 @@ export class NodeEntityMetadata implements BranchEndMetadata {
   }
 
   getPrimary(): EntityPrimaryMetadata {
-    return this.properties.getPrimary();
+    const primary = this.properties.getPrimary();
+    if (primary) {
+      return primary;
+    }
+    throw new Error('NodeEntity must have primary property');
   }
 
   getProperties(): EntityPropertyMetadata[] {
@@ -53,5 +61,9 @@ export class NodeEntityMetadata implements BranchEndMetadata {
 
   getFormula(): GraphPatternFormula {
     return new GraphPatternFormula('*');
+  }
+
+  getConstraints(): NodeConstraints {
+    return this.constraints;
   }
 }

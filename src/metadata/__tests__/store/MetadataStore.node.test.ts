@@ -7,17 +7,25 @@ import { EntityPropertyMetadata } from '../../schema/entity/EntityPropertyMetada
 import { PropertyType } from '../../schema/entity/PropertyType';
 import { Alias } from '../../schema/entity/Alias';
 import { MetadataStore } from '../../store/MetadataStore';
+import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
+import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
 
 class NodeClass {}
 
 describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
   test('with no properties', () => {
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel('User'));
+    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
 
     const n = m.getNodeEntityMetadata(NodeClass);
     expect(n).toStrictEqual(
-      new NodeEntityMetadata(NodeClass, new NodeLabel('User'), new Properties())
+      new NodeEntityMetadata(
+        NodeClass,
+        new NodeLabel('User'),
+        new Properties(),
+        new NodeConstraints([], [], [])
+      )
     );
   });
 
@@ -29,14 +37,15 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       new Alias('_p1'),
       null
     );
-    m.addProperty(NodeClass, new PropertyType('p2', Number), null, null);
+    m.addProperty(NodeClass, new PropertyType('p2', Number), null, null, false);
     m.addProperty(
       NodeClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
-      null
+      null,
+      false
     );
-    m.registerNode(NodeClass, new NodeLabel('User'));
+    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
 
     const properties = new Properties();
     properties.set(
@@ -47,19 +56,34 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
+      new EntityPropertyMetadata(
+        new PropertyType('p2', Number),
+        null,
+        null,
+        false
+      )
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
         new Alias('_p3'),
-        null
+        null,
+        false
       )
     );
 
     const nodeEntityMetadata = m.getNodeEntityMetadata(NodeClass);
-    expect(nodeEntityMetadata).toStrictEqual(
-      new NodeEntityMetadata(NodeClass, new NodeLabel('User'), properties)
+    expect(nodeEntityMetadata).toMatchObject(
+      new NodeEntityMetadata(
+        NodeClass,
+        new NodeLabel('User'),
+        properties,
+        new NodeConstraints(
+          [],
+          [new NodePropertyExistenceConstraint(new NodeLabel('User'), '_p1')],
+          [new UniquenessConstraint(new NodeLabel('User'), '_p1')]
+        )
+      )
     );
   });
 

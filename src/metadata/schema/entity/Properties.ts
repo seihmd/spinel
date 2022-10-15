@@ -13,17 +13,13 @@ export class Properties {
     this.map.set(property.getKey(), property);
   }
 
-  validate(): void {
-    this.getPrimary();
-  }
-
-  getPrimary(): EntityPrimaryMetadata {
+  getPrimary(): EntityPrimaryMetadata | null {
     for (const propertyMetadata of this.map.values()) {
       if (propertyMetadata instanceof EntityPrimaryMetadata) {
         return propertyMetadata;
       }
     }
-    throw new Error('Entity must have one Primary property');
+    return null;
   }
 
   getProperties(): EntityPropertyMetadata[] {
@@ -31,5 +27,14 @@ export class Properties {
       (propertyMetadata): propertyMetadata is EntityPropertyMetadata =>
         propertyMetadata instanceof EntityPropertyMetadata
     );
+  }
+
+  toNeo4jKey(propertyKey: string): string {
+    for (const metadata of this.map.values()) {
+      if (metadata.getKey() === propertyKey) {
+        return metadata.getNeo4jKey();
+      }
+    }
+    throw new Error(`Property key "${propertyKey}" not found`);
   }
 }

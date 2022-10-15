@@ -37,4 +37,8 @@ export class EntityPrimaryMetadata {
   getTransformer(): TransformerInterface {
     return this.transformer || new NothingTransformer();
   }
+
+  isNotNull(): boolean {
+    return true;
+  }
 }

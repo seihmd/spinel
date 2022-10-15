@@ -12,6 +12,7 @@ import { getDefaultTransformer } from '../../metadata/schema/transformation/tran
 interface PropertyOption {
   alias?: string;
   transformer?: TransformerInterface;
+  notNull?: boolean;
 }
 
 export function Property(option?: PropertyOption): PropertyDecorator {
@@ -26,7 +27,8 @@ export function Property(option?: PropertyOption): PropertyDecorator {
       target.constructor as AnyClassConstructor,
       propertyType,
       option?.alias ? new Alias(option.alias) : null,
-      transformer
+      transformer,
+      option?.notNull ?? false
     );
 
     Transform(

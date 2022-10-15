@@ -4,6 +4,8 @@ import { NodeLabel } from '../../domain/node/NodeLabel';
 
 interface NodeEntityOption {
   label?: string;
+  unique?: string[];
+  keys?: string[][];
 }
 
 export function NodeEntity(option?: NodeEntityOption) {
@@ -11,6 +13,11 @@ export function NodeEntity(option?: NodeEntityOption) {
   return function _DecoratorName<T extends { new (...args: any[]): {} }>(
     cstr: T
   ) {
-    getMetadataStore().registerNode(cstr, new NodeLabel(option?.label ?? cstr));
+    getMetadataStore().registerNode(
+      cstr,
+      new NodeLabel(option?.label ?? cstr),
+      option?.unique ?? [],
+      option?.keys ?? []
+    );
   };
 }

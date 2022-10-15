@@ -7,6 +7,8 @@ import { Alias } from '../../schema/entity/Alias';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
+import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
+import { RelationshipPropertyExistenceConstraint } from '../../../query/constraint/RelationshipPropertyExistenceConstraint';
 
 class RelationshipClass {}
 
@@ -20,7 +22,8 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       new RelationshipEntityMetadata(
         RelationshipClass,
         new RelationshipType('HAS'),
-        new Properties()
+        new Properties(),
+        new RelationshipConstraints([])
       )
     );
   });
@@ -37,13 +40,15 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       RelationshipClass,
       new PropertyType('p2', Number),
       null,
-      null
+      null,
+      false
     );
     m.addProperty(
       RelationshipClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
-      null
+      null,
+      false
     );
     m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
 
@@ -56,13 +61,19 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
+      new EntityPropertyMetadata(
+        new PropertyType('p2', Number),
+        null,
+        null,
+        false
+      )
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
         new Alias('_p3'),
-        null
+        null,
+        false
       )
     );
 
@@ -72,7 +83,13 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       new RelationshipEntityMetadata(
         RelationshipClass,
         new RelationshipType('HAS'),
-        properties
+        properties,
+        new RelationshipConstraints([
+          new RelationshipPropertyExistenceConstraint(
+            new RelationshipType('HAS'),
+            '_p1'
+          ),
+        ])
       )
     );
   });

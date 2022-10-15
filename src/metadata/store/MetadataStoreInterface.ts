@@ -13,6 +13,8 @@ import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationship
 import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
+import { NodeConstraints } from '../schema/constraint/NodeConstraints';
+import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
 
 export interface MetadataStoreInterface {
   setPrimary(
@@ -26,7 +28,8 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor,
     propertyType: PropertyType,
     alias: Alias | null,
-    transformer: TransformerInterface | null
+    transformer: TransformerInterface | null,
+    notNull: boolean
   ): void;
 
   addGraphNode(
@@ -48,7 +51,12 @@ export interface MetadataStoreInterface {
     depth: number
   ): void;
 
-  registerNode(cstr: AnyClassConstructor, label: NodeLabel): void;
+  registerNode(
+    cstr: AnyClassConstructor,
+    label: NodeLabel,
+    unique: string[],
+    keys: string[][]
+  ): void;
 
   registerRelationship(cstr: AnyClassConstructor, type: RelationshipType): void;
 
@@ -77,4 +85,6 @@ export interface MetadataStoreInterface {
   findGraphFragmentMetadata(
     cstr: AnyClassConstructor
   ): GraphFragmentMetadata | null;
+
+  getAllConstraints(): (NodeConstraints | RelationshipConstraints)[];
 }

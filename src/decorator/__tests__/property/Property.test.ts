@@ -26,7 +26,37 @@ describe('Property', () => {
     [
       () => {
         class NodeClass {
+          @Property({})
+          name?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
           @Property({ alias: 'title' })
+          name?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
+          @Property({
+            alias: 'hoge',
+            notNull: true,
+          })
+          name?: string;
+        }
+      },
+    ],
+    [
+      () => {
+        class NodeClass {
+          @Property({
+            alias: 'hoge',
+            notNull: false,
+          })
           name?: string;
         }
       },

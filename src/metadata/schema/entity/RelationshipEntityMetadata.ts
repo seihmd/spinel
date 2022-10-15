@@ -3,17 +3,21 @@ import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { EntityPropertyMetadata } from './EntityPropertyMetadata';
 import { Properties } from './Properties';
+import { RelationshipConstraints } from '../constraint/RelationshipConstraints';
 
 export class RelationshipEntityMetadata {
   private readonly cstr: AnyClassConstructor;
   private readonly type: RelationshipType;
   private readonly properties: Properties;
+  private readonly constraints: RelationshipConstraints;
 
   constructor(
     cstr: AnyClassConstructor,
     type: RelationshipType,
-    properties: Properties
+    properties: Properties,
+    constraints: RelationshipConstraints
   ) {
+    this.constraints = constraints;
     this.cstr = cstr;
     this.type = type;
     this.properties = properties;
@@ -28,10 +32,18 @@ export class RelationshipEntityMetadata {
   }
 
   getPrimary(): EntityPrimaryMetadata {
-    return this.properties.getPrimary();
+    const primary = this.properties.getPrimary();
+    if (primary) {
+      return primary;
+    }
+    throw new Error('RelationshipEntity must have primary property');
   }
 
   getProperties(): EntityPropertyMetadata[] {
     return this.properties.getProperties();
+  }
+
+  getConstraints(): RelationshipConstraints {
+    return this.constraints;
   }
 }

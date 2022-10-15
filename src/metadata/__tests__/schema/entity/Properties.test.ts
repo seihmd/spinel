@@ -9,7 +9,7 @@ import { NothingTransformer } from '../../../schema/transformation/transformer/N
 function createPropertyStub(key: string): EntityPropertyMetadata {
   const propertyType = mock(PropertyType);
   when(propertyType.getKey()).thenReturn(key);
-  return new EntityPropertyMetadata(instance(propertyType), null, null);
+  return new EntityPropertyMetadata(instance(propertyType), null, null, false);
 }
 
 function createPrimaryStub(key: string): EntityPrimaryMetadata {
@@ -36,12 +36,5 @@ describe(`${Properties.name}`, () => {
 
     expect(properties.getPrimary()).toBe(primary);
     expect(properties.getProperties()).toStrictEqual([prop1, prop2]);
-  });
-
-  test('primary is null, getPrimary throw error', () => {
-    const properties = new Properties();
-    expect(() => {
-      properties.getPrimary();
-    }).toThrowError();
   });
 });
