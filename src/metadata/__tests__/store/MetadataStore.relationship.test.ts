@@ -8,7 +8,7 @@ import { RelationshipType } from '../../../domain/relationship/RelationshipType'
 import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
-import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
+import { RelationshipPropertyExistenceConstraint } from '../../../query/constraint/RelationshipPropertyExistenceConstraint';
 
 class RelationshipClass {}
 

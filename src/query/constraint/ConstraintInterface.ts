@@ -1,5 +1,5 @@
-import { NodeLabel } from '../../../../src/domain/node/NodeLabel';
-import { RelationshipType } from '../../../../src/domain/relationship/RelationshipType';
+import { NodeLabel } from '../../domain/node/NodeLabel';
+import { RelationshipType } from '../../domain/relationship/RelationshipType';
 
 export interface ConstraintInterface {
   getProperties(): string[];

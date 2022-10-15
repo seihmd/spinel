@@ -1,6 +1,7 @@
-import { NodeKeyConstraint } from '../../../../test/functional/query/constraint/NodeKeyConstraint';
-import { NodePropertyExistenceConstraint } from '../../../../test/functional/query/constraint/NodePropertyExistenceConstraint';
-import { UniquenessConstraint } from '../../../../test/functional/query/constraint/UniquenessConstraint';
+import { ConstraintInterface } from 'query/constraint/ConstraintInterface';
+import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
+import { NodeKeyConstraint } from '../../../query/constraint/NodeKeyConstraint';
+import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
 
 export class NodeConstraints {
   private readonly nodeKeys: NodeKeyConstraint[];
@@ -17,15 +18,7 @@ export class NodeConstraints {
     this.uniques = uniques;
   }
 
-  getNodeKeys(): NodeKeyConstraint[] {
-    return this.nodeKeys;
-  }
-
-  getExistences(): NodePropertyExistenceConstraint[] {
-    return this.existences;
-  }
-
-  getUniques(): UniquenessConstraint[] {
-    return this.uniques;
+  getAll(): ConstraintInterface[] {
+    return [...this.nodeKeys, ...this.existences, ...this.uniques];
   }
 }

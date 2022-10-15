@@ -58,4 +58,8 @@ export class NodeEntityMetadata implements BranchEndMetadata {
   getFormula(): GraphPatternFormula {
     return new GraphPatternFormula('*');
   }
+
+  getConstraints(): NodeConstraints {
+    return this.constraints;
+  }
 }

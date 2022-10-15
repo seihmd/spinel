@@ -1,5 +1,5 @@
-import { ConstraintInterface } from '../../../test/functional/query/constraint/ConstraintInterface';
 import { NodeLabel } from '../../domain/node/NodeLabel';
+import { ConstraintInterface } from './ConstraintInterface';
 
 export class CreateConstraintClause {
   private readonly constraint: ConstraintInterface;

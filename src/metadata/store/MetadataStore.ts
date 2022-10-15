@@ -32,6 +32,8 @@ import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/As
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
 import { ConstraintMetadataMap } from './ConstraintMetadataMap';
 import { Constraints } from '../schema/constraint/Constraints';
+import { NodeConstraints } from '../schema/constraint/NodeConstraints';
+import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -284,6 +286,13 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor
   ): GraphFragmentMetadata | null {
     return this.graphFragmentMap.get(cstr);
+  }
+
+  getAllConstraints(): (NodeConstraints | RelationshipConstraints)[] {
+    return [
+      ...this.nodeEntityMap.getAll().map((n) => n.getConstraints()),
+      ...this.relationshipEntityMap.getAll().map((r) => r.getConstraints()),
+    ];
   }
 }
 

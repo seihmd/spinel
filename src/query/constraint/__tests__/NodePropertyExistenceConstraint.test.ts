@@ -1,5 +1,5 @@
 import { NodePropertyExistenceConstraint } from '../NodePropertyExistenceConstraint';
-import { NodeLabel } from '../../../../../src/domain/node/NodeLabel';
+import { NodeLabel } from '../../../domain/node/NodeLabel';
 
 describe(`${NodePropertyExistenceConstraint.name}`, () => {
   test('getName', () => {
@@ -8,6 +8,6 @@ describe(`${NodePropertyExistenceConstraint.name}`, () => {
         new NodeLabel('User'),
         'email'
       ).getName()
-    ).toBe('SPNL-npe-User-email');
+    ).toBe('SPNL_npe_User_email');
   });
 });

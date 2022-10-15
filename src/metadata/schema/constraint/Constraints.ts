@@ -5,10 +5,10 @@ import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { NodeConstraints } from './NodeConstraints';
 import { RelationshipConstraints } from './RelationshipConstraints';
-import { NodeKeyConstraint } from '../../../../test/functional/query/constraint/NodeKeyConstraint';
-import { NodePropertyExistenceConstraint } from '../../../../test/functional/query/constraint/NodePropertyExistenceConstraint';
-import { UniquenessConstraint } from '../../../../test/functional/query/constraint/UniquenessConstraint';
-import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
+import { RelationshipPropertyExistenceConstraint } from '../../../query/constraint/RelationshipPropertyExistenceConstraint';
+import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
+import { NodeKeyConstraint } from '../../../query/constraint/NodeKeyConstraint';
+import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
 
 type PropertyMetadata = EntityPropertyMetadata | EntityPrimaryMetadata;
 

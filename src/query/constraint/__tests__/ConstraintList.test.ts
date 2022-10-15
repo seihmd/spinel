@@ -1,7 +1,7 @@
 import { ConstraintList } from '../ConstraintList';
-import { NodeLabel } from '../../../../../src/domain/node/NodeLabel';
-import { RelationshipType } from '../../../../../src/domain/relationship/RelationshipType';
 import { ConstraintInterface } from '../ConstraintInterface';
+import { NodeLabel } from '../../../domain/node/NodeLabel';
+import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 
 const stubConstraint = (name: string): ConstraintInterface => {
   class TestConstraint implements ConstraintInterface {

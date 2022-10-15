@@ -38,4 +38,8 @@ export class RelationshipEntityMetadata {
   getProperties(): EntityPropertyMetadata[] {
     return this.properties.getProperties();
   }
+
+  getConstraints(): RelationshipConstraints {
+    return this.constraints;
+  }
 }

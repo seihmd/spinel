@@ -1,4 +1,4 @@
-import { RelationshipPropertyExistenceConstraint } from '../../../../test/functional/query/constraint/RelationshipPropertyExistenceConstraint';
+import { RelationshipPropertyExistenceConstraint } from 'query/constraint/RelationshipPropertyExistenceConstraint';
 
 export class RelationshipConstraints {
   private readonly existences: RelationshipPropertyExistenceConstraint[];
@@ -7,7 +7,7 @@ export class RelationshipConstraints {
     this.existences = existences;
   }
 
-  getExistences(): RelationshipPropertyExistenceConstraint[] {
+  getAll(): RelationshipPropertyExistenceConstraint[] {
     return this.existences;
   }
 }
