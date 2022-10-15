@@ -39,14 +39,6 @@ describe('Primary', () => {
         }
       },
     ],
-    [
-      () => {
-        class NodeClass {
-          @Primary({ constraint: { nodeKey: 'keyName' } })
-          id?: string;
-        }
-      },
-    ],
   ])('Valid definition', (definition: () => void) => {
     expect(definition).not.toThrowError();
   });

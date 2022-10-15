@@ -24,6 +24,18 @@ describe('NodeEntity', () => {
         class NodeClass {}
       },
     ],
+    [
+      () => {
+        @NodeEntity({ unique: ['p'] })
+        class NodeClass {}
+      },
+    ],
+    [
+      () => {
+        @NodeEntity({ keys: [['p', 'p2']] })
+        class NodeClass {}
+      },
+    ],
   ])('Valid definition', (definition: () => void) => {
     expect(definition).not.toThrowError();
   });

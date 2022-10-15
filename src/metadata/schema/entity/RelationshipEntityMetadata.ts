@@ -32,7 +32,11 @@ export class RelationshipEntityMetadata {
   }
 
   getPrimary(): EntityPrimaryMetadata {
-    return this.properties.getPrimary();
+    const primary = this.properties.getPrimary();
+    if (primary) {
+      return primary;
+    }
+    throw new Error('RelationshipEntity must have primary property');
   }
 
   getProperties(): EntityPropertyMetadata[] {

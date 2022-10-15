@@ -36,7 +36,11 @@ export class NodeEntityMetadata implements BranchEndMetadata {
   }
 
   getPrimary(): EntityPrimaryMetadata {
-    return this.properties.getPrimary();
+    const primary = this.properties.getPrimary();
+    if (primary) {
+      return primary;
+    }
+    throw new Error('NodeEntity must have primary property');
   }
 
   getProperties(): EntityPropertyMetadata[] {

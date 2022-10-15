@@ -34,7 +34,6 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       RelationshipClass,
       new PrimaryType('p1', String),
       new Alias('_p1'),
-      null,
       null
     );
     m.addProperty(
@@ -42,18 +41,14 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       new PropertyType('p2', Number),
       null,
       null,
-      false,
-      false,
-      null
+      false
     );
     m.addProperty(
       RelationshipClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
       null,
-      false,
-      false,
-      null
+      false
     );
     m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
 
@@ -66,13 +61,19 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
+      new EntityPropertyMetadata(
+        new PropertyType('p2', Number),
+        null,
+        null,
+        false
+      )
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
         new Alias('_p3'),
-        null
+        null,
+        false
       )
     );
 

@@ -30,15 +30,12 @@ import { GraphFragment } from '../../decorator/class/GraphFragment';
 import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
-import { ConstraintMetadataMap } from './ConstraintMetadataMap';
-import { Constraints } from '../schema/constraint/Constraints';
 import { NodeConstraints } from '../schema/constraint/NodeConstraints';
 import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
     new PropertyMetadataMap();
-  private constraintsMap: ConstraintMetadataMap = new ConstraintMetadataMap();
   private nodeEntityMap: ClassMetadataMap<NodeEntityMetadata> =
     new ClassMetadataMap();
   private relationshipEntityMap: ClassMetadataMap<RelationshipEntityMetadata> =
@@ -54,8 +51,7 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     primaryType: PrimaryType,
     alias: Alias | null,
-    transformer: TransformerInterface | null,
-    nodeKey: string | null
+    transformer: TransformerInterface | null
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
@@ -66,18 +62,6 @@ export class MetadataStore implements MetadataStoreInterface {
       );
       properties.set(primaryMetadata);
 
-      this.constraintsMap.update(cstr, (constraints) => {
-        if (!constraints) {
-          constraints = new Constraints(cstr);
-        }
-        constraints.addUnique(primaryMetadata);
-        constraints.addExistence(primaryMetadata);
-        if (nodeKey !== null) {
-          constraints.addNodeKey(nodeKey, primaryMetadata);
-        }
-        return constraints;
-      });
-
       return properties;
     });
   }
@@ -87,47 +71,36 @@ export class MetadataStore implements MetadataStoreInterface {
     propertyType: PropertyType,
     alias: Alias | null,
     transformer: TransformerInterface | null,
-    unique: boolean,
-    existence: boolean,
-    nodeKey: string | null
+    notNull: boolean
   ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
       const propertyMetadata = new EntityPropertyMetadata(
         propertyType,
         alias,
-        transformer ?? null
+        transformer ?? null,
+        notNull
       );
       properties.set(propertyMetadata);
-
-      this.constraintsMap.update(cstr, (constraints) => {
-        if (!constraints) {
-          constraints = new Constraints(cstr);
-        }
-        if (unique) {
-          constraints.addUnique(propertyMetadata);
-        }
-        if (existence) {
-          constraints.addExistence(propertyMetadata);
-        }
-        if (nodeKey !== null) {
-          constraints.addNodeKey(nodeKey, propertyMetadata);
-        }
-        return constraints;
-      });
 
       return properties;
     });
   }
 
-  registerNode(cstr: AnyClassConstructor, label: NodeLabel): void {
+  registerNode(
+    cstr: AnyClassConstructor,
+    label: NodeLabel,
+    unique: string[],
+    key: string[][]
+  ): void {
+    const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.nodeEntityMap.register(
       cstr,
       new NodeEntityMetadata(
         cstr,
         label,
-        this.propertiesMap.get(cstr) ?? new Properties(),
-        this.constraintsMap.get(cstr).toNodeConstraints(label)
+        properties,
+        NodeConstraints.new(key, unique, label, properties)
       )
     );
   }
@@ -136,13 +109,14 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     type: RelationshipType
   ): void {
+    const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.relationshipEntityMap.register(
       cstr,
       new RelationshipEntityMetadata(
         cstr,
         type,
-        this.propertiesMap.get(cstr) ?? new Properties(),
-        this.constraintsMap.get(cstr).toRelationshipConstraints(type)
+        properties,
+        RelationshipConstraints.new(type, properties)
       )
     );
   }

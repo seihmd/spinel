@@ -6,13 +6,16 @@ import { NothingTransformer } from '../transformation/transformer/NothingTransfo
 export class EntityPropertyMetadata {
   private readonly propertyType: PropertyType;
   private readonly transformer: TransformerInterface | null;
+  private readonly notNull: boolean;
   private readonly alias: Alias | null;
 
   constructor(
     propertyType: PropertyType,
     alias: Alias | null,
-    transformer: TransformerInterface | null
+    transformer: TransformerInterface | null,
+    notNull: boolean
   ) {
+    this.notNull = notNull;
     this.propertyType = propertyType;
     this.alias = alias;
     this.transformer = transformer;
@@ -36,5 +39,9 @@ export class EntityPropertyMetadata {
 
   getTransformer(): TransformerInterface {
     return this.transformer || new NothingTransformer();
+  }
+
+  isNotNull(): boolean {
+    return this.notNull;
   }
 }

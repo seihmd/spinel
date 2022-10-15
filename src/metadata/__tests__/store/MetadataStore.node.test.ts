@@ -16,7 +16,7 @@ class NodeClass {}
 describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
   test('with no properties', () => {
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel('User'));
+    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
 
     const n = m.getNodeEntityMetadata(NodeClass);
     expect(n).toStrictEqual(
@@ -35,28 +35,17 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       NodeClass,
       new PrimaryType('p1', String),
       new Alias('_p1'),
-      null,
       null
     );
-    m.addProperty(
-      NodeClass,
-      new PropertyType('p2', Number),
-      null,
-      null,
-      false,
-      false,
-      null
-    );
+    m.addProperty(NodeClass, new PropertyType('p2', Number), null, null, false);
     m.addProperty(
       NodeClass,
       new PropertyType('p3', Boolean),
       new Alias('_p3'),
       null,
-      false,
-      false,
-      null
+      false
     );
-    m.registerNode(NodeClass, new NodeLabel('User'));
+    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
 
     const properties = new Properties();
     properties.set(
@@ -67,13 +56,19 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       )
     );
     properties.set(
-      new EntityPropertyMetadata(new PropertyType('p2', Number), null, null)
+      new EntityPropertyMetadata(
+        new PropertyType('p2', Number),
+        null,
+        null,
+        false
+      )
     );
     properties.set(
       new EntityPropertyMetadata(
         new PropertyType('p3', Boolean),
         new Alias('_p3'),
-        null
+        null,
+        false
       )
     );
 

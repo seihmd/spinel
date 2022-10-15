@@ -40,7 +40,7 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
     class RelationshipClass {}
 
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel(NodeClass));
+    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], []);
     m.registerRelationship(
       RelationshipClass,
       new RelationshipType(RelationshipClass)

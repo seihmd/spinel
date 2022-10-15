@@ -9,16 +9,10 @@ import { PropertyType } from '../../metadata/schema/entity/PropertyType';
 import { TransformerInterface } from '../../metadata/schema/transformation/transformer/TransformerInterface';
 import { getDefaultTransformer } from '../../metadata/schema/transformation/transformer/getDefaultTransformer';
 
-interface ConstraintOption {
-  unique?: boolean;
-  existence?: boolean;
-  nodeKey?: string;
-}
-
 interface PropertyOption {
   alias?: string;
   transformer?: TransformerInterface;
-  constraint?: ConstraintOption;
+  notNull?: boolean;
 }
 
 export function Property(option?: PropertyOption): PropertyDecorator {
@@ -34,9 +28,7 @@ export function Property(option?: PropertyOption): PropertyDecorator {
       propertyType,
       option?.alias ? new Alias(option.alias) : null,
       transformer,
-      option?.constraint?.unique ?? false,
-      option?.constraint?.existence ?? false,
-      option?.constraint?.nodeKey ?? null
+      option?.notNull ?? false
     );
 
     Transform(

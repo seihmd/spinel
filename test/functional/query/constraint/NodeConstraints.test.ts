@@ -9,23 +9,26 @@ import { ConstraintData } from '../../../../src/query/constraint/ConstraintData'
 
 const neo4jFixture = Neo4jFixture.new();
 
-describe('sync constraints', () => {
-  afterAll(async () => {
+describe('NodeConstraints', () => {
+  afterEach(async () => {
     await neo4jFixture.teardown();
   });
 
-  test('Sync node constraints', async () => {
-    @NodeEntity()
+  test('ConstraintQueryPlan.exec', async () => {
+    @NodeEntity({
+      unique: ['name'],
+      keys: [['name', 'address']],
+    })
     class ConstraintTestNode {
       @Primary() private id: string;
 
-      @Property({ constraint: { unique: true, nodeKey: 'name_address' } })
+      @Property()
       private name: string;
 
-      @Property({ constraint: { nodeKey: 'name_address' } })
+      @Property({ alias: 'location' })
       private address: string;
 
-      @Property({ constraint: { existence: true } })
+      @Property({ notNull: true })
       private startedDate: Date;
     }
 
@@ -45,11 +48,11 @@ describe('sync constraints', () => {
 
     expect(constraintsDataList).toMatchObject([
       {
-        name: 'SPNL_nk_ConstraintTestNode_address_name',
+        name: 'SPNL_nk_ConstraintTestNode_location_name',
         type: 'NODE_KEY',
         entityType: 'NODE',
         labelsOrTypes: ['ConstraintTestNode'],
-        properties: ['address', 'name'],
+        properties: ['location', 'name'],
       },
       {
         name: 'SPNL_npe_ConstraintTestNode_id',

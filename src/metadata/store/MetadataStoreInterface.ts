@@ -21,8 +21,7 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor,
     primaryType: PrimaryType,
     alias: Alias | null,
-    transformer: TransformerInterface | null,
-    nodeKey: string | null
+    transformer: TransformerInterface | null
   ): void;
 
   addProperty(
@@ -30,9 +29,7 @@ export interface MetadataStoreInterface {
     propertyType: PropertyType,
     alias: Alias | null,
     transformer: TransformerInterface | null,
-    unique: boolean,
-    existence: boolean,
-    nodeKey: string | null
+    notNull: boolean
   ): void;
 
   addGraphNode(
@@ -54,7 +51,12 @@ export interface MetadataStoreInterface {
     depth: number
   ): void;
 
-  registerNode(cstr: AnyClassConstructor, label: NodeLabel): void;
+  registerNode(
+    cstr: AnyClassConstructor,
+    label: NodeLabel,
+    unique: string[],
+    keys: string[][]
+  ): void;
 
   registerRelationship(cstr: AnyClassConstructor, type: RelationshipType): void;
 
