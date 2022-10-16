@@ -1,5 +1,5 @@
 import { ConstraintInterface } from './ConstraintInterface';
-import { RelationshipType } from '../../domain/relationship/RelationshipType';
+import { RelationshipType } from '../relationship/RelationshipType';
 
 export class RelationshipPropertyExistenceConstraint
   implements ConstraintInterface
@@ -13,7 +13,7 @@ export class RelationshipPropertyExistenceConstraint
   }
 
   getName(): string {
-    return `SPNL_rpe_${this.type.toString()}_${this.property}`;
+    return `SPNL_c_rpe_${this.type.toString()}_${this.property}`;
   }
 
   getLabelOrType(): RelationshipType {

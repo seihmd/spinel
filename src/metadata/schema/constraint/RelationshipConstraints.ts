@@ -1,8 +1,8 @@
-import { RelationshipPropertyExistenceConstraint } from 'query/constraint/RelationshipPropertyExistenceConstraint';
 import { Properties } from '../entity/Properties';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
 import { EntityPrimaryMetadata } from '../entity/EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from '../entity/EntityPropertyMetadata';
+import { RelationshipPropertyExistenceConstraint } from '../../../domain/constraint/RelationshipPropertyExistenceConstraint';
 
 export class RelationshipConstraints {
   static new(

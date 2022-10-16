@@ -35,6 +35,7 @@ import { RelationshipConstraints } from '../schema/constraint/RelationshipConstr
 import { IndexOption } from '../../decorator/class/IndexOption';
 import { Indexes } from '../schema/index/Indexes';
 import { IndexInterface } from '../../domain/index/IndexInterface';
+import { ConstraintInterface } from '../../domain/constraint/ConstraintInterface';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -269,11 +270,13 @@ export class MetadataStore implements MetadataStoreInterface {
     return this.graphFragmentMap.get(cstr);
   }
 
-  getAllConstraints(): (NodeConstraints | RelationshipConstraints)[] {
+  getAllConstraints(): ConstraintInterface[] {
     return [
-      ...this.nodeEntityMap.getAll().map((n) => n.getConstraints()),
-      ...this.relationshipEntityMap.getAll().map((r) => r.getConstraints()),
-    ];
+      ...this.nodeEntityMap.getAll().map((n) => n.getConstraints().getAll()),
+      ...this.relationshipEntityMap
+        .getAll()
+        .map((r) => r.getConstraints().getAll()),
+    ].flat();
   }
 
   getAllIndexes(): IndexInterface[] {

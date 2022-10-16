@@ -4,7 +4,6 @@ import { Primary } from '../../../../src/decorator/property/Primary';
 import { Property } from '../../../../src/decorator/property/Property';
 import { ConstraintQueryPlan } from '../../../../src/query/builder/constraint/ConstraintQueryPlan';
 import { getMetadataStore } from '../../../../src/metadata/store/MetadataStore';
-import { ConstraintData } from '../../../../src/query/constraint/ConstraintData';
 import { RelationshipEntity } from '../../../../src/decorator/class/RelationshipEntity';
 
 const neo4jFixture = Neo4jFixture.new();
@@ -39,27 +38,27 @@ describe('relationship constraints', () => {
       .getDriver()
       .session()
       .run('SHOW CONSTRAINTS');
-    const constraintsDataList = result.records.map(
-      (record) => record.toObject() as ConstraintData
+    const constraintsDataList = result.records.map((record) =>
+      record.toObject()
     );
 
     expect(constraintsDataList).toMatchObject([
       {
-        name: 'SPNL_rpe_CONSTRAINT_TEST_RELATIONSHIP_id',
+        name: 'SPNL_c_rpe_CONSTRAINT_TEST_RELATIONSHIP_id',
         type: 'RELATIONSHIP_PROPERTY_EXISTENCE',
         entityType: 'RELATIONSHIP',
         labelsOrTypes: ['CONSTRAINT_TEST_RELATIONSHIP'],
         properties: ['id'],
       },
       {
-        name: 'SPNL_rpe_CONSTRAINT_TEST_RELATIONSHIP_name',
+        name: 'SPNL_c_rpe_CONSTRAINT_TEST_RELATIONSHIP_name',
         type: 'RELATIONSHIP_PROPERTY_EXISTENCE',
         entityType: 'RELATIONSHIP',
         labelsOrTypes: ['CONSTRAINT_TEST_RELATIONSHIP'],
         properties: ['name'],
       },
       {
-        name: 'SPNL_rpe_CONSTRAINT_TEST_RELATIONSHIP_visitedAt',
+        name: 'SPNL_c_rpe_CONSTRAINT_TEST_RELATIONSHIP_visitedAt',
         type: 'RELATIONSHIP_PROPERTY_EXISTENCE',
         entityType: 'RELATIONSHIP',
         labelsOrTypes: ['CONSTRAINT_TEST_RELATIONSHIP'],
