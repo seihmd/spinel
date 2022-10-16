@@ -1,5 +1,5 @@
 import { ConstraintInterface } from './ConstraintInterface';
-import { NodeLabel } from '../../domain/node/NodeLabel';
+import { NodeLabel } from '../node/NodeLabel';
 
 export class UniquenessConstraint implements ConstraintInterface {
   private readonly label: NodeLabel;
@@ -11,7 +11,7 @@ export class UniquenessConstraint implements ConstraintInterface {
   }
 
   getName(): string {
-    return `SPNL_u_${this.label.toString()}_${this.property}`;
+    return `SPNL_c_u_${this.label.toString()}_${this.property}`;
   }
 
   getLabelOrType(): NodeLabel {

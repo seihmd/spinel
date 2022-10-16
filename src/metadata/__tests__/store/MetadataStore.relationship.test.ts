@@ -8,8 +8,8 @@ import { RelationshipType } from '../../../domain/relationship/RelationshipType'
 import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
-import { RelationshipPropertyExistenceConstraint } from '../../../query/constraint/RelationshipPropertyExistenceConstraint';
 import { Indexes } from '../../schema/index/Indexes';
+import { RelationshipPropertyExistenceConstraint } from '../../../domain/constraint/RelationshipPropertyExistenceConstraint';
 
 class RelationshipClass {}
 

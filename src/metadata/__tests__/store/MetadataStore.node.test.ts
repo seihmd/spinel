@@ -8,9 +8,9 @@ import { PropertyType } from '../../schema/entity/PropertyType';
 import { Alias } from '../../schema/entity/Alias';
 import { MetadataStore } from '../../store/MetadataStore';
 import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
-import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
-import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
 import { Indexes } from '../../schema/index/Indexes';
+import { NodePropertyExistenceConstraint } from '../../../domain/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../domain/constraint/UniquenessConstraint';
 
 class NodeClass {}
 

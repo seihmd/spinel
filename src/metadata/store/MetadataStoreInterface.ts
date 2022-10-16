@@ -13,10 +13,9 @@ import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationship
 import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
 import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
-import { NodeConstraints } from '../schema/constraint/NodeConstraints';
-import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
 import { IndexOption } from '../../decorator/class/IndexOption';
 import { IndexInterface } from '../../domain/index/IndexInterface';
+import { ConstraintInterface } from '../../domain/constraint/ConstraintInterface';
 
 export interface MetadataStoreInterface {
   setPrimary(
@@ -93,7 +92,7 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor
   ): GraphFragmentMetadata | null;
 
-  getAllConstraints(): (NodeConstraints | RelationshipConstraints)[];
+  getAllConstraints(): ConstraintInterface[];
 
   getAllIndexes(): IndexInterface[];
 }

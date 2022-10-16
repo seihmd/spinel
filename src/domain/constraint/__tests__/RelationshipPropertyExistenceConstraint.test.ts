@@ -1,5 +1,5 @@
 import { RelationshipPropertyExistenceConstraint } from '../RelationshipPropertyExistenceConstraint';
-import { RelationshipType } from '../../../domain/relationship/RelationshipType';
+import { RelationshipType } from '../../relationship/RelationshipType';
 
 describe(`${RelationshipPropertyExistenceConstraint.name}`, () => {
   test('getName', () => {
@@ -8,6 +8,6 @@ describe(`${RelationshipPropertyExistenceConstraint.name}`, () => {
         new RelationshipType('HAS'),
         'userId'
       ).getName()
-    ).toBe('SPNL_rpe_HAS_userId');
+    ).toBe('SPNL_c_rpe_HAS_userId');
   });
 });

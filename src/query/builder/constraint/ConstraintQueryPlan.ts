@@ -1,11 +1,7 @@
 import { Driver } from 'neo4j-driver';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { DropConstraintClause } from '../../constraint/DropConstraintClause';
-import { CreateConstraintClause } from '../../constraint/CreateConstraintClause';
-import { ConstraintData } from '../../constraint/ConstraintData';
-import { ConstraintList } from '../../constraint/ConstraintList';
-import { ConstraintInterface } from '../../constraint/ConstraintInterface';
+import { ConstraintQueryBuilder } from './ConstraintQueryBuilder';
 
 export class ConstraintQueryPlan {
   static new(driver: Driver): ConstraintQueryPlan {
@@ -24,41 +20,35 @@ export class ConstraintQueryPlan {
     if (!shouldCreate && !shouldDrop) {
       throw new Error();
     }
-    const [toCreates, toDrops] = await this.diff();
 
-    const dropQueries = toDrops.map((constraintName) =>
-      new DropConstraintClause(constraintName).get()
-    );
-
-    const createQueries = toCreates.map((constraint) =>
-      new CreateConstraintClause(constraint).get()
+    const constraintQueryBuilder = new ConstraintQueryBuilder(
+      this.metadataStore.getAllConstraints(),
+      await this.readExisting()
     );
 
     const session = this.driver.session({ defaultAccessMode: 'WRITE' });
     await session.executeWrite(async (txc) => {
       if (shouldDrop) {
-        await Promise.all(dropQueries.map(async (q) => await txc.run(q)));
+        await Promise.all(
+          constraintQueryBuilder
+            .getDropClauses()
+            .map(async (dropClause) => await txc.run(dropClause.get()))
+        );
       }
       if (shouldCreate) {
-        await Promise.all(createQueries.map(async (q) => await txc.run(q)));
+        await Promise.all(
+          constraintQueryBuilder
+            .getCreateClauses()
+            .map(async (createClause) => await txc.run(createClause.get()))
+        );
       }
     });
   }
 
-  private async diff(): Promise<[ConstraintInterface[], string[]]> {
-    const allConstraints = this.metadataStore.getAllConstraints();
-    const constraintList = new ConstraintList(
-      allConstraints.reduce((prev: ConstraintInterface[], constraints) => {
-        prev.push(...constraints.getAll());
-        return prev;
-      }, [])
-    );
-
-    return constraintList.diff(await this.readExisting());
-  }
-
-  private async readExisting(): Promise<ConstraintData[]> {
+  private async readExisting(): Promise<string[]> {
     const result = await this.driver.session().run('SHOW CONSTRAINTS');
-    return result.records.map((result) => result.toObject() as ConstraintData);
+    return result.records.map(
+      (result) => (result.toObject() as { name: string }).name
+    );
   }
 }

@@ -1,11 +1,11 @@
-import { ConstraintInterface } from 'query/constraint/ConstraintInterface';
-import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
-import { NodeKeyConstraint } from '../../../query/constraint/NodeKeyConstraint';
-import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
 import { Properties } from '../entity/Properties';
 import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { EntityPrimaryMetadata } from '../entity/EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from '../entity/EntityPropertyMetadata';
+import { NodeKeyConstraint } from 'domain/constraint/NodeKeyConstraint';
+import { NodePropertyExistenceConstraint } from '../../../domain/constraint/NodePropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../domain/constraint/UniquenessConstraint';
+import { ConstraintInterface } from '../../../domain/constraint/ConstraintInterface';
 
 export class NodeConstraints {
   static new(
