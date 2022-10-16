@@ -153,6 +153,28 @@ export class Neo4jFixture {
     return result;
   }
 
+  async clearMeta(): Promise<void> {
+    const constraintsResult = await this.session().run('SHOW CONSTRAINTS');
+
+    await this.session().executeWrite(async (tsc) => {
+      await Promise.all(
+        [...constraintsResult.records].map(async (record) => {
+          await tsc.run(`DROP CONSTRAINT ${record.toObject().name}`);
+        })
+      );
+    });
+
+    const indexResult = await this.session().run('SHOW INDEXES');
+
+    await this.session().executeWrite(async (tsc) => {
+      await Promise.all(
+        [...indexResult.records].map(async (record) => {
+          await tsc.run(`DROP INDEX ${record.toObject().name}`);
+        })
+      );
+    });
+  }
+
   async teardown(): Promise<void> {
     const ids: number[] = [
       ...this.nodes.map((n) => n.identity.toNumber()),

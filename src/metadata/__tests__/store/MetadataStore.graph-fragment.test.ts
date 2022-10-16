@@ -17,6 +17,7 @@ import { FragmentPatternFormula } from '../../../domain/graph/pattern/formula/Fr
 import { AssociationPatternFormula } from '../../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
+import { Indexes } from '../../schema/index/Indexes';
 
 class GraphFragmentClass {}
 
@@ -40,10 +41,11 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
     class RelationshipClass {}
 
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], []);
+    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], [], []);
     m.registerRelationship(
       RelationshipClass,
-      new RelationshipType(RelationshipClass)
+      new RelationshipType(RelationshipClass),
+      []
     );
 
     m.addGraphNode(
@@ -70,7 +72,8 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
           NodeClass,
           new NodeLabel(NodeClass),
           new Properties(),
-          new NodeConstraints([], [], [])
+          new NodeConstraints([], [], []),
+          new Indexes([])
         )
       )
     );
@@ -81,7 +84,8 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
           RelationshipClass,
           new RelationshipType(RelationshipClass),
           new Properties(),
-          new RelationshipConstraints([])
+          new RelationshipConstraints([]),
+          new Indexes([])
         )
       )
     );

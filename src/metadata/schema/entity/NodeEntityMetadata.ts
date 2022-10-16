@@ -8,19 +8,23 @@ import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
 import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
 import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
 import { NodeConstraints } from '../constraint/NodeConstraints';
+import { Indexes } from '../index/Indexes';
 
 export class NodeEntityMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
   private readonly label: NodeLabel;
   private readonly properties: Properties;
   private readonly constraints: NodeConstraints;
+  private readonly indexes: Indexes;
 
   constructor(
     cstr: AnyClassConstructor,
     label: NodeLabel,
     properties: Properties,
-    constraints: NodeConstraints
+    constraints: NodeConstraints,
+    indexes: Indexes
   ) {
+    this.indexes = indexes;
     this.cstr = cstr;
     this.label = label;
     this.properties = properties;
@@ -65,5 +69,9 @@ export class NodeEntityMetadata implements BranchEndMetadata {
 
   getConstraints(): NodeConstraints {
     return this.constraints;
+  }
+
+  getIndexes(): Indexes {
+    return this.indexes;
   }
 }

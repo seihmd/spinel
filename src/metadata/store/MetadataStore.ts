@@ -32,6 +32,9 @@ import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/As
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
 import { NodeConstraints } from '../schema/constraint/NodeConstraints';
 import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
+import { IndexOption } from '../../decorator/class/IndexOption';
+import { Indexes } from '../schema/index/Indexes';
+import { IndexInterface } from '../../domain/index/IndexInterface';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
@@ -91,7 +94,8 @@ export class MetadataStore implements MetadataStoreInterface {
     cstr: AnyClassConstructor,
     label: NodeLabel,
     unique: string[],
-    key: string[][]
+    key: string[][],
+    indexes: IndexOption[]
   ): void {
     const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.nodeEntityMap.register(
@@ -100,14 +104,16 @@ export class MetadataStore implements MetadataStoreInterface {
         cstr,
         label,
         properties,
-        NodeConstraints.new(key, unique, label, properties)
+        NodeConstraints.new(key, unique, label, properties),
+        Indexes.new(label, indexes, properties)
       )
     );
   }
 
   registerRelationship(
     cstr: AnyClassConstructor,
-    type: RelationshipType
+    type: RelationshipType,
+    indexes: IndexOption[]
   ): void {
     const properties = this.propertiesMap.get(cstr) ?? new Properties();
     this.relationshipEntityMap.register(
@@ -116,7 +122,8 @@ export class MetadataStore implements MetadataStoreInterface {
         cstr,
         type,
         properties,
-        RelationshipConstraints.new(type, properties)
+        RelationshipConstraints.new(type, properties),
+        Indexes.new(type, indexes, properties)
       )
     );
   }
@@ -267,6 +274,15 @@ export class MetadataStore implements MetadataStoreInterface {
       ...this.nodeEntityMap.getAll().map((n) => n.getConstraints()),
       ...this.relationshipEntityMap.getAll().map((r) => r.getConstraints()),
     ];
+  }
+
+  getAllIndexes(): IndexInterface[] {
+    return [
+      ...this.nodeEntityMap.getAll().map((n) => n.getIndexes().getAll()),
+      ...this.relationshipEntityMap
+        .getAll()
+        .map((r) => r.getIndexes().getAll()),
+    ].flat();
   }
 }
 

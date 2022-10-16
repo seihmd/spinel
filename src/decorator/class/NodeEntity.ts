@@ -1,11 +1,13 @@
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 
 import { NodeLabel } from '../../domain/node/NodeLabel';
+import { IndexOption } from './IndexOption';
 
 interface NodeEntityOption {
   label?: string;
   unique?: string[];
   keys?: string[][];
+  indexes?: IndexOption[];
 }
 
 export function NodeEntity(option?: NodeEntityOption) {
@@ -17,7 +19,8 @@ export function NodeEntity(option?: NodeEntityOption) {
       cstr,
       new NodeLabel(option?.label ?? cstr),
       option?.unique ?? [],
-      option?.keys ?? []
+      option?.keys ?? [],
+      option?.indexes ?? []
     );
   };
 }

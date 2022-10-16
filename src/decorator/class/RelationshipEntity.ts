@@ -1,8 +1,10 @@
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
+import { IndexOption } from './IndexOption';
 
 interface RelationshipEntityOption {
   type?: string;
+  indexes?: IndexOption[];
 }
 
 export function RelationshipEntity(
@@ -14,7 +16,8 @@ export function RelationshipEntity(
   ) {
     getMetadataStore().registerRelationship(
       cstr,
-      new RelationshipType(option?.type ?? cstr)
+      new RelationshipType(option?.type ?? cstr),
+      option?.indexes ?? []
     );
   };
 }

@@ -10,13 +10,14 @@ import { MetadataStore } from '../../store/MetadataStore';
 import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
 import { NodePropertyExistenceConstraint } from '../../../query/constraint/NodePropertyExistenceConstraint';
 import { UniquenessConstraint } from '../../../query/constraint/UniquenessConstraint';
+import { Indexes } from '../../schema/index/Indexes';
 
 class NodeClass {}
 
 describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
   test('with no properties', () => {
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
+    m.registerNode(NodeClass, new NodeLabel('User'), [], [], []);
 
     const n = m.getNodeEntityMetadata(NodeClass);
     expect(n).toStrictEqual(
@@ -24,7 +25,8 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
         NodeClass,
         new NodeLabel('User'),
         new Properties(),
-        new NodeConstraints([], [], [])
+        new NodeConstraints([], [], []),
+        new Indexes([])
       )
     );
   });
@@ -45,7 +47,7 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
       null,
       false
     );
-    m.registerNode(NodeClass, new NodeLabel('User'), [], []);
+    m.registerNode(NodeClass, new NodeLabel('User'), [], [], []);
 
     const properties = new Properties();
     properties.set(
@@ -82,7 +84,8 @@ describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
           [],
           [new NodePropertyExistenceConstraint(new NodeLabel('User'), '_p1')],
           [new UniquenessConstraint(new NodeLabel('User'), '_p1')]
-        )
+        ),
+        new Indexes([])
       )
     );
   });

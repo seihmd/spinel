@@ -36,6 +36,36 @@ describe('NodeEntity', () => {
         class NodeClass {}
       },
     ],
+    [
+      () => {
+        @NodeEntity({
+          indexes: [
+            {
+              type: 'text',
+              on: ['p1'],
+            },
+          ],
+        })
+        class NodeClass {}
+      },
+    ],
+    [
+      () => {
+        @NodeEntity({
+          indexes: [
+            {
+              name: 'index_NodeClass_p1',
+              type: 'btree',
+              on: ['p1'],
+              options:
+                '{indexConfig: {`spatial.cartesian.min`: [-100.0, -100.0], ' +
+                '`spatial.cartesian.max`: [100.0, 100.0]}}',
+            },
+          ],
+        })
+        class NodeClass {}
+      },
+    ],
   ])('Valid definition', (definition: () => void) => {
     expect(definition).not.toThrowError();
   });
