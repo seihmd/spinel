@@ -9,13 +9,14 @@ import { MetadataStore } from '../../store/MetadataStore';
 import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEntityMetadata';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
 import { RelationshipPropertyExistenceConstraint } from '../../../query/constraint/RelationshipPropertyExistenceConstraint';
+import { Indexes } from '../../schema/index/Indexes';
 
 class RelationshipClass {}
 
 describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
   test('with no properties', () => {
     const m = new MetadataStore();
-    m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
+    m.registerRelationship(RelationshipClass, new RelationshipType('HAS'), []);
 
     const n = m.getRelationshipEntityMetadata(RelationshipClass);
     expect(n).toStrictEqual(
@@ -23,7 +24,8 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
         RelationshipClass,
         new RelationshipType('HAS'),
         new Properties(),
-        new RelationshipConstraints([])
+        new RelationshipConstraints([]),
+        new Indexes([])
       )
     );
   });
@@ -50,7 +52,7 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
       null,
       false
     );
-    m.registerRelationship(RelationshipClass, new RelationshipType('HAS'));
+    m.registerRelationship(RelationshipClass, new RelationshipType('HAS'), []);
 
     const properties = new Properties();
     properties.set(
@@ -89,7 +91,8 @@ describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
             new RelationshipType('HAS'),
             '_p1'
           ),
-        ])
+        ]),
+        new Indexes([])
       )
     );
   });

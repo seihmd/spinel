@@ -17,6 +17,7 @@ import { RelationshipEntityMetadata } from '../../schema/entity/RelationshipEnti
 import { AssociationPatternFormula } from '../../../domain/graph/pattern/formula/AssociationPatternFormula';
 import { NodeConstraints } from '../../schema/constraint/NodeConstraints';
 import { RelationshipConstraints } from '../../schema/constraint/RelationshipConstraints';
+import { Indexes } from '../../schema/index/Indexes';
 
 class GraphClass {}
 
@@ -40,10 +41,11 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     class RelationshipClass {}
 
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], []);
+    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], [], []);
     m.registerRelationship(
       RelationshipClass,
-      new RelationshipType(RelationshipClass)
+      new RelationshipType(RelationshipClass),
+      []
     );
 
     m.addGraphNode(GraphClass, new GraphNodePropertyType('p1', NodeClass));
@@ -67,7 +69,8 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
           NodeClass,
           new NodeLabel(NodeClass),
           new Properties(),
-          new NodeConstraints([], [], [])
+          new NodeConstraints([], [], []),
+          new Indexes([])
         )
       )
     );
@@ -78,7 +81,8 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
           RelationshipClass,
           new RelationshipType(RelationshipClass),
           new Properties(),
-          new RelationshipConstraints([])
+          new RelationshipConstraints([]),
+          new Indexes([])
         )
       )
     );

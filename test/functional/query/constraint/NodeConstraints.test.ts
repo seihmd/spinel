@@ -10,6 +10,10 @@ import { ConstraintData } from '../../../../src/query/constraint/ConstraintData'
 const neo4jFixture = Neo4jFixture.new();
 
 describe('NodeConstraints', () => {
+  beforeEach(async () => {
+    await neo4jFixture.clearMeta();
+  });
+
   afterEach(async () => {
     await neo4jFixture.teardown();
   });

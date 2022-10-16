@@ -15,6 +15,8 @@ import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/As
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
 import { NodeConstraints } from '../schema/constraint/NodeConstraints';
 import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
+import { IndexOption } from '../../decorator/class/IndexOption';
+import { IndexInterface } from '../../domain/index/IndexInterface';
 
 export interface MetadataStoreInterface {
   setPrimary(
@@ -55,10 +57,15 @@ export interface MetadataStoreInterface {
     cstr: AnyClassConstructor,
     label: NodeLabel,
     unique: string[],
-    keys: string[][]
+    keys: string[][],
+    indexes: IndexOption[]
   ): void;
 
-  registerRelationship(cstr: AnyClassConstructor, type: RelationshipType): void;
+  registerRelationship(
+    cstr: AnyClassConstructor,
+    type: RelationshipType,
+    indexes: IndexOption[]
+  ): void;
 
   registerGraph(cstr: AnyClassConstructor, formula: string): void;
 
@@ -87,4 +94,6 @@ export interface MetadataStoreInterface {
   ): GraphFragmentMetadata | null;
 
   getAllConstraints(): (NodeConstraints | RelationshipConstraints)[];
+
+  getAllIndexes(): IndexInterface[];
 }

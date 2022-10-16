@@ -10,6 +10,9 @@ import { RelationshipEntity } from '../../../../src/decorator/class/Relationship
 const neo4jFixture = Neo4jFixture.new();
 
 describe('relationship constraints', () => {
+  beforeEach(async () => {
+    await neo4jFixture.clearMeta();
+  });
   afterEach(async () => {
     await neo4jFixture.teardown();
   });
