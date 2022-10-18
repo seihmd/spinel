@@ -1,10 +1,10 @@
 import { BranchQueryContext } from './BranchQueryContext';
-import { ReturnClause } from '../clause/ReturnClause';
+import { ReturnClause } from '../../clause/ReturnClause';
 import { StemQueryContext } from './StemQueryContext';
-import { MatchPathClause } from '../clause/MatchPathClause';
-import { MapLiteral } from '../literal/MapLiteral';
-import { MapEntryLiteral } from '../literal/MapEntryLiteral';
-import { WhereClause } from '../clause/WhereClause';
+import { MatchPathClause } from '../../clause/MatchPathClause';
+import { MapLiteral } from '../../literal/MapLiteral';
+import { MapEntryLiteral } from '../../literal/MapEntryLiteral';
+import { WhereClause } from '../../clause/WhereClause';
 
 export class Query {
   private stemQueryContext: StemQueryContext;

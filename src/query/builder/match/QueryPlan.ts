@@ -1,11 +1,11 @@
 import { Driver } from 'neo4j-driver';
 import { QueryBuilder } from './QueryBuilder';
 import { StemBuilder } from './StemBuilder';
-import { ClassConstructor } from '../../domain/type/ClassConstructor';
-import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
-import { Depth } from '../../domain/graph/branch/Depth';
-import { WhereQueries } from './where/WhereQueries';
-import { getMetadataStore } from '../../metadata/store/MetadataStore';
+import { ClassConstructor } from '../../../domain/type/ClassConstructor';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { WhereQueries } from '../where/WhereQueries';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { toInstance } from 'util/toInstance';
 
 export class QueryPlan {

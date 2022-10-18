@@ -1,18 +1,18 @@
 import 'reflect-metadata';
-import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
-import { Primary } from '../../../src/decorator/property/Primary';
-import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { GraphFragment } from '../../../src/decorator/class/GraphFragment';
-import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
-import { IdFixture } from '../fixtures/IdFixture';
-import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
-import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
-import { Depth } from '../../../src/domain/graph/branch/Depth';
+import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
+import { IdFixture } from '../../fixtures/IdFixture';
+import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
+import { GraphNode } from '../../../../src/decorator/property/GraphNode';
+import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
+import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
+import { Depth } from '../../../../src/domain/graph/branch/Depth';
+import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { Graph } from '../../../../src/decorator/class/Graph';
+import { Primary } from '../../../../src/decorator/property/Primary';
+import { GraphFragment } from '../../../../src/decorator/class/GraphFragment';
+import { StemBuilder } from '../../../../src/query/builder/match/StemBuilder';
+import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
 const neo4jFixture = Neo4jFixture.new();
 

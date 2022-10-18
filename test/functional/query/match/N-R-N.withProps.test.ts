@@ -1,19 +1,19 @@
 import 'reflect-metadata';
-import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
-import { Primary } from '../../../src/decorator/property/Primary';
-import { Property } from '../../../src/decorator/property/Property';
-import { RelationshipEntity } from '../../../src/decorator/class/RelationshipEntity';
-import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { GraphRelationship } from '../../../src/decorator/property/GraphRelationship';
-import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { IdFixture } from '../fixtures/IdFixture';
-import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
-import { Depth } from '../../../src/domain/graph/branch/Depth';
-import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
+import { GraphRelationship } from '../../../../src/decorator/property/GraphRelationship';
+import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
+import { IdFixture } from '../../fixtures/IdFixture';
+import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
+import { GraphNode } from '../../../../src/decorator/property/GraphNode';
+import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
+import { RelationshipEntity } from '../../../../src/decorator/class/RelationshipEntity';
+import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
+import { Depth } from '../../../../src/domain/graph/branch/Depth';
+import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { Graph } from '../../../../src/decorator/class/Graph';
+import { Primary } from '../../../../src/decorator/property/Primary';
+import { StemBuilder } from '../../../../src/query/builder/match/StemBuilder';
+import { Property } from '../../../../src/decorator/property/Property';
+import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -65,7 +65,7 @@ class ShopCustomer {
 
 const id = new IdFixture();
 
-describe('map Neo4j Record into N-R-N Graph class', () => {
+describe('map Neo4j Record into N-R-N Graph class with property', () => {
   beforeAll(async () => {
     const node1 = await neo4jFixture.addNode('Shop', {
       id: id.get('shop'),
@@ -90,7 +90,11 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
 
   test('QueryBuilder', () => {
     const queryBuilder = new QueryBuilder(StemBuilder.new());
-    const query = queryBuilder.build(ShopCustomer, new WhereQueries([]));
+    const query = queryBuilder.build(
+      ShopCustomer,
+      new WhereQueries([]),
+      Depth.withDefault()
+    );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
         'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
@@ -100,14 +104,21 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
+    const whereQueries = new WhereQueries([
+      new WhereQuery(null, '{shop}.id = $shop.id'),
+    ]);
+
     const results = await queryPlan.execute(
       ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
+      whereQueries,
       Depth.withDefault(),
       {
         shop: { id: id.get('shop') },
+        isCustomer: { visited: new Date('2022-01-01') },
+        customer: { birthday: new Date('2000-01-01') },
       }
     );
+
     expect(results).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop'), 'MyShop'),

@@ -1,23 +1,23 @@
-import { Stem } from '../path/Stem';
-import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { GraphMetadata } from '../../metadata/schema/graph/GraphMetadata';
-import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
-import { GraphBranchMetadata } from '../../metadata/schema/graph/GraphBranchMetadata';
-import { Branch } from '../path/Branch';
-import { Depth } from '../../domain/graph/branch/Depth';
-import { GraphFragmentMetadata } from '../../metadata/schema/graph/GraphFragmentMetadata';
-import { BranchIndexes } from '../meterial/BranchIndexes';
-import { WhereQueries } from './where/WhereQueries';
-import { StemMaterialBuilder } from '../meterial/stem/StemMaterialBuilder';
-import { StemMaterial } from '../meterial/stem/StemMaterial';
-import { getMetadataStore } from '../../metadata/store/MetadataStore';
-import { TermElementBuilder } from '../meterial/stem/TermElementBuilder';
-import { TermElementBuilder as BranchTermElementBuilder } from '../meterial/branch/TermElementBuilder';
-import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
-import { BranchMaterialBuilder } from '../meterial/branch/BranchMaterialBuilder';
-import { GraphBranchMaterialBuilder } from '../meterial/branch/GraphBranchMaterialBuilder';
-import { NodeBranchMaterialBuilder } from '../meterial/branch/NodeBranchMaterialBuilder';
-import { FragmentBranchMaterialBuilder } from '../meterial/branch/FragmentBranchMaterialBuilder';
+import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
+import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
+import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
+import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
+import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
+import { WhereQueries } from '../where/WhereQueries';
+import { BranchIndexes } from '../../meterial/BranchIndexes';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { Stem } from '../../path/Stem';
+import { GraphBranchMaterialBuilder } from '../../meterial/branch/GraphBranchMaterialBuilder';
+import { StemMaterial } from '../../meterial/stem/StemMaterial';
+import { Branch } from '../../path/Branch';
+import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
+import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
+import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
+import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
+import { TermElementBuilder as BranchTermElementBuilder } from '../../meterial/branch/TermElementBuilder';
 
 export class StemBuilder {
   static new(): StemBuilder {

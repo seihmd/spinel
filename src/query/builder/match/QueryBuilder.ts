@@ -1,10 +1,10 @@
-import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
+import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { StemQueryContext } from './StemQueryContext';
 import { BranchQueryContext } from './BranchQueryContext';
 import { Query } from './Query';
 import { StemBuilder } from './StemBuilder';
-import { Depth } from '../../domain/graph/branch/Depth';
-import { WhereQueries } from './where/WhereQueries';
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { WhereQueries } from '../where/WhereQueries';
 
 export class QueryBuilder {
   private readonly stemBuilder: StemBuilder;
