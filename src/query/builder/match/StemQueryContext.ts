@@ -1,9 +1,9 @@
-import { NodeLiteral } from '../literal/NodeLiteral';
-import { Stem } from '../path/Stem';
-import { PathLiteral } from '../literal/PathLiteral';
-import { PathStepLiteral } from '../literal/PathStepLiteral';
-import { Depth } from '../../domain/graph/branch/Depth';
-import { WhereLiteral } from '../literal/WhereLiteral';
+import { NodeLiteral } from '../../literal/NodeLiteral';
+import { Stem } from '../../path/Stem';
+import { PathLiteral } from '../../literal/PathLiteral';
+import { PathStepLiteral } from '../../literal/PathStepLiteral';
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { WhereLiteral } from '../../literal/WhereLiteral';
 
 export class StemQueryContext {
   private readonly stem: Stem;

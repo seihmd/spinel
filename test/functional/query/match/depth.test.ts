@@ -1,16 +1,17 @@
 import 'reflect-metadata';
-import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
-import { Primary } from '../../../src/decorator/property/Primary';
-import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { IdFixture } from '../fixtures/IdFixture';
-import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
+
 import { Node } from 'neo4j-driver-core';
-import { Depth } from '../../../src/domain/graph/branch/Depth';
-import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
-import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
+import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { Graph } from '../../../../src/decorator/class/Graph';
+import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
+import { IdFixture } from '../../fixtures/IdFixture';
+import { Primary } from '../../../../src/decorator/property/Primary';
+import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
+import { GraphNode } from '../../../../src/decorator/property/GraphNode';
+import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
+import { Depth } from '../../../../src/domain/graph/branch/Depth';
+import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
 const neo4jFixture = Neo4jFixture.new();
 

@@ -35,20 +35,20 @@ export class NodeLiteral extends EntityLiteral {
 
   get(partial: Partial<EntityLiteralOption> = {}): string {
     const option = this.getOption(partial);
-    return `(${this.createVariableName(option)}${this.createLabel(
+    return `(${this.getVariableName(option)}${this.getLabel(
       option
-    )}${this.createParameter(option)})`;
+    )}${this.getParameter(option)})`;
   }
 
-  private createVariableName(option: EntityLiteralOption): string {
-    if (!option.variable) {
+  getVariableName(option: EntityLiteralOption | null = null): string {
+    if (option !== null && !option.variable) {
       return '';
     }
 
     return this.variableName;
   }
 
-  private createLabel(option: EntityLiteralOption): string {
+  private getLabel(option: EntityLiteralOption): string {
     if (!option.labelType) {
       return '';
     }
@@ -59,7 +59,7 @@ export class NodeLiteral extends EntityLiteral {
     return ':' + this.nodeLabel.toString();
   }
 
-  private createParameter(option: EntityLiteralOption): string {
+  private getParameter(option: EntityLiteralOption): string {
     if (!option.parameter) {
       return '';
     }

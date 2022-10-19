@@ -8,6 +8,10 @@ import { Path } from '../../path/Path';
 import { ElementBuilderInterface } from './ElementBuilderInterface';
 import { StemMaterial } from './StemMaterial';
 import { PlainGraph } from '../../element/PlainGraph';
+import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
+import { NodeElement } from '../../element/NodeElement';
+import { ElementContext } from '../../element/ElementContext';
+import { BranchIndexes } from '../BranchIndexes';
 
 export class StemMaterialBuilder {
   private elementBuilder: ElementBuilderInterface;
@@ -16,8 +20,23 @@ export class StemMaterialBuilder {
     this.elementBuilder = elementBuilder;
   }
 
-  build(graphMetadata: GraphMetadata, instance?: PlainGraph): StemMaterial {
-    const elements = graphMetadata
+  build(
+    metadata: GraphMetadata | NodeEntityMetadata,
+    instance?: PlainGraph
+  ): StemMaterial {
+    if (metadata instanceof NodeEntityMetadata) {
+      return new StemMaterial(
+        Path.new([
+          new NodeElement(
+            new NodeKeyTerm('n'),
+            metadata,
+            new ElementContext(new BranchIndexes([]), 0, false)
+          ),
+        ])
+      );
+    }
+
+    const elements = metadata
       .getFormula()
       .get()
       .map((term, i) => {
@@ -25,7 +44,7 @@ export class StemMaterialBuilder {
           return this.elementBuilder.createNodeElement(
             term,
             i,
-            graphMetadata,
+            metadata,
             instance?.getEntity(term.getKey())
           );
         }
@@ -36,7 +55,7 @@ export class StemMaterialBuilder {
           return this.elementBuilder.createRelationshipElement(
             term,
             i,
-            graphMetadata,
+            metadata,
             instance?.getEntity(term.getKey())
           );
         }

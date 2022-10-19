@@ -1,18 +1,17 @@
 import 'reflect-metadata';
-import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
-import { Primary } from '../../../src/decorator/property/Primary';
-import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { GraphFragment } from '../../../src/decorator/class/GraphFragment';
-import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
-import { IdFixture } from '../fixtures/IdFixture';
-import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
-import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
-import { Depth } from '../../../src/domain/graph/branch/Depth';
+import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
+import { IdFixture } from '../../fixtures/IdFixture';
+import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
+import { GraphNode } from '../../../../src/decorator/property/GraphNode';
+import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
+import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
+import { Depth } from '../../../../src/domain/graph/branch/Depth';
+import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { Graph } from '../../../../src/decorator/class/Graph';
+import { Primary } from '../../../../src/decorator/property/Primary';
+import { GraphFragment } from '../../../../src/decorator/class/GraphFragment';
+import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -46,7 +45,7 @@ class FavoriteItem {
 @Graph('shop')
 class ShopCustomerFavorites {
   @GraphNode() private shop: Shop;
-  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer@customer')
+  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer')
   private favoriteItems: FavoriteItem[];
 
   constructor(shop: Shop, favoriteItems: FavoriteItem[]) {
@@ -87,22 +86,17 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
     await neo4jFixture.teardown();
   });
 
-  const whereQueries = new WhereQueries([
-    new WhereQuery(
-      'favoriteItems',
-      '{shop}.id=$shop.id AND ({customer}) AND [{*.hasFavorite}] AND ({*.item})'
-    ),
-  ]);
-
   test('QueryBuilder', () => {
-    const queryBuilder = new QueryBuilder(StemBuilder.new());
-    const query = queryBuilder.build(ShopCustomerFavorites, whereQueries);
+    const queryBuilder = QueryBuilder.new();
+    const query = queryBuilder.build(
+      ShopCustomerFavorites,
+      new WhereQueries([])
+    );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
-        'RETURN {shop:n0{.*},' +
-        'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item) ' +
-        'WHERE n0.id=$shop.id AND (b0_n4) AND [b0_r6] AND (b0_n8)' +
-        '|{item:b0_n8{.*}}]} AS _'
+      'RETURN {shop:n0{.*},' +
+      'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item)' +
+      '|{item:b0_n8{.*}}]} AS _'
     );
   });
 

@@ -1,17 +1,16 @@
 import 'reflect-metadata';
-import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { NodeEntity } from '../../../src/decorator/class/NodeEntity';
-import { Primary } from '../../../src/decorator/property/Primary';
-import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { Graph } from '../../../src/decorator/class/Graph';
-import { QueryPlan } from '../../../src/query/builder/QueryPlan';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
-import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
-import { Depth } from '../../../src/domain/graph/branch/Depth';
-import { StemBuilder } from '../../../src/query/builder/StemBuilder';
-import { IdFixture } from '../fixtures/IdFixture';
-import { WhereQueries } from '../../../src/query/builder/where/WhereQueries';
-import { WhereQuery } from '../../../src/query/builder/where/WhereQuery';
+import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
+import { IdFixture } from '../../fixtures/IdFixture';
+import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
+import { GraphNode } from '../../../../src/decorator/property/GraphNode';
+import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
+import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
+import { Depth } from '../../../../src/domain/graph/branch/Depth';
+import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { Graph } from '../../../../src/decorator/class/Graph';
+import { Primary } from '../../../../src/decorator/property/Primary';
+import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -84,7 +83,7 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
   });
 
   test('QueryBuilder', () => {
-    const queryBuilder = new QueryBuilder(StemBuilder.new());
+    const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(
       ShopItemTags,
       new WhereQueries([]),
@@ -92,9 +91,9 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
     );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
-        'RETURN {shop:n0{.*},' +
-        'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
-        'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} AS _'
+      'RETURN {shop:n0{.*},' +
+      'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
+      'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} AS _'
     );
   });
 

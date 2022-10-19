@@ -1,8 +1,8 @@
-import { StemQueryContext } from '../../builder/StemQueryContext';
 import { Stem } from '../../path/Stem';
 import { Path } from '../../path/Path';
 import { ElementFixture } from './ElementFixture';
 import { Depth } from '../../../domain/graph/branch/Depth';
+import { StemQueryContext } from '../../builder/match/StemQueryContext';
 
 describe(`${StemQueryContext.name}`, () => {
   test('N-R-N', () => {

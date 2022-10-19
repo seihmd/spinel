@@ -12,6 +12,10 @@ export class MapEntryLiteral {
   }
 
   get(): string {
-    return `${this.entry[0]}:${this.entry[1]}`;
+    return `${this.entry[0]}:${this.getValue()}`;
+  }
+
+  getValue(): string {
+    return this.entry[1];
   }
 }

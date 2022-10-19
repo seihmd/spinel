@@ -1,9 +1,9 @@
 import { ElementFixture } from './ElementFixture';
-import { BranchQueryContext } from '../../builder/BranchQueryContext';
 
 import { Path } from '../../path/Path';
 import { Branch } from '../../path/Branch';
 import { GraphBranchMaterial } from '../../meterial/branch/GraphBranchMaterial';
+import { BranchQueryContext } from '../../builder/match/BranchQueryContext';
 
 describe(`${BranchQueryContext.name}`, () => {
   test('-R-N', () => {
