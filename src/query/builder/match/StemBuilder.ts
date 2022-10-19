@@ -2,7 +2,6 @@ import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
 import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
 import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
 import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
-import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { WhereQueries } from '../where/WhereQueries';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
@@ -47,11 +46,10 @@ export class StemBuilder {
   }
 
   build(
-    cstr: AnyClassConstructor,
+    graphMetadata: GraphMetadata,
     whereQueries: WhereQueries,
     depth: Depth
   ): Stem {
-    const graphMetadata = this.metadataStore.getGraphMetadata(cstr);
     const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
 
     return new Stem(

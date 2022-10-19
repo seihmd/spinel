@@ -10,7 +10,6 @@ import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
-import { StemBuilder } from '../../../../src/query/builder/match/StemBuilder';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
@@ -151,7 +150,7 @@ describe('map Neo4j Record into N-:R-N-G[] Graph class', () => {
   });
 
   test('QueryBuilder', () => {
-    const queryBuilder = new QueryBuilder(StemBuilder.new());
+    const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(
       ShopCustomer,
       new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')])

@@ -10,7 +10,6 @@ import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { GraphFragment } from '../../../../src/decorator/class/GraphFragment';
-import { StemBuilder } from '../../../../src/query/builder/match/StemBuilder';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
@@ -95,7 +94,7 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
   ]);
 
   test('QueryBuilder', () => {
-    const queryBuilder = new QueryBuilder(StemBuilder.new());
+    const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(ShopCustomerFavorites, whereQueries);
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +

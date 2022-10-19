@@ -9,7 +9,6 @@ import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
-import { StemBuilder } from '../../../../src/query/builder/match/StemBuilder';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
 
@@ -84,7 +83,7 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
   });
 
   test('QueryBuilder', () => {
-    const queryBuilder = new QueryBuilder(StemBuilder.new());
+    const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(
       ShopItemTags,
       new WhereQueries([]),
@@ -92,9 +91,9 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
     );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
-        'RETURN {shop:n0{.*},' +
-        'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
-        'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} AS _'
+      'RETURN {shop:n0{.*},' +
+      'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
+      'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} AS _'
     );
   });
 
