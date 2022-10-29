@@ -115,14 +115,15 @@ describe('map Neo4j Record into Graph class with depth', () => {
   ])('map nested graphs', async (depth: Depth, expected: SimilarItems) => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      SimilarItems,
-      new WhereQueries([new WhereQuery(null, '{item}.id=$item.id')]),
+    const results = await queryPlan.execute(SimilarItems, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{item}.id=$item.id'),
+      ]),
       depth,
-      {
+      parameters: {
         item: { id: id.get('item') },
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([expected]);
   });
 });

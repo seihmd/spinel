@@ -5,7 +5,6 @@ import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
@@ -108,14 +107,14 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomerFavorites,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      Depth.withDefault(),
-      {
+    const results = await queryPlan.execute(ShopCustomerFavorites, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      parameters: {
         shop: { id: id.get('shop') },
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomerFavorites(new Shop(id.get('shop')), [
         new FavoriteItem(new Item(id.get('item2'))),

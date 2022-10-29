@@ -5,7 +5,6 @@ import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
@@ -84,22 +83,22 @@ describe('map Neo4j Record into N-:R-N[] Graph class', () => {
     const query = queryBuilder.build(ShopCustomer, new WhereQueries([]));
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
-      'RETURN {shop:n0{.*},' +
-      'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} AS _'
+        'RETURN {shop:n0{.*},' +
+        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} AS _'
     );
   });
 
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      Depth.withDefault(),
-      {
+    const results = await queryPlan.execute(ShopCustomer, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      parameters: {
         shop: { id: id.get('shop1') },
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomer(new Shop(id.get('shop1')), [
         new User(id.get('customer2')),
@@ -111,14 +110,14 @@ describe('map Neo4j Record into N-:R-N[] Graph class', () => {
   test('no customers', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      Depth.withDefault(),
-      {
+    const results = await queryPlan.execute(ShopCustomer, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      parameters: {
         shop: { id: id.get('shop2') },
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomer(new Shop(id.get('shop2')), []),
     ]);

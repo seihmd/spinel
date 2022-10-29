@@ -111,7 +111,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     new WhereQuery(
       null,
       '{isCustomer}.visited >= $visitedFrom AND ' +
-      '{customer}.email =~ $emailPattern'
+        '{customer}.email =~ $emailPattern'
     ),
   ]);
 
@@ -125,23 +125,21 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
 
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
-      'WHERE r2.visited >= $visitedFrom AND n4.email =~ $emailPattern ' +
-      'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
+        'WHERE r2.visited >= $visitedFrom AND n4.email =~ $emailPattern ' +
+        'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
     );
   });
 
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-    const results = await queryPlan.execute(
-      ShopCustomer,
+    const results = await queryPlan.execute(ShopCustomer, {
       whereQueries,
-      Depth.withDefault(),
-      {
+      parameters: {
         shop: { id: id.get('shop') },
         visitedFrom: '2020-01-01',
         emailPattern: 'customer3@.*',
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop')),

@@ -107,16 +107,14 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
       new WhereQuery(null, '{shop}.id = $shop.id'),
     ]);
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
+    const results = await queryPlan.execute(ShopCustomer, {
       whereQueries,
-      Depth.withDefault(),
-      {
+      parameters: {
         shop: { id: id.get('shop') },
         isCustomer: { visited: new Date('2022-01-01') },
         customer: { birthday: new Date('2000-01-01') },
-      }
-    );
+      },
+    });
 
     expect(results).toStrictEqual([
       new ShopCustomer(

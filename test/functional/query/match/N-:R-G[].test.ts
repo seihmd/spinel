@@ -102,9 +102,10 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
 
     const results = await queryPlan.execute(
       ShopItemTags,
-      new WhereQueries([new WhereQuery(null, '{shop}.id = $shopId')]),
-      Depth.withDefault(),
-      { shopId: id.get('shop') }
+      {
+        whereQueries: new WhereQueries([new WhereQuery(null, '{shop}.id = $shopId')]),
+        parameters: { shopId: id.get('shop') }
+      }
     );
     expect(results).toStrictEqual([
       new ShopItemTags(new Shop(id.get('shop')), [

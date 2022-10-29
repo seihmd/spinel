@@ -43,7 +43,7 @@ class IsCustomer {
 }
 
 @NodeEntity()
-export class Item {
+class Item {
   @Primary() private id: string;
 
   constructor(id: string) {
@@ -169,12 +169,13 @@ describe('map Neo4j Record into N-:R-N-G[] Graph class', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      new Depth(2),
-      { shop: { id: id.get('shop') } }
-    );
+    const results = await queryPlan.execute(ShopCustomer, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      depth: new Depth(2),
+      parameters: { shop: { id: id.get('shop') } },
+    });
     expect(results).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop')),

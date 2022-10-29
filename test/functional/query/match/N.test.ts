@@ -4,7 +4,6 @@ import { IdFixture } from '../../fixtures/IdFixture';
 import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { Property } from '../../../../src/decorator/property/Property';
@@ -56,14 +55,14 @@ describe('map Neo4j Record into Node class', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      Shop,
-      new WhereQueries([new WhereQuery(null, '{*}.id IN $shopIds')]),
-      Depth.withDefault(),
-      {
+    const results = await queryPlan.execute(Shop, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{*}.id IN $shopIds'),
+      ]),
+      parameters: {
         shopIds: [id.get('shop1'), id.get('shop2')],
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new Shop(id.get('shop1'), 'Shop1'),
       new Shop(id.get('shop2'), 'Shop2'),

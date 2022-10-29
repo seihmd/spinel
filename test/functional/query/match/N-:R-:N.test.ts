@@ -8,7 +8,6 @@ import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 
 const neo4jFixture = Neo4jFixture.new();
@@ -66,9 +65,10 @@ describe('map Neo4j Record into N-:R-:N Graph class', () => {
 
     const results = await queryPlan.execute(
       ShopCustomer,
-      whereQueries,
-      Depth.withDefault(),
-      { shopId: id.get('shop') }
+      {
+        whereQueries,
+        parameters: { shopId: id.get('shop') }
+      }
     );
     expect(results).toStrictEqual([new ShopCustomer(new Shop(id.get('shop')))]);
   });

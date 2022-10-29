@@ -8,7 +8,6 @@ import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
 import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { TransformerInterface } from '../../../../src/metadata/schema/transformation/transformer/TransformerInterface';
@@ -93,14 +92,12 @@ describe('Date Transformer', () => {
       new WhereQuery(null, '{n}.id = $id'),
     ]);
 
-    const results = await queryPlan.execute(
-      TestGraph,
+    const results = await queryPlan.execute(TestGraph, {
       whereQueries,
-      Depth.withDefault(),
-      {
+      parameters: {
         id: id.get('id'),
-      }
-    );
+      },
+    });
 
     expect(results).toStrictEqual([
       new TestGraph(new Node(id.get('id'), date, date)),
