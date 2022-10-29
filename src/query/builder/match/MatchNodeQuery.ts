@@ -4,6 +4,7 @@ import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { WhereQuery } from '../where/WhereQuery';
 import { WhereLiteral } from '../../literal/WhereLiteral';
+import { VariableMap } from '../../literal/util/VariableMap';
 
 export class MatchNodeQuery {
   private readonly nodeLiteral: NodeLiteral;
@@ -30,9 +31,10 @@ export class MatchNodeQuery {
     }
 
     return ` ${new WhereClause(
-      new WhereLiteral(this.whereQuery.getQuery(), {
-        '*': this.nodeLiteral.getVariableName(),
-      })
+      WhereLiteral.newWithVariableMap(
+        this.whereQuery.getQuery(),
+        new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
+      )
     ).get()} `;
   }
 
