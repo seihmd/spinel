@@ -12,6 +12,7 @@ import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -153,7 +154,8 @@ describe('map Neo4j Record into N-:R-N-G[] Graph class', () => {
     const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(
       ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')])
+      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
+      new OrderByQueries([])
     );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +

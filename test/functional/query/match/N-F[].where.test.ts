@@ -11,6 +11,7 @@ import { Primary } from '../../../../src/decorator/property/Primary';
 import { GraphFragment } from '../../../../src/decorator/class/GraphFragment';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -94,7 +95,11 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
 
   test('QueryBuilder', () => {
     const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(ShopCustomerFavorites, whereQueries);
+    const query = queryBuilder.build(
+      ShopCustomerFavorites,
+      whereQueries,
+      new OrderByQueries([])
+    );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
         'RETURN {shop:n0{.*},' +

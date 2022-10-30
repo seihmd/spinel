@@ -17,6 +17,7 @@ import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBra
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
 import { TermElementBuilder as BranchTermElementBuilder } from '../../meterial/branch/TermElementBuilder';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 export class StemBuilder {
   static new(): StemBuilder {
@@ -48,6 +49,7 @@ export class StemBuilder {
   build(
     graphMetadata: GraphMetadata,
     whereQueries: WhereQueries,
+    orderByQueries: OrderByQueries,
     depth: Depth
   ): Stem {
     const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
@@ -55,6 +57,7 @@ export class StemBuilder {
     return new Stem(
       stemMaterial.getPath(),
       whereQueries.ofStem(),
+      orderByQueries,
       this.buildBranches(
         graphMetadata,
         stemMaterial,

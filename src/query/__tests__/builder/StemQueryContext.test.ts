@@ -3,6 +3,7 @@ import { Path } from '../../path/Path';
 import { ElementFixture } from './ElementFixture';
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { StemQueryContext } from '../../builder/match/StemQueryContext';
+import { OrderByQueries } from '../../builder/orderBy/OrderByQueries';
 
 describe(`${StemQueryContext.name}`, () => {
   test('N-R-N', () => {
@@ -18,6 +19,7 @@ describe(`${StemQueryContext.name}`, () => {
           ef.newNodeElement('Item', 'item'),
         ]),
         null,
+        new OrderByQueries([]),
         []
       ),
       new Depth(2)
@@ -46,6 +48,7 @@ describe(`${StemQueryContext.name}`, () => {
           ef.newNodeLabelElement(':Item'),
         ]),
         null,
+        new OrderByQueries([]),
         []
       ),
       new Depth(2)
@@ -74,6 +77,7 @@ describe(`${StemQueryContext.name}`, () => {
           ef.newNodeElement('Store', 'store'),
         ]),
         null,
+        new OrderByQueries([]),
         []
       ),
       new Depth(2)
@@ -102,6 +106,7 @@ describe(`${StemQueryContext.name}`, () => {
           ef.newNodeElement('Item', 'item'),
         ]),
         null,
+        new OrderByQueries([]),
         []
       ),
       new Depth(2)

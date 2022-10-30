@@ -3,13 +3,21 @@ import { PathStep } from './PathStep';
 import { AnyNodeElement, EntityElement } from '../element/Element';
 import { Path } from './Path';
 import { WhereQuery } from '../builder/where/WhereQuery';
+import { OrderByQueries } from '../builder/orderBy/OrderByQueries';
 
 export class Stem {
   private readonly path: Path;
   private readonly whereQuery: WhereQuery | null;
   private readonly branches: Branch[];
+  private readonly orderByQueries: OrderByQueries;
 
-  constructor(path: Path, whereQuery: WhereQuery | null, branches: Branch[]) {
+  constructor(
+    path: Path,
+    whereQuery: WhereQuery | null,
+    orderByQueries: OrderByQueries,
+    branches: Branch[]
+  ) {
+    this.orderByQueries = orderByQueries;
     this.whereQuery = whereQuery;
     this.path = path;
     this.branches = branches;
@@ -37,5 +45,9 @@ export class Stem {
 
   getWhereQuery(): WhereQuery | null {
     return this.whereQuery;
+  }
+
+  getOrderByQueries(): OrderByQueries {
+    return this.orderByQueries;
   }
 }

@@ -5,6 +5,7 @@ import { MatchPathClause } from '../../clause/MatchPathClause';
 import { MapLiteral } from '../../literal/MapLiteral';
 import { MapEntryLiteral } from '../../literal/MapEntryLiteral';
 import { WhereClause } from '../../clause/WhereClause';
+import { OrderByClause } from '../../clause/OrderByClause';
 
 export class Query {
   private stemQueryContext: StemQueryContext;
@@ -20,7 +21,10 @@ export class Query {
 
   get(as: string): string {
     return (
-      this.getMatchClause() + this.getWhereClause() + this.getReturnClause(as)
+      this.getMatchClause() +
+      this.getWhereClause() +
+      this.getReturnClause(as) +
+      this.getOrderByClause()
     );
   }
 
@@ -35,6 +39,16 @@ export class Query {
     }
 
     return ` ${new WhereClause(whereLiteral).get()} `;
+  }
+
+  private getOrderByClause(): string {
+    const orderBy = new OrderByClause(
+      this.stemQueryContext.getOrderByLiterals()
+    ).get();
+    if (orderBy === '') {
+      return '';
+    }
+    return ` ${orderBy}`;
   }
 
   private getReturnClause(as: string): string {

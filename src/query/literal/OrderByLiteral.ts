@@ -1,12 +1,15 @@
-import { Path } from '../path/Path';
 import { placeholder } from './util/placeholder';
 import { VariableMap } from './util/VariableMap';
 
-type Sort = 'ASC' | 'DESC';
+export type Sort = 'ASC' | 'DESC';
 
 export class OrderByLiteral {
-  static new(query: string, sort: Sort, path: Path): OrderByLiteral {
-    return new OrderByLiteral(placeholder(query, VariableMap.new(path)), sort);
+  static new(
+    query: string,
+    sort: Sort,
+    variableMap: VariableMap
+  ): OrderByLiteral {
+    return new OrderByLiteral(placeholder(query, variableMap), sort);
   }
 
   private readonly query: string;

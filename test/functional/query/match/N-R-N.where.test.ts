@@ -13,6 +13,7 @@ import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { Property } from '../../../../src/decorator/property/Property';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -120,6 +121,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     const query = queryBuilder.build(
       ShopCustomer,
       whereQueries,
+      new OrderByQueries([]),
       Depth.withDefault()
     );
 

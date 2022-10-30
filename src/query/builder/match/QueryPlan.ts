@@ -6,15 +6,18 @@ import { Depth } from '../../../domain/graph/branch/Depth';
 import { WhereQueries } from '../where/WhereQueries';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { toInstance } from 'util/toInstance';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 type MatchQueryPlanOption = {
   whereQueries: WhereQueries;
+  orderByQueries: OrderByQueries;
   depth: Depth;
   parameters: unknown;
 };
 
 const defaultOption: MatchQueryPlanOption = {
   whereQueries: new WhereQueries([]),
+  orderByQueries: new OrderByQueries([]),
   depth: Depth.withDefault(),
   parameters: {},
 };
@@ -49,6 +52,7 @@ export class QueryPlan {
     const query = this.queryBuilder.build(
       cstr,
       completeOption.whereQueries,
+      completeOption.orderByQueries,
       completeOption.depth
     );
 

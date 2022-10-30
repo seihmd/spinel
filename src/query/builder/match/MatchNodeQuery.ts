@@ -5,20 +5,30 @@ import { NodeLiteral } from '../../literal/NodeLiteral';
 import { WhereQuery } from '../where/WhereQuery';
 import { WhereLiteral } from '../../literal/WhereLiteral';
 import { VariableMap } from '../../literal/util/VariableMap';
+import { OrderByClause } from '../../clause/OrderByClause';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 export class MatchNodeQuery {
   private readonly nodeLiteral: NodeLiteral;
   private readonly whereQuery: WhereQuery | null;
+  private readonly orderByQueries: OrderByQueries;
 
-  constructor(nodeLiteral: NodeLiteral, whereQuery: WhereQuery | null) {
+  constructor(
+    nodeLiteral: NodeLiteral,
+    whereQuery: WhereQuery | null,
+    orderByQueries: OrderByQueries
+  ) {
     this.nodeLiteral = nodeLiteral;
     this.whereQuery = whereQuery;
+    this.orderByQueries = orderByQueries;
   }
 
   get(as: string): string {
-    return `${
-      this.getMatchClause() + this.getWhereClause() + this.getReturnClause()
-    } AS ${as}`;
+    return (
+      `${
+        this.getMatchClause() + this.getWhereClause() + this.getReturnClause()
+      } AS ${as}` + this.getOrderByClause()
+    );
   }
 
   private getMatchClause(): string {
@@ -36,6 +46,19 @@ export class MatchNodeQuery {
         new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
       )
     ).get()} `;
+  }
+
+  private getOrderByClause(): string {
+    const orderBy = new OrderByClause(
+      this.orderByQueries.getLiterals(
+        new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
+      )
+    ).get();
+
+    if (orderBy === '') {
+      return '';
+    }
+    return ` ${orderBy}`;
   }
 
   private getReturnClause(): string {
