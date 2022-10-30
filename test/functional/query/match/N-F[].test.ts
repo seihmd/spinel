@@ -5,13 +5,13 @@ import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { GraphFragment } from '../../../../src/decorator/class/GraphFragment';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { GraphBranch } from '../../../../src/decorator/property/GraphBranch';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -90,27 +90,28 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
     const queryBuilder = QueryBuilder.new();
     const query = queryBuilder.build(
       ShopCustomerFavorites,
-      new WhereQueries([])
+      new WhereQueries([]),
+      new OrderByQueries([])
     );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop) ' +
-      'RETURN {shop:n0{.*},' +
-      'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item)' +
-      '|{item:b0_n8{.*}}]} AS _'
+        'RETURN {shop:n0{.*},' +
+        'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item)' +
+        '|{item:b0_n8{.*}}]} AS _'
     );
   });
 
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomerFavorites,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      Depth.withDefault(),
-      {
+    const results = await queryPlan.execute(ShopCustomerFavorites, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      parameters: {
         shop: { id: id.get('shop') },
-      }
-    );
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomerFavorites(new Shop(id.get('shop')), [
         new FavoriteItem(new Item(id.get('item2'))),

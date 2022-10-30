@@ -13,6 +13,7 @@ import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { Property } from '../../../../src/decorator/property/Property';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -92,6 +93,7 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
     const query = queryBuilder.build(
       ShopCustomer,
       new WhereQueries([]),
+      new OrderByQueries([]),
       Depth.withDefault()
     );
     expect(query.get('_')).toBe(
@@ -107,16 +109,14 @@ describe('map Neo4j Record into N-R-N Graph class with property', () => {
       new WhereQuery(null, '{shop}.id = $shop.id'),
     ]);
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
+    const results = await queryPlan.execute(ShopCustomer, {
       whereQueries,
-      Depth.withDefault(),
-      {
+      parameters: {
         shop: { id: id.get('shop') },
         isCustomer: { visited: new Date('2022-01-01') },
         customer: { birthday: new Date('2000-01-01') },
-      }
-    );
+      },
+    });
 
     expect(results).toStrictEqual([
       new ShopCustomer(

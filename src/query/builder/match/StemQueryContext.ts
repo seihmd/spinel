@@ -4,6 +4,8 @@ import { PathLiteral } from '../../literal/PathLiteral';
 import { PathStepLiteral } from '../../literal/PathStepLiteral';
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { WhereLiteral } from '../../literal/WhereLiteral';
+import { OrderByLiteral } from '../../literal/OrderByLiteral';
+import { VariableMap } from '../../literal/util/VariableMap';
 
 export class StemQueryContext {
   private readonly stem: Stem;
@@ -30,6 +32,12 @@ export class StemQueryContext {
     }
 
     return WhereLiteral.new(whereQuery.getQuery(), this.stem.getPath());
+  }
+
+  getOrderByLiterals(): OrderByLiteral[] {
+    return this.stem
+      .getOrderByQueries()
+      .getLiterals(VariableMap.new(this.stem.getPath()));
   }
 
   getMapEntries(): [string, string][] {

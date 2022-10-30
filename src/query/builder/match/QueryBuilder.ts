@@ -13,6 +13,7 @@ import { ElementContext } from '../../element/ElementContext';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { MatchNodeQuery } from './MatchNodeQuery';
 import { NodeLiteral } from '../../literal/NodeLiteral';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 export class QueryBuilder {
   static new(): QueryBuilder {
@@ -30,11 +31,17 @@ export class QueryBuilder {
   build(
     cstr: AnyClassConstructor,
     whereQueries: WhereQueries,
+    orderByQueries: OrderByQueries,
     depth: Depth = Depth.withDefault()
   ): Query | MatchNodeQuery {
     const graphMetadata = this.metadataStore.findGraphMetadata(cstr);
     if (graphMetadata) {
-      const stem = this.stemBuilder.build(graphMetadata, whereQueries, depth);
+      const stem = this.stemBuilder.build(
+        graphMetadata,
+        whereQueries,
+        orderByQueries,
+        depth
+      );
       const stemQueryContext = new StemQueryContext(stem, depth);
       const branchQueryContexts = stem.getBranches().map((branch) => {
         return new BranchQueryContext(branch);
@@ -52,7 +59,8 @@ export class QueryBuilder {
       );
       return new MatchNodeQuery(
         NodeLiteral.new(nodeElement, null),
-        whereQueries.ofStem()
+        whereQueries.ofStem(),
+        orderByQueries
       );
     }
 

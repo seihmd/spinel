@@ -7,7 +7,6 @@ import { Property } from '../../../../src/decorator/property/Property';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
 import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { WhereQuery } from '../../../../src/query/builder/where/WhereQuery';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { Integer } from 'neo4j-driver';
@@ -71,14 +70,12 @@ describe('Number Transformer', () => {
       new WhereQuery(null, '{n}.id = $id'),
     ]);
 
-    const results = await queryPlan.execute(
-      TestGraph,
+    const results = await queryPlan.execute(TestGraph, {
       whereQueries,
-      Depth.withDefault(),
-      {
+      parameters: {
         id: id.get('id'),
-      }
-    );
+      },
+    });
 
     expect(results).toStrictEqual([
       new TestGraph(new Node(id.get('id'), 1, 1.1)),

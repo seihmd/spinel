@@ -8,8 +8,8 @@ import { WhereQueries } from '../../../../src/query/builder/where/WhereQueries';
 import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -50,10 +50,14 @@ describe('map Neo4j Record into N-:R-:N Graph class', () => {
 
   test('QueryBuilder', () => {
     const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(ShopCustomer, new WhereQueries([]));
+    const query = queryBuilder.build(
+      ShopCustomer,
+      new WhereQueries([]),
+      new OrderByQueries([])
+    );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
-      'RETURN {shop:n0{.*}} AS _'
+        'RETURN {shop:n0{.*}} AS _'
     );
   });
 
@@ -64,12 +68,10 @@ describe('map Neo4j Record into N-:R-:N Graph class', () => {
       new WhereQuery(null, '{shop}.id = $shopId'),
     ]);
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
+    const results = await queryPlan.execute(ShopCustomer, {
       whereQueries,
-      Depth.withDefault(),
-      { shopId: id.get('shop') }
-    );
+      parameters: { shopId: id.get('shop') },
+    });
     expect(results).toStrictEqual([new ShopCustomer(new Shop(id.get('shop')))]);
   });
 });

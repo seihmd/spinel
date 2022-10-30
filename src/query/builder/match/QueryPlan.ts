@@ -6,6 +6,21 @@ import { Depth } from '../../../domain/graph/branch/Depth';
 import { WhereQueries } from '../where/WhereQueries';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { toInstance } from 'util/toInstance';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
+
+type MatchQueryPlanOption = {
+  whereQueries: WhereQueries;
+  orderByQueries: OrderByQueries;
+  depth: Depth;
+  parameters: unknown;
+};
+
+const defaultOption: MatchQueryPlanOption = {
+  whereQueries: new WhereQueries([]),
+  orderByQueries: new OrderByQueries([]),
+  depth: Depth.withDefault(),
+  parameters: {},
+};
 
 export class QueryPlan {
   static new(driver: Driver): QueryPlan {
@@ -28,14 +43,23 @@ export class QueryPlan {
 
   async execute<T>(
     cstr: ClassConstructor<T>,
-    whereQueries: WhereQueries,
-    depth: Depth = Depth.withDefault(),
-    parameters: unknown = {}
+    option: Partial<MatchQueryPlanOption>
   ): Promise<T[]> {
-    const query = this.queryBuilder.build(cstr, whereQueries, depth);
+    const completeOption = Object.assign(
+      defaultOption,
+      option
+    ) as MatchQueryPlanOption;
+    const query = this.queryBuilder.build(
+      cstr,
+      completeOption.whereQueries,
+      completeOption.orderByQueries,
+      completeOption.depth
+    );
 
     const q = query.get('_');
-    const result = await this.driver.session().run(q, parameters);
+    const result = await this.driver
+      .session()
+      .run(q, completeOption.parameters);
 
     return result.records.map((record) => {
       return toInstance(cstr, record.toObject()['_']);

@@ -7,12 +7,16 @@ import { GraphNode } from '../../../../src/decorator/property/GraphNode';
 import { QueryBuilder } from '../../../../src/query/builder/match/QueryBuilder';
 import { RelationshipEntity } from '../../../../src/decorator/class/RelationshipEntity';
 import { QueryPlan } from '../../../../src/query/builder/match/QueryPlan';
-import { Depth } from '../../../../src/domain/graph/branch/Depth';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 import { Graph } from '../../../../src/decorator/class/Graph';
 import { Primary } from '../../../../src/decorator/property/Primary';
 import { Property } from '../../../../src/decorator/property/Property';
 import { NodeEntity } from '../../../../src/decorator/class/NodeEntity';
+import { OrderByQueries } from '../../../../src/query/builder/orderBy/OrderByQueries';
+import { Node } from 'neo4j-driver-core';
+import { Date as Neo4jDate } from 'neo4j-driver';
+import { OrderByQuery } from '../../../../src/query/builder/orderBy/OrderByQuery';
+import { Sort } from '../../../../src/query/literal/OrderByLiteral';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -65,21 +69,50 @@ class ShopCustomer {
 const id = new IdFixture();
 
 describe('map Neo4j Record into N-R-N Graph class', () => {
-  beforeAll(async () => {
-    const node1 = await neo4jFixture.addNode('Shop', {
-      id: id.get('shop'),
-      name: 'MyShop',
-    });
-    const node2 = await neo4jFixture.addNode('Customer', {
-      id: id.get('customer'),
-      birthday: '2000-01-01',
-    });
+  const addShop = async (id: string, name: string) => {
+    return await neo4jFixture.addNode('Shop', { id, name });
+  };
+  const addCustomer = async (id: string, birthday: Neo4jDate<number>) => {
+    return await neo4jFixture.addNode('Customer', { id, birthday });
+  };
+  const connect = async (
+    shop: Node,
+    customer: Node,
+    id: string,
+    visited: Neo4jDate<number>
+  ) => {
     await neo4jFixture.addRelationship(
       'IS_CUSTOMER',
-      { id: id.get('isCustomer'), visited: '2022-01-01' },
-      node1,
-      node2,
+      { id, visited },
+      shop,
+      customer,
       '<-'
+    );
+  };
+
+  beforeAll(async () => {
+    const shop1 = await addShop(id.get('shop1'), 'MyShop1');
+    const customer1 = await addCustomer(
+      id.get('customer1'),
+      new Neo4jDate(2000, 1, 1)
+    );
+    await connect(
+      shop1,
+      customer1,
+      id.get('isCustomer1'),
+      new Neo4jDate(2022, 1, 1)
+    );
+
+    const shop2 = await addShop(id.get('shop2'), 'MyShop2');
+    const customer2 = await addCustomer(
+      id.get('customer2'),
+      new Neo4jDate(2000, 2, 1)
+    );
+    await connect(
+      shop2,
+      customer2,
+      id.get('isCustomer2'),
+      new Neo4jDate(2022, 2, 1)
     );
   });
 
@@ -89,7 +122,11 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
 
   test('QueryBuilder', () => {
     const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(ShopCustomer, new WhereQueries([]));
+    const query = queryBuilder.build(
+      ShopCustomer,
+      new WhereQueries([]),
+      new OrderByQueries([])
+    );
     expect(query.get('_')).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
         'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
@@ -99,20 +136,71 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
   test('QueryPlan', async () => {
     const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
 
-    const results = await queryPlan.execute(
-      ShopCustomer,
-      new WhereQueries([new WhereQuery(null, '{shop}.id=$shop.id')]),
-      Depth.withDefault(),
-      {
-        shop: { id: id.get('shop') },
-      }
-    );
+    const results = await queryPlan.execute(ShopCustomer, {
+      whereQueries: new WhereQueries([
+        new WhereQuery(null, '{shop}.id=$shop.id'),
+      ]),
+      parameters: {
+        shop: { id: id.get('shop1') },
+      },
+    });
     expect(results).toStrictEqual([
       new ShopCustomer(
-        new Shop(id.get('shop'), 'MyShop'),
-        new IsCustomer(id.get('isCustomer'), new Date('2022-01-01')),
-        new User(id.get('customer'), new Date('2000-01-01'))
+        new Shop(id.get('shop1'), 'MyShop1'),
+        new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
+        new User(id.get('customer1'), new Date('2000-01-01'))
       ),
     ]);
   });
+
+  test.each([
+    [
+      'ASC',
+      [
+        new ShopCustomer(
+          new Shop(id.get('shop1'), 'MyShop1'),
+          new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
+          new User(id.get('customer1'), new Date('2000-01-01'))
+        ),
+        new ShopCustomer(
+          new Shop(id.get('shop2'), 'MyShop2'),
+          new IsCustomer(id.get('isCustomer2'), new Date('2022-02-01')),
+          new User(id.get('customer2'), new Date('2000-02-01'))
+        ),
+      ],
+    ],
+    [
+      'DESC',
+      [
+        new ShopCustomer(
+          new Shop(id.get('shop2'), 'MyShop2'),
+          new IsCustomer(id.get('isCustomer2'), new Date('2022-02-01')),
+          new User(id.get('customer2'), new Date('2000-02-01'))
+        ),
+        new ShopCustomer(
+          new Shop(id.get('shop1'), 'MyShop1'),
+          new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
+          new User(id.get('customer1'), new Date('2000-01-01'))
+        ),
+      ],
+    ],
+  ] as [Sort, ShopCustomer[]][])(
+    'QueryPlan with sort',
+    async (sort: Sort, expected: ShopCustomer[]) => {
+      const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
+
+      const results = await queryPlan.execute(ShopCustomer, {
+        whereQueries: new WhereQueries([
+          new WhereQuery(null, '{shop}.id IN $shopIds'),
+        ]),
+        orderByQueries: new OrderByQueries([
+          new OrderByQuery('{isCustomer}.visited', sort),
+        ]),
+        parameters: {
+          shopIds: [id.get('shop1'), id.get('shop2')],
+        },
+      });
+      expect(results).toStrictEqual(expected);
+    }
+  );
 });

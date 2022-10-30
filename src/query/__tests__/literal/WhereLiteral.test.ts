@@ -20,12 +20,4 @@ describe(`${WhereLiteral.name}`, () => {
 
     expect(whereQuery.get()).toBe('n0.id = $userId');
   });
-
-  test('get', () => {
-    const whereLiteral = new WhereLiteral(
-      '{shop}.id = $id AND {*.items}.id = $itemId',
-      { shop: 'n0', '*.items': 'b0_n0' }
-    );
-    expect(whereLiteral.get()).toBe('n0.id = $id AND b0_n0.id = $itemId');
-  });
 });

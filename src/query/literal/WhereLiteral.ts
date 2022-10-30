@@ -1,41 +1,26 @@
-import { placeholder } from './placeholder';
+import { placeholder } from './util/placeholder';
 import { Path } from '../path/Path';
+import { VariableMap } from './util/VariableMap';
 
 export class WhereLiteral {
   static new(query: string, path: Path): WhereLiteral {
-    const variableMap: { [key: string]: string } = {};
+    return new WhereLiteral(placeholder(query, VariableMap.new(path)));
+  }
 
-    const rootKey = path.getRoot().getGraphParameterKey();
-    if (rootKey !== null) {
-      variableMap[rootKey] = path.getRoot().getVariableName();
-    }
-
-    const elements = path
-      .getSteps()
-      .map((step) => [step.getRelationship(), step.getNode()])
-      .flat();
-
-    for (const element of elements) {
-      const graphKey = element.getWhereVariableName();
-      if (graphKey === null) {
-        continue;
-      }
-
-      variableMap[graphKey] = element.getVariableName();
-    }
-
-    return new WhereLiteral(query, variableMap);
+  static newWithVariableMap(
+    query: string,
+    variableMap: VariableMap
+  ): WhereLiteral {
+    return new WhereLiteral(placeholder(query, variableMap));
   }
 
   private readonly query: string;
-  private readonly variableMap: { [key: string]: string };
 
-  constructor(query: string, variableMap: { [key: string]: string }) {
+  constructor(query: string) {
     this.query = query;
-    this.variableMap = variableMap;
   }
 
   get(): string {
-    return placeholder(this.query, this.variableMap);
+    return this.query;
   }
 }
