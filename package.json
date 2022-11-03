@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "npm run test:unit && npm run test:functional",
     "test:unit": "jest --testMatch '<rootDir>/src/**/*.test.ts'",

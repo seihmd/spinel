@@ -57,10 +57,10 @@ export class QueryPlan {
     );
 
     const q = query.get('_');
-    const result = await this.driver
-      .session()
-      .run(q, completeOption.parameters);
-
+    const session = this.driver.session();
+    const result = await session.run(q, completeOption.parameters);
+    await session.close();
+    
     return result.records.map((record) => {
       return toInstance(cstr, record.toObject()['_']);
     });

@@ -1,3 +1,5 @@
+export { initSpinel, newSpinelRepository } from './api/repository';
+
 export { Graph } from './decorator/class/Graph';
 export { GraphFragment } from './decorator/class/GraphFragment';
 export { IndexOption } from './decorator/class/IndexOption';
@@ -8,3 +10,9 @@ export { GraphNode } from './decorator/property/GraphNode';
 export { GraphRelationship } from './decorator/property/GraphRelationship';
 export { Primary } from './decorator/property/Primary';
 export { Property } from './decorator/property/Property';
+
+export { DateTimeTransformer } from './metadata/schema/transformation/transformer/default/DateTimeTransformer';
+export { DateTransformer } from './metadata/schema/transformation/transformer/default/DateTransformer';
+export { IntegerTransformer } from './metadata/schema/transformation/transformer/default/IntegerTransformer';
+export { NumberTransformer } from './metadata/schema/transformation/transformer/default/NumberTransformer';
+export { TransformerInterface } from './metadata/schema/transformation/transformer/TransformerInterface';
