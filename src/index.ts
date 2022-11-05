@@ -1,4 +1,6 @@
 export { initSpinel, newSpinelRepository } from './api/repository';
+export { FindQuery } from './api/query';
+export { instantiate } from './api/api';
 
 export { Graph } from './decorator/class/Graph';
 export { GraphFragment } from './decorator/class/GraphFragment';
