@@ -1,10 +1,4 @@
-import {
-  initSpinel,
-  newSpinelRepository,
-  NodeEntity,
-  Primary,
-  Property,
-} from '../../../src';
+import { newRepository, NodeEntity, Primary, Property } from '../../../src';
 import { FindQuery } from '../../../src/api/query';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 import { randomUUID } from 'crypto';
@@ -30,16 +24,12 @@ async function saveShop(id: string, name: string) {
 }
 
 describe(`SpinelRepository`, () => {
-  beforeAll(() => {
-    initSpinel(neo4jFixture.getDriver());
-  });
-
   afterAll(async () => {
     await neo4jFixture.teardown();
   });
 
   test('find', async () => {
-    const repository = newSpinelRepository();
+    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
     await saveShop(id, 'shopName');
 
@@ -51,7 +41,7 @@ describe(`SpinelRepository`, () => {
   });
 
   test('find existing one', async () => {
-    const repository = newSpinelRepository();
+    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
     await saveShop(id, 'shopName');
 
@@ -63,7 +53,7 @@ describe(`SpinelRepository`, () => {
   });
 
   test('not found', async () => {
-    const repository = newSpinelRepository();
+    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
 
     const shop = await repository.findOne(
@@ -76,7 +66,7 @@ describe(`SpinelRepository`, () => {
   test('save', async () => {
     const id = randomUUID();
     const shop = new Shop(id, 'shopName');
-    const repository = newSpinelRepository();
+    const repository = newRepository(neo4jFixture.getDriver());
     await repository.save(shop);
 
     const savedValue = await neo4jFixture.findNode('Shop', id);

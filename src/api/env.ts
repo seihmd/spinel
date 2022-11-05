@@ -1,0 +1,3 @@
+export const ENV_SPINEL_HOST = 'SPINEL_HOST';
+export const ENV_SPINEL_USER = 'SPINEL_USER';
+export const ENV_SPINEL_PASSWORD = 'SPINEL_PASSWORD';

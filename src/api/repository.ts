@@ -1,16 +1,13 @@
 import 'reflect-metadata';
-import { Driver } from 'neo4j-driver';
+import neo4j, { Driver } from 'neo4j-driver';
 import { QueryPlan } from '../query/builder/match/QueryPlan';
 import { WhereQueries } from '../query/builder/where/WhereQueries';
 import { OrderByQueries } from '../query/builder/orderBy/OrderByQueries';
 import { FindQuery } from './query';
 import { SaveQueryPlan } from '../query/builder/save/SaveQueryPlan';
-
-let driver: Driver | null = null;
-
-export const initSpinel = (newDriver: Driver) => {
-  driver = newDriver;
-};
+import * as process from 'process';
+import { ENV_SPINEL_HOST, ENV_SPINEL_PASSWORD, ENV_SPINEL_USER } from './env';
+import { UndefinedSettingError } from './errors';
 
 export interface SpinelRepositoryInterface {
   find<T>(query: FindQuery<T>): Promise<T[]>;
@@ -21,10 +18,14 @@ export interface SpinelRepositoryInterface {
 }
 
 class SpinelRepository implements SpinelRepositoryInterface {
-  private driver: Driver;
+  private readonly driver: Driver;
 
   constructor(driver: Driver) {
     this.driver = driver;
+  }
+
+  getDriver(): Driver {
+    return this.driver;
   }
 
   async find<T>(query: FindQuery<T>): Promise<T[]> {
@@ -59,9 +60,54 @@ class SpinelRepository implements SpinelRepositoryInterface {
   }
 }
 
-export const newSpinelRepository = (): SpinelRepositoryInterface => {
-  if (!driver) {
-    throw new Error('Spinel is not yet initialized');
-  }
-  return new SpinelRepository(driver);
+type DriverSetting = {
+  host: string;
+  user: string;
+  password: string;
 };
+
+export const newRepository = (
+  settingOrDriver: DriverSetting | Driver | null = null
+): SpinelRepositoryInterface => {
+  return new SpinelRepository(newDriver(settingOrDriver));
+};
+
+function newDriver(
+  settingOrDriver: DriverSetting | Driver | null = null
+): Driver {
+  if (settingOrDriver === null) {
+    return newDriverWithEnvVars();
+  }
+  if ('rxSession' in settingOrDriver) {
+    return settingOrDriver;
+  }
+
+  return newDriverWithSetting(settingOrDriver);
+}
+
+function newDriverWithEnvVars(): Driver {
+  const host = process.env[ENV_SPINEL_HOST];
+  const user = process.env[ENV_SPINEL_USER];
+  const password = process.env[ENV_SPINEL_PASSWORD];
+
+  if (host === undefined) {
+    throw new UndefinedSettingError(ENV_SPINEL_HOST);
+  }
+
+  if (user === undefined) {
+    throw new UndefinedSettingError(ENV_SPINEL_USER);
+  }
+
+  if (password === undefined) {
+    throw new UndefinedSettingError(ENV_SPINEL_PASSWORD);
+  }
+
+  return neo4j.driver(host, neo4j.auth.basic(user, password));
+}
+
+function newDriverWithSetting(setting: DriverSetting): Driver {
+  return neo4j.driver(
+    setting.host,
+    neo4j.auth.basic(setting.user, setting.password)
+  );
+}
