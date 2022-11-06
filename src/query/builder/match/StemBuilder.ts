@@ -1,5 +1,5 @@
-import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
-import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
 import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
 import { WhereQueries } from '../where/WhereQueries';

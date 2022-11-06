@@ -2,7 +2,7 @@ import { NodeLabel } from '../../domain/node/NodeLabel';
 import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetadata';
-import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
+import { NodeKeyTerm } from '../../domain/graph/pattern/term/NodeKeyTerm';
 import { BranchIndexes } from '../meterial/BranchIndexes';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';

@@ -2,7 +2,7 @@ import { Properties } from '../entity/Properties';
 import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { EntityPrimaryMetadata } from '../entity/EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from '../entity/EntityPropertyMetadata';
-import { NodeKeyConstraint } from 'domain/constraint/NodeKeyConstraint';
+import { NodeKeyConstraint } from '../../../domain/constraint/NodeKeyConstraint';
 import { NodePropertyExistenceConstraint } from '../../../domain/constraint/NodePropertyExistenceConstraint';
 import { UniquenessConstraint } from '../../../domain/constraint/UniquenessConstraint';
 import { ConstraintInterface } from '../../../domain/constraint/ConstraintInterface';

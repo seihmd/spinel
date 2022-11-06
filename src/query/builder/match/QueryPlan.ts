@@ -5,7 +5,7 @@ import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInt
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { WhereQueries } from '../where/WhereQueries';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
-import { toInstance } from 'util/toInstance';
+import { toInstance } from '../../../util/toInstance';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 type MatchQueryPlanOption = {
