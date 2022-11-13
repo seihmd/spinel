@@ -7,7 +7,10 @@ export class GraphBranchPropertyType {
     reflectedType: ReflectedType,
     type: AnyClassConstructor
   ): GraphBranchPropertyType {
-    if (!(reflectedType.isArray() || reflectedType.isObject())) {
+    if (
+      !(reflectedType.isArray() || reflectedType.isObject()) &&
+      reflectedType.getType() !== Set
+    ) {
       throw new Error(`type of ${GraphBranch.name} property must be Array`);
     }
     return new GraphBranchPropertyType(reflectedType.getPropertyKey(), type);

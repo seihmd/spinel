@@ -46,7 +46,17 @@ export class ReflectedType {
   }
 
   isArray(): boolean {
-    return this.type === Array;
+    return this.type === Array || this.isExtendedArray();
+  }
+
+  private isExtendedArray(): boolean {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return typeof this.type === 'function' && Array.isArray(new this.type());
+    } catch (e) {
+      return false;
+    }
   }
 
   isObject(): boolean {
