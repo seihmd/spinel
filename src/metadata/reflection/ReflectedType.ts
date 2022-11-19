@@ -49,11 +49,25 @@ export class ReflectedType {
     return this.type === Array || this.isExtendedArray();
   }
 
+  isSet(): boolean {
+    return this.getType() === Set || this.isExtendedSet();
+  }
+
   private isExtendedArray(): boolean {
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return typeof this.type === 'function' && Array.isArray(new this.type());
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private isExtendedSet(): boolean {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return new this.type() instanceof Set;
     } catch (e) {
       return false;
     }

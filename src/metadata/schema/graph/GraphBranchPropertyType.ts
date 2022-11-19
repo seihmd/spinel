@@ -9,7 +9,7 @@ export class GraphBranchPropertyType {
   ): GraphBranchPropertyType {
     if (
       !(reflectedType.isArray() || reflectedType.isObject()) &&
-      reflectedType.getType() !== Set
+      !reflectedType.isSet()
     ) {
       throw new Error(`type of ${GraphBranch.name} property must be Array`);
     }
