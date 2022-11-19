@@ -5,6 +5,8 @@ import { ReflectedType } from '../../../reflection/ReflectedType';
 
 class A {}
 
+class ExtendedSet extends Set {}
+
 describe(`${GraphBranchPropertyType.name}`, () => {
   test('valid definition', () => {
     function Assert(isValid: boolean): PropertyDecorator {
@@ -30,7 +32,9 @@ describe(`${GraphBranchPropertyType.name}`, () => {
       @Assert(true) p1?: A[];
       @Assert(true) p2?: A[] | null;
       @Assert(true) p3?: A | null; // technical limitation
-      @Assert(false) p4?: A;
+      @Assert(true) p4?: Set<A>; // technical limitation
+      @Assert(true) p5?: ExtendedSet;
+      @Assert(false) p6?: A;
     }
   });
 
