@@ -1,6 +1,11 @@
 import { LabelPrefix, PatternTerm } from './PatternTerm';
+import { NodeLabel } from '../../../node/NodeLabel';
 
 export class NodeLabelTerm extends PatternTerm {
+  static withNodeLabel(nodeLabel: NodeLabel): NodeLabelTerm {
+    return new NodeLabelTerm(`:${nodeLabel.toString()}`);
+  }
+
   constructor(value: string) {
     super(value);
 
