@@ -1,14 +1,10 @@
 import { Driver } from 'neo4j-driver';
-import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { DeleteQueryBuilder } from './DeleteQueryBuilder';
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 
 export class DeleteQueryPlan {
   static new(driver: Driver): DeleteQueryPlan {
-    return new DeleteQueryPlan(
-      new DeleteQueryBuilder(getMetadataStore()),
-      driver
-    );
+    return new DeleteQueryPlan(DeleteQueryBuilder.new(), driver);
   }
 
   private readonly deleteQueryBuilder: DeleteQueryBuilder;
@@ -23,8 +19,11 @@ export class DeleteQueryPlan {
     instance: InstanceType<ClassConstructor<object>>,
     detach: boolean
   ): Promise<void> {
-    const query = this.deleteQueryBuilder.build(instance, detach);
+    const [query, parameterBag] = this.deleteQueryBuilder.build(
+      instance,
+      detach
+    );
 
-    await this.driver.session().run(query.get());
+    await this.driver.session().run(query.get(), parameterBag.toPlain());
   }
 }

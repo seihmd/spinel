@@ -1,36 +1,19 @@
-import { ClassConstructor } from '../../../domain/type/ClassConstructor';
-import { ElementContext } from '../../element/ElementContext';
-import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { DeleteClause } from '../../clause/DeleteClause';
-import { RelationshipEntityMetadata } from '../../../metadata/schema/entity/RelationshipEntityMetadata';
-import { RelationshipInstanceElement } from '../../element/RelationshipInstanceElement';
-import { RelationshipKeyTerm } from '../../../domain/graph/pattern/term/RelationshipKeyTerm';
 import { RelationshipLiteral } from '../../literal/RelationshipLiteral';
 import { MatchRelationshipClause } from '../../clause/MatchRelationshipClause';
+import { RelationshipInstanceElement } from '../../element/RelationshipInstanceElement';
 
 export class DeleteRelationshipQuery {
-  private readonly instance: InstanceType<ClassConstructor<object>>;
-  private readonly relationshipEntityMetadata: RelationshipEntityMetadata;
+  private readonly relationshipInstanceElement: RelationshipInstanceElement;
 
-  constructor(
-    instance: InstanceType<ClassConstructor<object>>,
-    relationshipEntityMetadata: RelationshipEntityMetadata
-  ) {
-    this.instance = instance;
-    this.relationshipEntityMetadata = relationshipEntityMetadata;
+  constructor(relationshipInstanceElement: RelationshipInstanceElement) {
+    this.relationshipInstanceElement = relationshipInstanceElement;
   }
 
   public get(): string {
-    const relationshipInstanceElement = new RelationshipInstanceElement(
-      this.instance,
-      this.relationshipEntityMetadata,
-      new ElementContext(new BranchIndexes([]), 0, false),
-      new RelationshipKeyTerm('r')
-    );
-
     const relationshipLiteral = RelationshipLiteral.new(
-      relationshipInstanceElement,
-      relationshipInstanceElement.getPrimaries()
+      this.relationshipInstanceElement,
+      this.relationshipInstanceElement.getPrimaries()
     );
 
     const matchRelationshipClause = new MatchRelationshipClause(

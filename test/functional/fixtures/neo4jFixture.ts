@@ -102,10 +102,17 @@ export class Neo4jFixture {
     return relationship;
   }
 
-  async findNode(label: string, id: string): Promise<Record<string, unknown>> {
+  async findNode(
+    label: string,
+    id: string
+  ): Promise<Record<string, unknown> | null> {
     const q = await this.session().run(
       `MATCH (n:${label} {id: "${id}"}) RETURN n`
     );
+
+    if (q.records.length === 0) {
+      return null;
+    }
 
     const node = q.records[0].get('n') as Node;
     if (!(node instanceof Node)) {
@@ -115,6 +122,28 @@ export class Neo4jFixture {
     this.nodes.push(node);
 
     return node.properties;
+  }
+
+  async findRelationship(
+    type: string,
+    id: string
+  ): Promise<Record<string, unknown> | null> {
+    const q = await this.session().run(
+      `MATCH ()-[r:${type}{id: "${id}"}]-() RETURN r`
+    );
+
+    if (q.records.length === 0) {
+      return null;
+    }
+
+    const relationship = q.records[0].get('r') as Relationship;
+    if (!(relationship instanceof Relationship)) {
+      throw new Error();
+    }
+
+    this.relationships.push(relationship);
+
+    return relationship.properties;
   }
 
   async findGraph(pattern: string): Promise<{ [key: string]: unknown }> {
