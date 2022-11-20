@@ -35,15 +35,12 @@ export class RelationshipLiteral extends EntityLiteral {
 
   get(partial: Partial<EntityLiteralOption> = {}): string {
     const option = this.getOption(partial);
-    return `[${this.createVariableName(option)}${this.createType(
+    return `[${option.variable ? this.getVariableName() : ''}${this.createType(
       option
     )}${this.createParameter(option)}]`;
   }
 
-  private createVariableName(option: EntityLiteralOption): string {
-    if (!option.variable) {
-      return '';
-    }
+  getVariableName(): string {
     return this.variableName;
   }
 
