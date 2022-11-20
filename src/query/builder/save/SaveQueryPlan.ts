@@ -27,7 +27,7 @@ export class SaveQueryPlan {
   }
 
   async execute(instance: object): Promise<void> {
-    this.driver.session().beginTransaction();
+    await this.driver.session().beginTransaction();
     const [query, parameterBag] = this.queryBuilder.build(instance);
 
     const p = parameterBag.toPlain();

@@ -11,12 +11,12 @@ import { OrderByQueries } from '../orderBy/OrderByQueries';
 export class MatchNodeQuery {
   private readonly nodeLiteral: NodeLiteral;
   private readonly whereQuery: WhereQuery | null;
-  private readonly orderByQueries: OrderByQueries;
+  private readonly orderByQueries: OrderByQueries | null;
 
   constructor(
     nodeLiteral: NodeLiteral,
     whereQuery: WhereQuery | null,
-    orderByQueries: OrderByQueries
+    orderByQueries: OrderByQueries | null
   ) {
     this.nodeLiteral = nodeLiteral;
     this.whereQuery = whereQuery;
@@ -49,6 +49,9 @@ export class MatchNodeQuery {
   }
 
   private getOrderByClause(): string {
+    if (this.orderByQueries === null) {
+      return '';
+    }
     const orderBy = new OrderByClause(
       this.orderByQueries.getLiterals(
         new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
