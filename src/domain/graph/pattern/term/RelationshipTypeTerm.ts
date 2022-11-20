@@ -1,6 +1,13 @@
 import { LabelPrefix, PatternTerm } from './PatternTerm';
+import { RelationshipType } from '../../../relationship/RelationshipType';
 
 export class RelationshipTypeTerm extends PatternTerm {
+  static withRelationshipType(
+    relationshipType: RelationshipType
+  ): RelationshipTypeTerm {
+    return new RelationshipTypeTerm(`:${relationshipType.toString()}`);
+  }
+
   constructor(value: string) {
     super(value);
 
