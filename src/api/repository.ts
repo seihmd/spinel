@@ -15,6 +15,8 @@ export interface SpinelRepositoryInterface {
   findOne<T>(query: FindQuery<T>): Promise<T | null>;
 
   save(nodeOrGraph: object): Promise<void>;
+
+  getDriver(): Driver;
 }
 
 class SpinelRepository implements SpinelRepositoryInterface {
