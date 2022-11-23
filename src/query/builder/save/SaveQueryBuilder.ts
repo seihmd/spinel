@@ -58,12 +58,12 @@ export class SaveQueryBuilder {
   build(
     instance: InstanceType<ClassConstructor<object>>
   ): [SaveQuery, ParameterBag] {
-    const cstr = instance.constructor as AnyClassConstructor;
     const parameterBag = new ParameterBag();
-    const plainGraph = PlainGraph.withInstance(instance);
 
+    const cstr = instance.constructor as AnyClassConstructor;
     const graphMetadata = this.metadataStore.findGraphMetadata(cstr);
     if (graphMetadata) {
+      const plainGraph = PlainGraph.withInstance(instance);
       const stemMaterial = this.stemMaterialBuilder.build(
         graphMetadata,
         plainGraph
