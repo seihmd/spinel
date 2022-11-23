@@ -1,4 +1,11 @@
-import { newRepository, NodeEntity, Primary, Property } from '../../../src';
+import {
+  Graph,
+  GraphNode,
+  newRepository,
+  NodeEntity,
+  Primary,
+  Property,
+} from '../../../src';
 import { FindQuery } from '../../../src/api/query';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 import { randomUUID } from 'crypto';
@@ -14,6 +21,20 @@ class Shop {
   }
 }
 
+@Graph('shop-:NEARBY->shop2')
+class NearbyShops {
+  @GraphNode()
+  private shop: Shop;
+
+  @GraphNode()
+  private shop2: Shop;
+
+  constructor(shop: Shop, shop2: Shop) {
+    this.shop = shop;
+    this.shop2 = shop2;
+  }
+}
+
 const neo4jFixture = Neo4jFixture.new();
 
 async function saveShop(id: string, name: string) {
@@ -24,12 +45,13 @@ async function saveShop(id: string, name: string) {
 }
 
 describe(`SpinelRepository`, () => {
+  const repository = newRepository(neo4jFixture.getDriver());
+
   afterAll(async () => {
     await neo4jFixture.teardown();
   });
 
   test('find', async () => {
-    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
     await saveShop(id, 'shopName');
 
@@ -41,7 +63,6 @@ describe(`SpinelRepository`, () => {
   });
 
   test('find existing one', async () => {
-    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
     await saveShop(id, 'shopName');
 
@@ -53,7 +74,6 @@ describe(`SpinelRepository`, () => {
   });
 
   test('not found', async () => {
-    const repository = newRepository(neo4jFixture.getDriver());
     const id = randomUUID();
 
     const shop = await repository.findOne(
@@ -66,7 +86,7 @@ describe(`SpinelRepository`, () => {
   test('save', async () => {
     const id = randomUUID();
     const shop = new Shop(id, 'shopName');
-    const repository = newRepository(neo4jFixture.getDriver());
+
     await repository.save(shop);
 
     const savedValue = await neo4jFixture.findNode('Shop', id);
@@ -74,5 +94,54 @@ describe(`SpinelRepository`, () => {
       id,
       name: 'shopName',
     });
+  });
+
+  test('delete', async () => {
+    const id = randomUUID();
+    const shop = new Shop(id, 'shopName');
+
+    await repository.save(shop);
+    await repository.delete(shop);
+
+    expect(await neo4jFixture.findNode('Shop', id)).toBeNull();
+  });
+
+  test('detach delete', async () => {
+    const id = randomUUID();
+    const id2 = randomUUID();
+    const shop = new Shop(id, 'shopName');
+    const shop2 = new Shop(id2, 'shopName2');
+    const nearbyShops = new NearbyShops(shop, shop2);
+
+    await repository.save(nearbyShops);
+    await repository.detachDelete(shop);
+
+    expect(await neo4jFixture.findNode('Shop', id)).toBeNull();
+  });
+
+  test('detach', async () => {
+    const id = randomUUID();
+    const id2 = randomUUID();
+    const shop = new Shop(id, 'shopName');
+    const shop2 = new Shop(id2, 'shopName2');
+    const nearbyShops = new NearbyShops(shop, shop2);
+
+    await repository.save(nearbyShops);
+    await repository.detach(shop, 'NEARBY', shop2, '->');
+
+    expect(await neo4jFixture.findNode('Shop', id)).toStrictEqual({
+      id,
+      name: 'shopName',
+    });
+    expect(await neo4jFixture.findNode('Shop', id2)).toStrictEqual({
+      id: id2,
+      name: 'shopName2',
+    });
+    expect(
+      await neo4jFixture.findGraph(
+        `MATCH (n:Shop{id:"${id}"})-[r:NEARBY]->(n2:Shop{id:"${id2}"}) 
+        RETURN n, r, n2`
+      )
+    ).toBeNull();
   });
 });

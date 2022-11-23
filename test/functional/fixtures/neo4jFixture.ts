@@ -146,8 +146,12 @@ export class Neo4jFixture {
     return relationship.properties;
   }
 
-  async findGraph(pattern: string): Promise<{ [key: string]: unknown }> {
+  async findGraph(pattern: string): Promise<{ [key: string]: unknown } | null> {
     const q = await this.session().run(pattern);
+
+    if (q.records.length === 0) {
+      return null;
+    }
 
     const result: { [key: string]: unknown } = {};
     for (const [key, entry] of q.records[0].entries()) {

@@ -8,6 +8,11 @@ import { SaveQueryPlan } from '../query/builder/save/SaveQueryPlan';
 import * as process from 'process';
 import { ENV_SPINEL_HOST, ENV_SPINEL_PASSWORD, ENV_SPINEL_USER } from './env';
 import { UndefinedSettingError } from './errors';
+import { ClassConstructor } from '../domain/type/ClassConstructor';
+import { Direction } from '../domain/graph/Direction';
+import { DeleteQueryPlan } from '../query/builder/delete/DeleteQueryPlan';
+import { DetachQueryPlan } from '../query/builder/delete/DetachQueryPlan';
+import { RelationshipType } from '../domain/relationship/RelationshipType';
 
 export interface SpinelRepositoryInterface {
   find<T>(query: FindQuery<T>): Promise<T[]>;
@@ -15,6 +20,17 @@ export interface SpinelRepositoryInterface {
   findOne<T>(query: FindQuery<T>): Promise<T | null>;
 
   save(nodeOrGraph: object): Promise<void>;
+
+  delete(entity: InstanceType<ClassConstructor<object>>): Promise<void>;
+
+  detachDelete(node: InstanceType<ClassConstructor<object>>): Promise<void>;
+
+  detach(
+    node1: InstanceType<ClassConstructor<object>>,
+    relationshipType: string,
+    node2: InstanceType<ClassConstructor<object>>,
+    direction: Direction
+  ): Promise<void>;
 
   getDriver(): Driver;
 }
@@ -59,6 +75,33 @@ class SpinelRepository implements SpinelRepositoryInterface {
   async save(nodeOrGraph: object): Promise<void> {
     const queryPlan = SaveQueryPlan.new(this.driver);
     await queryPlan.execute(nodeOrGraph);
+  }
+
+  async delete(entity: InstanceType<ClassConstructor<object>>): Promise<void> {
+    const deleteQueryPlan = DeleteQueryPlan.new(this.driver);
+    await deleteQueryPlan.execute(entity, false);
+  }
+
+  async detachDelete(
+    node: InstanceType<ClassConstructor<object>>
+  ): Promise<void> {
+    const deleteQueryPlan = DeleteQueryPlan.new(this.driver);
+    await deleteQueryPlan.execute(node, true);
+  }
+
+  async detach(
+    node1: InstanceType<ClassConstructor<object>>,
+    relationshipType: string,
+    node2: InstanceType<ClassConstructor<object>>,
+    direction: Direction
+  ): Promise<void> {
+    const detachQueryPlan = DetachQueryPlan.new(this.driver);
+    await detachQueryPlan.execute(
+      node1,
+      new RelationshipType(relationshipType),
+      node2,
+      direction
+    );
   }
 }
 
