@@ -1,12 +1,12 @@
-import { Driver } from 'neo4j-driver';
-import { QueryBuilder } from './QueryBuilder';
-import { ClassConstructor } from '../../../domain/type/ClassConstructor';
-import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { Depth } from '../../../domain/graph/branch/Depth';
-import { WhereQueries } from '../where/WhereQueries';
-import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { toInstance } from 'util/toInstance';
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { ClassConstructor } from '../../../domain/type/ClassConstructor';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
+import { SessionInterface } from '../SessionInterface';
+import { WhereQueries } from '../where/WhereQueries';
+import { QueryBuilder } from './QueryBuilder';
 
 type MatchQueryPlanOption = {
   whereQueries: WhereQueries;
@@ -23,22 +23,22 @@ const defaultOption: MatchQueryPlanOption = {
 };
 
 export class QueryPlan {
-  static new(driver: Driver): QueryPlan {
-    return new QueryPlan(QueryBuilder.new(), getMetadataStore(), driver);
+  static new(session: SessionInterface): QueryPlan {
+    return new QueryPlan(QueryBuilder.new(), getMetadataStore(), session);
   }
 
   private readonly queryBuilder: QueryBuilder;
   private readonly metadataStore: MetadataStoreInterface;
-  private readonly driver: Driver;
+  private readonly session: SessionInterface;
 
   constructor(
     queryBuilder: QueryBuilder,
     metadataStore: MetadataStoreInterface,
-    driver: Driver
+    session: SessionInterface
   ) {
     this.metadataStore = metadataStore;
     this.queryBuilder = queryBuilder;
-    this.driver = driver;
+    this.session = session;
   }
 
   async execute<T>(
@@ -57,9 +57,7 @@ export class QueryPlan {
     );
 
     const q = query.get('_');
-    const result = await this.driver
-      .session()
-      .run(q, completeOption.parameters);
+    const result = await this.session.run(q, completeOption.parameters);
 
     return result.records.map((record) => {
       return toInstance(cstr, record.toObject()['_']);
