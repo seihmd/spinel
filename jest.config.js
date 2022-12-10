@@ -1,7 +1,7 @@
 module.exports = {
   moduleDirectories: ['node_modules', 'src'],
   roots: ['<rootDir>/src', '<rootDir>/test'],
-  testMatch: ['**/*.test.ts'],
+  testMatch: ['test/**/*.test.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': '@swc/jest',
   },

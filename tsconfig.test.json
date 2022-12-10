@@ -5,6 +5,7 @@
     "./test/**/*.ts"
   ],
   "compilerOptions": {
+    "baseUrl": "./src",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "strictPropertyInitialization": false
