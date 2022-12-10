@@ -12,7 +12,7 @@
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
     "tsc": "tsc --noEmit",
     "eslint": "eslint",
-    "precommit": "npm run prettier:write && npm run tsc && npm run eslint && npm run test",
+    "precommit": "npm run prettier:write && npm run tsc && npm run eslint",
     "prepare": "husky install"
   },
   "prettier": {
