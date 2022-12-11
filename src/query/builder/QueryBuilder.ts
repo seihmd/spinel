@@ -2,6 +2,8 @@ import { Driver } from 'neo4j-driver';
 import { ClassConstructor } from '../../domain/type/ClassConstructor';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
+import { DeleteQuery } from './delete/DeleteQuery';
+import { DeleteQueryBuilder } from './delete/DeleteQueryBuilder';
 import { FindQueryBuilder } from './find/FindQueryBuilder';
 import { SaveQuery } from './save/SaveQuery';
 import { SaveQueryBuilder } from './save/SaveQueryBuilder';
@@ -28,6 +30,14 @@ export class QueryBuilder {
 
   save(instance: Instance): SaveQuery {
     return new SaveQueryBuilder(
+      this.sessionProvider(),
+      this.metadataStore(),
+      instance
+    ).buildQuery();
+  }
+
+  delete(instance: Instance): DeleteQuery {
+    return new DeleteQueryBuilder(
       this.sessionProvider(),
       this.metadataStore(),
       instance

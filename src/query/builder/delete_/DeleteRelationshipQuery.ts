@@ -1,8 +1,11 @@
 import { DeleteClause } from '../../clause/DeleteClause';
-import { RelationshipLiteral } from '../../literal/RelationshipLiteral';
 import { MatchRelationshipClause } from '../../clause/MatchRelationshipClause';
 import { RelationshipInstanceElement } from '../../element/RelationshipInstanceElement';
+import { RelationshipLiteral } from '../../literal/RelationshipLiteral';
 
+/**
+ * @deprecated DeleteRelationshipStatement
+ */
 export class DeleteRelationshipQuery {
   private readonly relationshipInstanceElement: RelationshipInstanceElement;
 

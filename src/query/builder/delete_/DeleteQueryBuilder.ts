@@ -4,6 +4,7 @@ import {
   AnyClassConstructor,
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
@@ -11,34 +12,34 @@ import { RelationshipInstanceElement } from '../../element/RelationshipInstanceE
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
-import { DeleteNodeStatement } from './DeleteNodeStatement';
-import { DeleteQuery } from './DeleteQuery';
-import { DeleteRelationshipStatement } from './DeleteRelationshipStatement';
+import { DeleteNodeQuery } from './DeleteNodeQuery';
+import { DeleteRelationshipQuery } from './DeleteRelationshipQuery';
 
+/**
+ * @deprecated
+ */
 export class DeleteQueryBuilder {
-  private readonly sessionProvider: SessionProviderInterface;
-  private readonly metadataStore: MetadataStoreInterface;
-  private readonly instance: InstanceType<ClassConstructor<object>>;
-
-  constructor(
-    sessionProvider: SessionProviderInterface,
-    metadataStore: MetadataStoreInterface,
-    instance: InstanceType<ClassConstructor<object>>
-  ) {
-    this.sessionProvider = sessionProvider;
-    this.metadataStore = metadataStore;
-    this.instance = instance;
+  static new(): DeleteQueryBuilder {
+    return new DeleteQueryBuilder(getMetadataStore());
   }
 
-  buildQuery(): DeleteQuery {
+  private readonly metadataStore: MetadataStoreInterface;
+
+  constructor(metadataStore: MetadataStoreInterface) {
+    this.metadataStore = metadataStore;
+  }
+
+  build(
+    instance: InstanceType<ClassConstructor<object>>,
+    detach: boolean
+  ): [DeleteNodeQuery | DeleteRelationshipQuery, ParameterBag] {
     const parameterBag = new ParameterBag();
-    const cstr = this.instance.constructor as AnyClassConstructor;
+    const cstr = instance.constructor as AnyClassConstructor;
     const nodeMetadata = this.metadataStore.findNodeEntityMetadata(cstr);
 
     if (nodeMetadata) {
       const nodeInstanceElement = new NodeInstanceElement(
-        this.instance,
+        instance,
         nodeMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
         new NodeKeyTerm('_')
@@ -50,18 +51,14 @@ export class DeleteQueryBuilder {
           nodeInstanceElement.getProperties().parameterize()
         )
       );
-      return new DeleteQuery(
-        this.sessionProvider,
-        new DeleteNodeStatement(nodeInstanceElement),
-        parameterBag
-      );
+      return [new DeleteNodeQuery(nodeInstanceElement, detach), parameterBag];
     }
 
     const relationshipMetadata =
       this.metadataStore.findRelationshipEntityMetadata(cstr);
     if (relationshipMetadata) {
       const relationshipInstanceElement = new RelationshipInstanceElement(
-        this.instance,
+        instance,
         relationshipMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
         new RelationshipKeyTerm('r')
@@ -72,11 +69,10 @@ export class DeleteQueryBuilder {
           relationshipInstanceElement.getProperties().parameterize()
         )
       );
-      return new DeleteQuery(
-        this.sessionProvider,
-        new DeleteRelationshipStatement(relationshipInstanceElement),
-        parameterBag
-      );
+      return [
+        new DeleteRelationshipQuery(relationshipInstanceElement),
+        parameterBag,
+      ];
     }
 
     throw new Error(

@@ -1,8 +1,11 @@
+import { DeleteClause } from '../../clause/DeleteClause';
+import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { NodeLiteral } from '../../literal/NodeLiteral';
-import { MatchNodeClause } from '../../clause/MatchNodeClause';
-import { DeleteClause } from '../../clause/DeleteClause';
 
+/**
+ * @deprecated DeleteNodeStatement
+ */
 export class DeleteNodeQuery {
   private readonly nodeInstanceElement: NodeInstanceElement;
   private readonly detach: boolean;
