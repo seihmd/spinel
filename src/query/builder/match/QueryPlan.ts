@@ -4,7 +4,7 @@ import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
-import { SessionInterface } from '../SessionInterface';
+import { SessionInterface } from '../session/SessionInterface';
 import { WhereQueries } from '../where/WhereQueries';
 import { QueryBuilder } from './QueryBuilder';
 

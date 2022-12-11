@@ -1,7 +1,7 @@
 import { Driver } from 'neo4j-driver';
 import { ClassConstructor } from '../../domain/type/ClassConstructor';
 import { FindQueryBuilder } from './FindQueryBuilder';
-import { SessionInterface } from './SessionInterface';
+import { SessionInterface } from './session/SessionInterface';
 
 export class QueryBuilder {
   private readonly driver: Driver;

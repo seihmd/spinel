@@ -4,7 +4,7 @@ import { Sort } from '../literal/OrderByLiteral';
 import { QueryPlan } from './match/QueryPlan';
 import { OrderByQueries } from './orderBy/OrderByQueries';
 import { OrderByQuery } from './orderBy/OrderByQuery';
-import { SessionInterface } from './SessionInterface';
+import { SessionInterface } from './session/SessionInterface';
 import { WhereQueries } from './where/WhereQueries';
 import { WhereQuery } from './where/WhereQuery';
 
