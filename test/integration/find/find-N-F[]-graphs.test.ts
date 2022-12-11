@@ -4,14 +4,10 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
-import { QueryBuilder } from 'query/builder/match/QueryBuilder';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -45,7 +41,7 @@ class FavoriteItem {
 @Graph('shop')
 class ShopCustomerFavorites {
   @GraphNode() private shop: Shop;
-  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer')
+  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer@customer')
   private favoriteItems: FavoriteItem[];
 
   constructor(shop: Shop, favoriteItems: FavoriteItem[]) {
@@ -55,8 +51,9 @@ class ShopCustomerFavorites {
 }
 
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
-describe('map Neo4j Record into N-F[] Graph class', () => {
+describe('Find N-F[] graphs', () => {
   beforeAll(async () => {
     const shop = await neo4jFixture.addNode('Shop', { id: id.get('shop') });
     const customer = await neo4jFixture.addNode('Customer', {
@@ -86,35 +83,49 @@ describe('map Neo4j Record into N-F[] Graph class', () => {
     await neo4jFixture.teardown();
   });
 
-  test('QueryBuilder', () => {
-    const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(
-      ShopCustomerFavorites,
-      new WhereQueries([]),
-      new OrderByQueries([])
-    );
-    expect(query.get('_')).toBe(
+  test('find', async () => {
+    const query = qb
+      .find(ShopCustomerFavorites, 'scf')
+      .where(null, '{shop}.id=$shop.id')
+      .buildQuery({
+        shop: { id: id.get('shop') },
+      });
+
+    expect(query.getStatement()).toBe(
       'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
         'RETURN {shop:n0{.*},' +
         'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item)' +
         '|{item:b0_n8{.*}}]} AS _'
     );
-  });
-
-  test('QueryPlan', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(ShopCustomerFavorites, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{shop}.id=$shop.id'),
-      ]),
-      parameters: {
-        shop: { id: id.get('shop') },
-      },
-    });
-    expect(results).toStrictEqual([
+    expect(await query.run()).toStrictEqual([
       new ShopCustomerFavorites(new Shop(id.get('shop')), [
         new FavoriteItem(new Item(id.get('item2'))),
+        new FavoriteItem(new Item(id.get('item1'))),
+      ]),
+    ]);
+  });
+
+  test('find with branch where', async () => {
+    const query = qb
+      .find(ShopCustomerFavorites, 'scf')
+      .where(null, '{shop}.id=$shop.id')
+      .where('favoriteItems', '{*.item}.id=$item.id')
+      .buildQuery({
+        shop: { id: id.get('shop') },
+        item: { id: id.get('item1') },
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
+        'RETURN {shop:n0{.*},' +
+        'favoriteItems:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)-[b0_r6:HAS_FAVORITE]->(b0_n8:Item) ' +
+        'WHERE b0_n8.id=$item.id|{item:b0_n8{.*}}]} ' +
+        'AS _'
+    );
+    expect(await query.run()).toStrictEqual([
+      new ShopCustomerFavorites(new Shop(id.get('shop')), [
         new FavoriteItem(new Item(id.get('item1'))),
       ]),
     ]);

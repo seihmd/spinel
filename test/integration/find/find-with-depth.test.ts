@@ -3,17 +3,11 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
-import { Depth } from 'domain/graph/branch/Depth';
-
 import { Node } from 'neo4j-driver-core';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
-
-const neo4jFixture = Neo4jFixture.new();
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 @NodeEntity()
 class Item {
@@ -42,9 +36,11 @@ async function addItem(name: string): Promise<Node> {
   });
 }
 
+const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
-describe('map Neo4j Record into Graph class with depth', () => {
+describe('Find graph with depth', () => {
   beforeAll(async () => {
     const item = await addItem('item');
     const similar1 = await addItem('similar1');
@@ -91,16 +87,16 @@ describe('map Neo4j Record into Graph class with depth', () => {
   });
 
   test.each([
-    [new Depth(0), new SimilarItems(new Item(id.get('item')), [])],
+    [0, new SimilarItems(new Item(id.get('item')), [])],
     [
-      new Depth(1),
+      1,
       new SimilarItems(new Item(id.get('item')), [
         new SimilarItems(new Item(id.get('similar2')), []),
         new SimilarItems(new Item(id.get('similar1')), []),
       ]),
     ],
     [
-      new Depth(2),
+      2,
       new SimilarItems(new Item(id.get('item')), [
         new SimilarItems(new Item(id.get('similar2')), [
           new SimilarItems(new Item(id.get('similar2_2')), []),
@@ -112,18 +108,15 @@ describe('map Neo4j Record into Graph class with depth', () => {
         ]),
       ]),
     ],
-  ])('map nested graphs', async (depth: Depth, expected: SimilarItems) => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(SimilarItems, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{item}.id=$item.id'),
-      ]),
-      depth,
-      parameters: {
+  ])('find', async (depth: number, expected: SimilarItems) => {
+    const query = qb
+      .find(SimilarItems, 'si')
+      .where(null, '{item}.id=$item.id')
+      .depth(depth)
+      .buildQuery({
         item: { id: id.get('item') },
-      },
-    });
-    expect(results).toStrictEqual([expected]);
+      });
+
+    expect(await query.run()).toStrictEqual([expected]);
   });
 });

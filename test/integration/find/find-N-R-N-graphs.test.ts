@@ -7,18 +7,11 @@ import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { Date as Neo4jDate } from 'neo4j-driver';
 import { Node } from 'neo4j-driver-core';
-import { QueryBuilder } from 'query/builder/match/QueryBuilder';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
-import { OrderByQuery } from 'query/builder/orderBy/OrderByQuery';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import { Sort } from 'query/literal/OrderByLiteral';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
-
-const neo4jFixture = Neo4jFixture.new();
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 @NodeEntity()
 class Shop {
@@ -66,9 +59,11 @@ class ShopCustomer {
   }
 }
 
+const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
-describe('map Neo4j Record into N-R-N Graph class', () => {
+describe('Find N-R-N graphs', () => {
   const addShop = async (id: string, name: string) => {
     return await neo4jFixture.addNode('Shop', { id, name });
   };
@@ -120,31 +115,21 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
     await neo4jFixture.teardown();
   });
 
-  test('QueryBuilder', () => {
-    const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(
-      ShopCustomer,
-      new WhereQueries([]),
-      new OrderByQueries([])
-    );
-    expect(query.get('_')).toBe(
+  test('find', async () => {
+    const query = qb
+      .find(ShopCustomer, 'sc')
+      .where(null, '{shop}.id=$shop.id')
+      .buildQuery({
+        shop: { id: id.get('shop1') },
+      });
+
+    expect(query.getStatement()).toBe(
       'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+        'WHERE n0.id=$shop.id ' +
         'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _'
     );
-  });
 
-  test('QueryPlan', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(ShopCustomer, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{shop}.id=$shop.id'),
-      ]),
-      parameters: {
-        shop: { id: id.get('shop1') },
-      },
-    });
-    expect(results).toStrictEqual([
+    expect(await query.run()).toStrictEqual([
       new ShopCustomer(
         new Shop(id.get('shop1'), 'MyShop1'),
         new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
@@ -185,22 +170,23 @@ describe('map Neo4j Record into N-R-N Graph class', () => {
       ],
     ],
   ] as [Sort, ShopCustomer[]][])(
-    'QueryPlan with sort',
+    'find with sort',
     async (sort: Sort, expected: ShopCustomer[]) => {
-      const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-      const results = await queryPlan.execute(ShopCustomer, {
-        whereQueries: new WhereQueries([
-          new WhereQuery(null, '{shop}.id IN $shopIds'),
-        ]),
-        orderByQueries: new OrderByQueries([
-          new OrderByQuery('{isCustomer}.visited', sort),
-        ]),
-        parameters: {
+      const query = qb
+        .find(ShopCustomer, 'sc')
+        .where(null, '{shop}.id IN $shopIds')
+        .orderBy('{isCustomer}.visited', sort)
+        .buildQuery({
           shopIds: [id.get('shop1'), id.get('shop2')],
-        },
-      });
-      expect(results).toStrictEqual(expected);
+        });
+
+      expect(query.getStatement()).toBe(
+        'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+          'WHERE n0.id IN $shopIds ' +
+          'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _ ' +
+          `ORDER BY r2.visited ${sort}`
+      );
+      expect(await query.run()).toStrictEqual(expected);
     }
   );
 });

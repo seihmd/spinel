@@ -4,13 +4,11 @@ import { ReturnClause } from '../../clause/ReturnClause';
 import { WhereClause } from '../../clause/WhereClause';
 import { MapEntryLiteral } from '../../literal/MapEntryLiteral';
 import { MapLiteral } from '../../literal/MapLiteral';
-import { BranchQueryContext } from './BranchQueryContext';
-import { StemQueryContext } from './StemQueryContext';
+import { AbstractStatement } from '../AbstractStatement';
+import { BranchQueryContext } from '../match/BranchQueryContext';
+import { StemQueryContext } from '../match/StemQueryContext';
 
-/**
- * @deprecated FindGraphStatement
- */
-export class Query {
+export class FindGraphStatement extends AbstractStatement {
   private stemQueryContext: StemQueryContext;
   private branchQueryContexts: BranchQueryContext[];
 
@@ -18,15 +16,16 @@ export class Query {
     stemQueryContext: StemQueryContext,
     branchQueryContexts: BranchQueryContext[]
   ) {
+    super();
     this.stemQueryContext = stemQueryContext;
     this.branchQueryContexts = branchQueryContexts;
   }
 
-  get(as: string): string {
+  build(): string {
     return (
       this.getMatchClause() +
       this.getWhereClause() +
-      this.getReturnClause(as) +
+      this.getReturnClause() +
       this.getOrderByClause()
     );
   }
@@ -54,7 +53,7 @@ export class Query {
     return ` ${orderBy}`;
   }
 
-  private getReturnClause(as: string): string {
+  private getReturnClause(): string {
     return new ReturnClause([
       new MapLiteral(
         MapEntryLiteral.new([
@@ -67,7 +66,7 @@ export class Query {
             []
           ),
         ]),
-        as
+        this.as()
       ),
     ]).get();
   }

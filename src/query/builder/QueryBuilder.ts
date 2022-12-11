@@ -1,7 +1,10 @@
 import { Driver } from 'neo4j-driver';
 import { ClassConstructor } from '../../domain/type/ClassConstructor';
-import { FindQueryBuilder } from './FindQueryBuilder';
-import { SessionInterface } from './session/SessionInterface';
+import { getMetadataStore } from '../../metadata/store/MetadataStore';
+import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
+import { FindQueryBuilder } from './find/FindQueryBuilder';
+import { SessionProvider } from './session/SessionProvider';
+import { SessionProviderInterface } from './session/SessionProviderInterface';
 
 export class QueryBuilder {
   private readonly driver: Driver;
@@ -10,11 +13,20 @@ export class QueryBuilder {
     this.driver = driver;
   }
 
-  find<S>(cstr: ClassConstructor<S>, alias: string): FindQueryBuilder<S> {
-    return new FindQueryBuilder<S>(this.session(), cstr, alias);
+  find<T>(cstr: ClassConstructor<T>, alias: string): FindQueryBuilder<T> {
+    return new FindQueryBuilder<T>(
+      this.sessionProvider(),
+      this.metadataStore(),
+      cstr,
+      alias
+    );
   }
 
-  private session(): SessionInterface {
-    return this.driver.session();
+  private sessionProvider(): SessionProviderInterface {
+    return new SessionProvider(this.driver);
+  }
+
+  private metadataStore(): MetadataStoreInterface {
+    return getMetadataStore();
   }
 }

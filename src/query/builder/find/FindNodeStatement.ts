@@ -5,13 +5,11 @@ import { WhereClause } from '../../clause/WhereClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { VariableMap } from '../../literal/util/VariableMap';
 import { WhereLiteral } from '../../literal/WhereLiteral';
+import { AbstractStatement } from '../AbstractStatement';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
 import { WhereQuery } from '../where/WhereQuery';
 
-/**
- * @deprecated FindNodeStatement
- */
-export class MatchNodeQuery {
+export class FindNodeStatement extends AbstractStatement {
   private readonly nodeLiteral: NodeLiteral;
   private readonly whereQuery: WhereQuery | null;
   private readonly orderByQueries: OrderByQueries | null;
@@ -21,16 +19,18 @@ export class MatchNodeQuery {
     whereQuery: WhereQuery | null,
     orderByQueries: OrderByQueries | null
   ) {
+    super();
+
     this.nodeLiteral = nodeLiteral;
     this.whereQuery = whereQuery;
     this.orderByQueries = orderByQueries;
   }
 
-  get(as: string): string {
+  protected build(): string {
     return (
       `${
         this.getMatchClause() + this.getWhereClause() + this.getReturnClause()
-      } AS ${as}` + this.getOrderByClause()
+      } AS ${this.as()}` + this.getOrderByClause()
     );
   }
 

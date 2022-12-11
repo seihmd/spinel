@@ -3,14 +3,10 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
-import { QueryBuilder } from 'query/builder/match/QueryBuilder';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 
@@ -44,8 +40,9 @@ class ShopCustomer {
 }
 
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
-describe('map Neo4j Record into N-:R-N[] Graph class', () => {
+describe('Find N-:R-N[] graphs', () => {
   beforeAll(async () => {
     const shop = await neo4jFixture.addNode('Shop', {
       id: id.get('shop1'),
@@ -79,32 +76,23 @@ describe('map Neo4j Record into N-:R-N[] Graph class', () => {
     await neo4jFixture.teardown();
   });
 
-  test('QueryBuilder', () => {
-    const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(
-      ShopCustomer,
-      new WhereQueries([]),
-      new OrderByQueries([])
-    );
-    expect(query.get('_')).toBe(
-      'MATCH (n0:Shop) ' +
-        'RETURN {shop:n0{.*},' +
-        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} AS _'
-    );
-  });
-
-  test('QueryPlan', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(ShopCustomer, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{shop}.id=$shop.id'),
-      ]),
-      parameters: {
+  test('find', async () => {
+    const query = qb
+      .find(ShopCustomer, 'sc')
+      .where(null, '{shop}.id=$shop.id')
+      .buildQuery({
         shop: { id: id.get('shop1') },
-      },
-    });
-    expect(results).toStrictEqual([
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
+        'RETURN {shop:n0{.*},' +
+        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} ' +
+        'AS _'
+    );
+
+    expect(await query.run()).toStrictEqual([
       new ShopCustomer(new Shop(id.get('shop1')), [
         new User(id.get('customer2')),
         new User(id.get('customer1')),
@@ -112,18 +100,22 @@ describe('map Neo4j Record into N-:R-N[] Graph class', () => {
     ]);
   });
 
-  test('no customers', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(ShopCustomer, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{shop}.id=$shop.id'),
-      ]),
-      parameters: {
+  test('find no customers', async () => {
+    const query = qb
+      .find(ShopCustomer, 'sc')
+      .where(null, '{shop}.id=$shop.id')
+      .buildQuery({
         shop: { id: id.get('shop2') },
-      },
-    });
-    expect(results).toStrictEqual([
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
+        'RETURN {shop:n0{.*},' +
+        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} ' +
+        'AS _'
+    );
+    expect(await query.run()).toStrictEqual([
       new ShopCustomer(new Shop(id.get('shop2')), []),
     ]);
   });

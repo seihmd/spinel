@@ -1,20 +1,23 @@
+import { Depth } from '../../../domain/graph/branch/Depth';
+import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
-import { StemQueryContext } from './StemQueryContext';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { ElementContext } from '../../element/ElementContext';
+import { NodeElement } from '../../element/NodeElement';
+import { NodeLiteral } from '../../literal/NodeLiteral';
+import { BranchIndexes } from '../../meterial/BranchIndexes';
+import { OrderByQueries } from '../orderBy/OrderByQueries';
+import { WhereQueries } from '../where/WhereQueries';
 import { BranchQueryContext } from './BranchQueryContext';
+import { MatchNodeQuery } from './MatchNodeQuery';
 import { Query } from './Query';
 import { StemBuilder } from './StemBuilder';
-import { Depth } from '../../../domain/graph/branch/Depth';
-import { WhereQueries } from '../where/WhereQueries';
-import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { getMetadataStore } from '../../../metadata/store/MetadataStore';
-import { NodeElement } from '../../element/NodeElement';
-import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
-import { ElementContext } from '../../element/ElementContext';
-import { BranchIndexes } from '../../meterial/BranchIndexes';
-import { MatchNodeQuery } from './MatchNodeQuery';
-import { NodeLiteral } from '../../literal/NodeLiteral';
-import { OrderByQueries } from '../orderBy/OrderByQueries';
+import { StemQueryContext } from './StemQueryContext';
 
+/**
+ * @deprecated
+ */
 export class QueryBuilder {
   static new(): QueryBuilder {
     return new QueryBuilder(StemBuilder.new(), getMetadataStore());

@@ -3,17 +3,10 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
-import { Depth } from 'domain/graph/branch/Depth';
-import { QueryBuilder } from 'query/builder/match/QueryBuilder';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
-
-const neo4jFixture = Neo4jFixture.new();
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 @NodeEntity()
 class Shop {
@@ -65,9 +58,11 @@ class ShopItemTags {
   }
 }
 
+const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
-describe('map Neo4j Record into N-:R-G[] Graph class', () => {
+describe('Find N-:R-:N graphs', () => {
   beforeAll(async () => {
     const shop = await neo4jFixture.addNode('Shop', { id: id.get('shop') });
     const item = await neo4jFixture.addNode('Item', { id: id.get('item') });
@@ -83,32 +78,21 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
     await neo4jFixture.teardown();
   });
 
-  test('QueryBuilder', () => {
-    const queryBuilder = QueryBuilder.new();
-    const query = queryBuilder.build(
-      ShopItemTags,
-      new WhereQueries([]),
-      new OrderByQueries([]),
-      new Depth(3)
-    );
-    expect(query.get('_')).toBe(
-      'MATCH (n0:Shop) ' +
+  test('find', async () => {
+    const query = qb
+      .find(ShopItemTags, 'sit')
+      .where(null, '{shop}.id = $shopId')
+      .buildQuery({ shopId: id.get('shop') });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop) WHERE n0.id = $shopId ' +
         'RETURN {shop:n0{.*},' +
         'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
-        'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} AS _'
+        'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} ' +
+        'AS _'
     );
-  });
 
-  test('QueryPlan', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-
-    const results = await queryPlan.execute(ShopItemTags, {
-      whereQueries: new WhereQueries([
-        new WhereQuery(null, '{shop}.id = $shopId'),
-      ]),
-      parameters: { shopId: id.get('shop') },
-    });
-    expect(results).toStrictEqual([
+    expect(await query.run()).toStrictEqual([
       new ShopItemTags(new Shop(id.get('shop')), [
         new ItemTags(new Item(id.get('item')), [
           new Tag(id.get('tag2')),

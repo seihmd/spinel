@@ -22,6 +22,9 @@ const defaultOption: MatchQueryPlanOption = {
   parameters: {},
 };
 
+/**
+ * @deprecated FindQueryBuilder
+ */
 export class QueryPlan {
   static new(session: SessionInterface): QueryPlan {
     return new QueryPlan(QueryBuilder.new(), getMetadataStore(), session);

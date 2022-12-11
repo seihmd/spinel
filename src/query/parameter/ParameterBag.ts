@@ -1,6 +1,15 @@
 import { Parameter } from './Parameter';
 
 export class ParameterBag {
+  static new(parameters: Record<string, unknown>): ParameterBag {
+    const parameterBag = new ParameterBag();
+    Object.entries(parameters).forEach(([key, value]) => {
+      parameterBag.add(Parameter.new(key, value));
+    });
+
+    return parameterBag;
+  }
+
   private readonly parameterMap: Map<string, Parameter> = new Map();
 
   add(parameter: Parameter): void {
