@@ -7,6 +7,8 @@ import { DeleteQuery } from './delete/DeleteQuery';
 import { DeleteQueryBuilder } from './delete/DeleteQueryBuilder';
 import { DetachQuery } from './detach/DetachQuery';
 import { DetachQueryBuilder } from './detach/DetachQueryBuilder';
+import { DetachDeleteQuery } from './detachDelete/DetachDeleteQuery';
+import { DetachDeleteQueryBuilder } from './detachDelete/DetachDeleteQueryBuilder';
 import { FindQueryBuilder } from './find/FindQueryBuilder';
 import { SaveQuery } from './save/SaveQuery';
 import { SaveQueryBuilder } from './save/SaveQueryBuilder';
@@ -60,6 +62,14 @@ export class QueryBuilder {
       node2,
       relationship,
       direction
+    ).buildQuery();
+  }
+
+  detachDelete(instance: Instance): DetachDeleteQuery {
+    return new DetachDeleteQueryBuilder(
+      this.sessionProvider(),
+      this.metadataStore(),
+      instance
     ).buildQuery();
   }
 
