@@ -1,60 +1,73 @@
-import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
 import {
   AnyClassConstructor,
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
-import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
-import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
-import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { ElementContext } from '../../element/ElementContext';
+import { SaveQuery } from './SaveQuery';
+import { Path } from '../../path/Path';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
-import { PlainEntity } from '../../element/PlainEntity';
-import { PlainGraph } from '../../element/PlainGraph';
-import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
-import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
-import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
-import { GraphBranchMaterialBuilder } from '../../meterial/branch/GraphBranchMaterialBuilder';
-import { InstanceElementBuilder as BranchInstanceElementBuilder } from '../../meterial/branch/InstanceElementBuilder';
-import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
+import { ElementContext } from '../../element/ElementContext';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
-import { InstanceElementBuilder } from '../../meterial/stem/InstanceElementBuilder';
-import { StemMaterial } from '../../meterial/stem/StemMaterial';
 import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { InstanceElementBuilder } from '../../meterial/stem/InstanceElementBuilder';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
+import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
+import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
+import { InstanceElementBuilder as BranchInstanceElementBuilder } from '../../meterial/branch/InstanceElementBuilder';
+import { GraphBranchMaterialBuilder } from '../../meterial/branch/GraphBranchMaterialBuilder';
+import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { StemMaterial } from '../../meterial/stem/StemMaterial';
+import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
+import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
+import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { Branch } from '../../path/Branch';
-import { Path } from '../../path/Path';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
-import { SaveQuery } from './SaveQuery';
-import { SaveStatement } from './SaveStatement';
+import { PlainGraph } from '../../element/PlainGraph';
+import { PlainEntity } from '../../element/PlainEntity';
+import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
 
 export class SaveQueryBuilder {
-  private readonly sessionProvider: SessionProviderInterface;
-  private readonly metadataStore: MetadataStoreInterface;
-  private readonly instance: InstanceType<ClassConstructor<object>>;
-
-  constructor(
-    sessionProvider: SessionProviderInterface,
-    metadataStore: MetadataStoreInterface,
-    instance: InstanceType<ClassConstructor<object>>
-  ) {
-    this.sessionProvider = sessionProvider;
-    this.metadataStore = metadataStore;
-    this.instance = instance;
+  static new(): SaveQueryBuilder {
+    return new SaveQueryBuilder(
+      getMetadataStore(),
+      new StemMaterialBuilder(new InstanceElementBuilder()),
+      new BranchMaterialBuilder(
+        new NodeBranchMaterialBuilder(new BranchInstanceElementBuilder()),
+        new GraphBranchMaterialBuilder(new BranchInstanceElementBuilder()),
+        new FragmentBranchMaterialBuilder(new BranchInstanceElementBuilder())
+      )
+    );
   }
 
-  buildQuery(): SaveQuery {
-    const stemMaterialBuilder = new StemMaterialBuilder(
-      new InstanceElementBuilder()
-    );
+  private readonly metadataStore: MetadataStoreInterface;
+  private readonly stemMaterialBuilder: StemMaterialBuilder;
+  private readonly branchMaterialBuilder: BranchMaterialBuilder;
+
+  constructor(
+    metadataStore: MetadataStoreInterface,
+    stemMaterialBuilder: StemMaterialBuilder,
+    branchMaterialBuilder: BranchMaterialBuilder
+  ) {
+    this.metadataStore = metadataStore;
+    this.stemMaterialBuilder = stemMaterialBuilder;
+    this.branchMaterialBuilder = branchMaterialBuilder;
+  }
+
+  build(
+    instance: InstanceType<ClassConstructor<object>>
+  ): [SaveQuery, ParameterBag] {
     const parameterBag = new ParameterBag();
 
-    const cstr = this.instance.constructor as AnyClassConstructor;
+    const cstr = instance.constructor as AnyClassConstructor;
     const graphMetadata = this.metadataStore.findGraphMetadata(cstr);
     if (graphMetadata) {
-      const plainGraph = PlainGraph.withInstance(this.instance);
-      const stemMaterial = stemMaterialBuilder.build(graphMetadata, plainGraph);
+      const plainGraph = PlainGraph.withInstance(instance);
+      const stemMaterial = this.stemMaterialBuilder.build(
+        graphMetadata,
+        plainGraph
+      );
       stemMaterial.getInstanceElements().forEach((instanceElement) => {
         parameterBag.add(
           Parameter.new(
@@ -84,9 +97,8 @@ export class SaveQueryBuilder {
         });
       });
 
-      return new SaveQuery(
-        this.sessionProvider,
-        new SaveStatement(
+      return [
+        new SaveQuery(
           stemMaterial.getPath(),
           branches
             .map((branch: Branch) => {
@@ -94,14 +106,14 @@ export class SaveQueryBuilder {
             })
             .flat()
         ),
-        parameterBag
-      );
+        parameterBag,
+      ];
     }
 
     const nodeMetadata = this.metadataStore.findNodeEntityMetadata(cstr);
     if (nodeMetadata) {
       const nodeInstanceElement = new NodeInstanceElement(
-        this.instance,
+        instance,
         nodeMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
         new BranchEndTerm('*')
@@ -112,11 +124,10 @@ export class SaveQueryBuilder {
           nodeInstanceElement.getProperties().parameterize()
         )
       );
-      return new SaveQuery(
-        this.sessionProvider,
-        new SaveStatement(new Path(nodeInstanceElement, []), []),
-        parameterBag
-      );
+      return [
+        new SaveQuery(new Path(nodeInstanceElement, []), []),
+        parameterBag,
+      ];
     }
 
     const relationshipMetadata =
@@ -157,12 +168,6 @@ export class SaveQueryBuilder {
     branchIndexes: BranchIndexes,
     branchIndexNumber: number
   ): Branch[] {
-    const branchMaterialBuilder = new BranchMaterialBuilder(
-      new NodeBranchMaterialBuilder(new BranchInstanceElementBuilder()),
-      new GraphBranchMaterialBuilder(new BranchInstanceElementBuilder()),
-      new FragmentBranchMaterialBuilder(new BranchInstanceElementBuilder())
-    );
-
     const branchGraphMetadata = this.metadataStore.findGraphMetadata(
       branchMetadata.getBranchCstr()
     );
@@ -170,13 +175,14 @@ export class SaveQueryBuilder {
     if (branchGraphMetadata) {
       const plainBranches = plainGraph.getBranches(branchMetadata.getKey());
       return plainBranches.map((plainBranch, i: number) => {
-        const branchMaterial = branchMaterialBuilder.buildGraphBranchMaterial(
-          branchMetadata,
-          stemMaterial,
-          branchGraphMetadata,
-          branchIndexes.append(branchIndexNumber, branchMetadata.getKey(), i),
-          plainBranch
-        );
+        const branchMaterial =
+          this.branchMaterialBuilder.buildGraphBranchMaterial(
+            branchMetadata,
+            stemMaterial,
+            branchGraphMetadata,
+            branchIndexes.append(branchIndexNumber, branchMetadata.getKey(), i),
+            plainBranch
+          );
         return new Branch(
           branchMaterial,
           null,
@@ -197,7 +203,7 @@ export class SaveQueryBuilder {
       const plainBranches = plainGraph.getBranches(branchMetadata.getKey());
       return plainBranches.map((plainBranch: PlainGraph, i: number) => {
         const branchFragmentMaterial =
-          branchMaterialBuilder.buildFragmentBranchMaterial(
+          this.branchMaterialBuilder.buildFragmentBranchMaterial(
             branchMetadata,
             stemMaterial,
             graphFragmentMetadata,
@@ -226,7 +232,7 @@ export class SaveQueryBuilder {
       const plainEntities = plainGraph.getEntities(branchMetadata.getKey());
       return plainEntities.map((plainEntity: PlainEntity, i: number) => {
         return new Branch(
-          branchMaterialBuilder.buildNodeBranchMaterial(
+          this.branchMaterialBuilder.buildNodeBranchMaterial(
             branchMetadata,
             stemMaterial,
             nodeEntityMetadata,
