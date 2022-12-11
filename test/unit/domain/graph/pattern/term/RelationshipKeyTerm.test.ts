@@ -3,6 +3,7 @@ import { RelationshipKeyTerm } from 'domain/graph/pattern/term/RelationshipKeyTe
 describe(`${RelationshipKeyTerm.name}`, () => {
   it.each([
     ['rel', true],
+    ['', true],
     [':rel', false],
     ['<-', false],
     ['-', false],
