@@ -1,3 +1,4 @@
+import { CallSubqueryClause } from '../../clause/CallSubqueryClause';
 import { DeleteClause } from '../../clause/DeleteClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { isAnyNodeElement } from '../../element/Element';
@@ -23,11 +24,19 @@ export class DetachDeleteGraphStatement extends AbstractStatement {
       }),
     ].join(' ');
 
-    const detachDeleteStatement = this.getDetachDeleteClauses()
-      .map((setClause) => setClause.get())
-      .join(' ');
+    const detachDeleteClauses = this.getDetachDeleteClauses();
 
-    return `${matchStatement} ${detachDeleteStatement}`;
+    const withClause =
+      'WITH ' + detachDeleteClauses.map((c) => c.getVariableName()).join(',');
+    const detachDeleteStatement = detachDeleteClauses
+      .map((c) => c.get())
+      .join(' ');
+    const callSubqueryClause = new CallSubqueryClause(
+      `${withClause} ${detachDeleteStatement}`,
+      true
+    );
+
+    return `${matchStatement} ${callSubqueryClause.get()}`;
   }
 
   private getMatchNodeClauses(): MatchNodeClause[] {
