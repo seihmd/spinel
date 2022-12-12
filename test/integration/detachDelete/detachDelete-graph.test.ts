@@ -55,12 +55,14 @@ class ShopItems {
 }
 
 const id = new IdFixture();
-let neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+let neo4jFixture: Neo4jFixture | null = null;
+let qb: QueryBuilder | null = null;
 
 describe('DetachDelete graph', () => {
   beforeEach(async () => {
     neo4jFixture = Neo4jFixture.new();
+    qb = new QueryBuilder(neo4jFixture.getDriver());
+
     await neo4jFixture.addRelationship(
       'HAS',
       { id: id.get('has1') },
