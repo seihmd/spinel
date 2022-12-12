@@ -103,7 +103,8 @@ describe('DetachDelete graph', () => {
     expect(await neo4jFixture.findNode('Item', id.get('item1'))).toBeNull();
   });
 
-  test('detach and delete branches', async () => {
+  // TODO https://neo4j.com/docs/cypher-manual/current/clauses/call-subquery/#delete-with-call-in-transactions
+  test.skip('detach and delete branches', async () => {
     const shopItems = new ShopItems(new Shop(id.get('shop')), [
       new Item(id.get('item1')),
       new Item(id.get('item2')),
