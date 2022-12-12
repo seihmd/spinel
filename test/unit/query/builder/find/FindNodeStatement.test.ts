@@ -12,7 +12,7 @@ describe(`${FindNodeStatement.name}`, () => {
       new OrderByQueries([])
     );
 
-    expect(findNodeStatement.get('_')).toBe('MATCH (u:User) RETURN u{.*} AS _');
+    expect(findNodeStatement.get()).toBe('MATCH (u:User) RETURN u{.*} AS _');
   });
 
   test('with WhereQuery', () => {
@@ -22,7 +22,7 @@ describe(`${FindNodeStatement.name}`, () => {
       new OrderByQueries([])
     );
 
-    expect(findNodeStatement.get('_')).toBe(
+    expect(findNodeStatement.get()).toBe(
       'MATCH (u:User) WHERE u.id = $id RETURN u{.*} AS _'
     );
   });
