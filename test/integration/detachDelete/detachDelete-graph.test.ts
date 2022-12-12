@@ -119,17 +119,18 @@ describe('DetachDelete graph', () => {
         'DETACH DELETE b0_0_n4 ' +
         'DETACH DELETE b0_1_n4'
     );
+
     await query.run();
 
     expect(await neo4jFixture.findNode('Shop', id.get('shop'))).toBeNull();
+    expect(await neo4jFixture.findNode('Item', id.get('item1'))).toBeNull();
+    expect(await neo4jFixture.findNode('Item', id.get('item2'))).toBeNull();
+
     expect(
       await neo4jFixture.findRelationship('HAS', id.get('has1'))
     ).toBeNull();
-    expect(await neo4jFixture.findNode('Item', id.get('item1'))).toBeNull();
-
     expect(
       await neo4jFixture.findRelationship('HAS', id.get('has2'))
     ).toBeNull();
-    expect(await neo4jFixture.findNode('Item', id.get('item2'))).toBeNull();
   });
 });

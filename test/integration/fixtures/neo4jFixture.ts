@@ -150,7 +150,6 @@ export class Neo4jFixture {
     const q = await this.session().run(pattern);
 
     const result: { [key: string]: unknown } = {};
-    console.log(q.records);
     for (const [key, entry] of (q.records[0] ?? []).entries()) {
       if (entry instanceof Node) {
         this.nodes.push(entry);
