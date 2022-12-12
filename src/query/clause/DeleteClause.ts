@@ -8,6 +8,10 @@ export class DeleteClause {
   }
 
   get(): string {
-    return `${this.detach ? 'DETACH ' : ''}DELETE ${this.variableName}`;
+    return `${this.detach ? 'DETACH ' : ''}DELETE ${this.getVariableName()}`;
+  }
+
+  getVariableName(): string {
+    return this.variableName;
   }
 }

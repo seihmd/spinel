@@ -55,11 +55,14 @@ class ShopItems {
 }
 
 const id = new IdFixture();
-const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+let neo4jFixture: Neo4jFixture | null = null;
+let qb: QueryBuilder | null = null;
 
 describe('DetachDelete graph', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
+    neo4jFixture = Neo4jFixture.new();
+    qb = new QueryBuilder(neo4jFixture.getDriver());
+
     await neo4jFixture.addRelationship(
       'HAS',
       { id: id.get('has1') },
@@ -77,7 +80,7 @@ describe('DetachDelete graph', () => {
     );
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await neo4jFixture.teardown();
   });
 
@@ -91,8 +94,7 @@ describe('DetachDelete graph', () => {
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop{id:$n0.id}) ' +
         'MATCH (n4:Item{id:$n4.id}) ' +
-        'DETACH DELETE n0 ' +
-        'DETACH DELETE n4'
+        'CALL {WITH n0,n4 DETACH DELETE n0 DETACH DELETE n4} IN TRANSACTIONS'
     );
     await query.run();
 
@@ -103,8 +105,7 @@ describe('DetachDelete graph', () => {
     expect(await neo4jFixture.findNode('Item', id.get('item1'))).toBeNull();
   });
 
-  // TODO https://neo4j.com/docs/cypher-manual/current/clauses/call-subquery/#delete-with-call-in-transactions
-  test.skip('detach and delete branches', async () => {
+  test('detach and delete branches', async () => {
     const shopItems = new ShopItems(new Shop(id.get('shop')), [
       new Item(id.get('item1')),
       new Item(id.get('item2')),
@@ -116,11 +117,12 @@ describe('DetachDelete graph', () => {
       'MATCH (n0:Shop{id:$n0.id}) ' +
         'MATCH (b0_0_n4:Item{id:$b0_0_n4.id}) ' +
         'MATCH (b0_1_n4:Item{id:$b0_1_n4.id}) ' +
+        'CALL {' +
+        'WITH n0,b0_0_n4,b0_1_n4 ' +
         'DETACH DELETE n0 ' +
         'DETACH DELETE b0_0_n4 ' +
-        'DETACH DELETE b0_1_n4'
+        'DETACH DELETE b0_1_n4} IN TRANSACTIONS'
     );
-
     await query.run();
 
     expect(await neo4jFixture.findNode('Shop', id.get('shop'))).toBeNull();
