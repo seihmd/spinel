@@ -10,6 +10,7 @@ import { DetachQueryBuilder } from './detach/DetachQueryBuilder';
 import { DetachDeleteQuery } from './detachDelete/DetachDeleteQuery';
 import { DetachDeleteQueryBuilder } from './detachDelete/DetachDeleteQueryBuilder';
 import { FindQueryBuilder } from './find/FindQueryBuilder';
+import { FindOneQueryBuilder } from './findOne/FindOneQueryBuilder';
 import { SaveQuery } from './save/SaveQuery';
 import { SaveQueryBuilder } from './save/SaveQueryBuilder';
 import { SessionProvider } from './session/SessionProvider';
@@ -26,6 +27,15 @@ export class QueryBuilder {
 
   find<T>(cstr: ClassConstructor<T>, alias: string): FindQueryBuilder<T> {
     return new FindQueryBuilder<T>(
+      this.sessionProvider(),
+      this.metadataStore(),
+      cstr,
+      alias
+    );
+  }
+
+  findOne<T>(cstr: ClassConstructor<T>, alias: string): FindOneQueryBuilder<T> {
+    return new FindOneQueryBuilder<T>(
       this.sessionProvider(),
       this.metadataStore(),
       cstr,
