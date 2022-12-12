@@ -1,4 +1,4 @@
-import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
+import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import {
   AnyClassConstructor,
   ClassConstructor,
@@ -24,12 +24,12 @@ import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { Branch } from '../../path/Branch';
-import { Path } from '../../path/Path';
 import { SessionProviderInterface } from '../session/SessionProviderInterface';
-import { SaveQuery } from './SaveQuery';
-import { SaveStatement } from './SaveStatement';
+import { DetachDeleteGraphStatement } from './DetachDeleteGraphStatement';
+import { DetachDeleteNodeStatement } from './DetachDeleteNodeStatement';
+import { DetachDeleteQuery } from './DetachDeleteQuery';
 
-export class SaveQueryBuilder {
+export class DetachDeleteQueryBuilder {
   private readonly sessionProvider: SessionProviderInterface;
   private readonly metadataStore: MetadataStoreInterface;
   private readonly instance: InstanceType<ClassConstructor<object>>;
@@ -44,16 +44,38 @@ export class SaveQueryBuilder {
     this.instance = instance;
   }
 
-  buildQuery(): SaveQuery {
-    const stemMaterialBuilder = new StemMaterialBuilder(
-      new InstanceElementBuilder()
-    );
+  buildQuery(): DetachDeleteQuery {
     const parameterBag = new ParameterBag();
-
     const cstr = this.instance.constructor as AnyClassConstructor;
+    const nodeMetadata = this.metadataStore.findNodeEntityMetadata(cstr);
+
+    if (nodeMetadata) {
+      const nodeInstanceElement = new NodeInstanceElement(
+        this.instance,
+        nodeMetadata,
+        new ElementContext(new BranchIndexes([]), 0, false),
+        new NodeKeyTerm('_')
+      );
+
+      parameterBag.add(
+        Parameter.new(
+          nodeInstanceElement.getVariableName(),
+          nodeInstanceElement.getProperties().parameterize()
+        )
+      );
+      return new DetachDeleteQuery(
+        this.sessionProvider,
+        new DetachDeleteNodeStatement(nodeInstanceElement),
+        parameterBag
+      );
+    }
+
     const graphMetadata = this.metadataStore.findGraphMetadata(cstr);
     if (graphMetadata) {
       const plainGraph = PlainGraph.withInstance(this.instance);
+      const stemMaterialBuilder = new StemMaterialBuilder(
+        new InstanceElementBuilder()
+      );
       const stemMaterial = stemMaterialBuilder.build(graphMetadata, plainGraph);
       stemMaterial.getInstanceElements().forEach((instanceElement) => {
         parameterBag.add(
@@ -84,9 +106,9 @@ export class SaveQueryBuilder {
         });
       });
 
-      return new SaveQuery(
+      return new DetachDeleteQuery(
         this.sessionProvider,
-        new SaveStatement(
+        new DetachDeleteGraphStatement(
           stemMaterial.getPath(),
           branches
             .map((branch: Branch) => {
@@ -98,34 +120,9 @@ export class SaveQueryBuilder {
       );
     }
 
-    const nodeMetadata = this.metadataStore.findNodeEntityMetadata(cstr);
-    if (nodeMetadata) {
-      const nodeInstanceElement = new NodeInstanceElement(
-        this.instance,
-        nodeMetadata,
-        new ElementContext(new BranchIndexes([]), 0, false),
-        new BranchEndTerm('*')
-      );
-      parameterBag.add(
-        Parameter.new(
-          nodeInstanceElement.getVariableName(),
-          nodeInstanceElement.getProperties().parameterize()
-        )
-      );
-      return new SaveQuery(
-        this.sessionProvider,
-        new SaveStatement(new Path(nodeInstanceElement, []), []),
-        parameterBag
-      );
-    }
-
-    const relationshipMetadata =
-      this.metadataStore.findRelationshipEntityMetadata(cstr);
-    if (relationshipMetadata) {
-      throw new Error('Relationship instance cannot be saved alone');
-    }
-
-    throw new Error(`Metadata of class "${cstr.name}" is not found`);
+    throw new Error(
+      `Constructor of instance: "${cstr.name}" is not registered as NodeEntity or RelationshipEntity`
+    );
   }
 
   private buildBranches(

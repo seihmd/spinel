@@ -1,15 +1,16 @@
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { SessionProviderInterface } from '../session/SessionProviderInterface';
-import { SaveStatement } from './SaveStatement';
 
-export class SaveQuery {
+import { DetachStatement } from './DetachStatement';
+
+export class DetachQuery {
   private readonly sessionProvider: SessionProviderInterface;
-  private readonly statement: SaveStatement;
+  private readonly statement: DetachStatement;
   private readonly parameterBag: ParameterBag;
 
   constructor(
     sessionProvider: SessionProviderInterface,
-    statement: SaveStatement,
+    statement: DetachStatement,
     parameterBag: ParameterBag
   ) {
     this.sessionProvider = sessionProvider;

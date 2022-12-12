@@ -150,7 +150,7 @@ export class Neo4jFixture {
     const q = await this.session().run(pattern);
 
     const result: { [key: string]: unknown } = {};
-    for (const [key, entry] of q.records[0].entries()) {
+    for (const [key, entry] of (q.records[0] ?? []).entries()) {
       if (entry instanceof Node) {
         this.nodes.push(entry);
         result[key] = entry.properties;
@@ -162,18 +162,20 @@ export class Neo4jFixture {
         continue;
       }
       if (Array.isArray(entry)) {
-        result[key] = entry.map((entryItem) => {
-          if (entryItem instanceof Node) {
-            this.nodes.push(entryItem);
-            return entryItem.properties;
-          }
-          if (entryItem instanceof Relationship) {
-            this.relationships.push(entryItem);
-            return entryItem.properties;
-          }
+        result[key] = entry
+          .map((entryItem) => {
+            if (entryItem instanceof Node) {
+              this.nodes.push(entryItem);
+              return entryItem.properties;
+            }
+            if (entryItem instanceof Relationship) {
+              this.relationships.push(entryItem);
+              return entryItem.properties;
+            }
 
-          return entryItem;
-        });
+            return entryItem;
+          })
+          .sort((a, b) => (a.id > b.id ? 1 : -1));
         continue;
       }
 

@@ -1,15 +1,16 @@
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { SessionProviderInterface } from '../session/SessionProviderInterface';
-import { SaveStatement } from './SaveStatement';
+import { DeleteNodeStatement } from './DeleteNodeStatement';
+import { DeleteRelationshipStatement } from './DeleteRelationshipStatement';
 
-export class SaveQuery {
+export class DeleteQuery {
   private readonly sessionProvider: SessionProviderInterface;
-  private readonly statement: SaveStatement;
+  private readonly statement: DeleteNodeStatement | DeleteRelationshipStatement;
   private readonly parameterBag: ParameterBag;
 
   constructor(
     sessionProvider: SessionProviderInterface,
-    statement: SaveStatement,
+    statement: DeleteNodeStatement | DeleteRelationshipStatement,
     parameterBag: ParameterBag
   ) {
     this.sessionProvider = sessionProvider;
