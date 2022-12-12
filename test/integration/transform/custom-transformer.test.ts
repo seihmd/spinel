@@ -4,22 +4,18 @@ import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { TransformerInterface } from 'metadata/schema/transformation/transformer/TransformerInterface';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { SaveQueryPlan } from 'query/builder/save/SaveQueryPlan';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
 describe('Custom Transformer', () => {
   beforeAll(async () => {
-    const saveQueryPlan = SaveQueryPlan.new(neo4jFixture.getDriver());
-    const entity = new Node(id.get('id'), '_', 'not transformed');
-    await saveQueryPlan.execute(entity);
+    await qb.save(new Node(id.get('id'), '_', 'not transformed')).run();
   });
 
   afterAll(async () => {
@@ -73,20 +69,16 @@ describe('Custom Transformer', () => {
   });
 
   test('restore', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-    const whereQueries = new WhereQueries([
-      new WhereQuery(null, '{n}.id = $id'),
-    ]);
-
-    const results = await queryPlan.execute(TestGraph, {
-      whereQueries,
-      parameters: {
+    const result = await qb
+      .findOne(TestGraph, 'tg')
+      .where(null, '{n}.id = $id')
+      .buildQuery({
         id: id.get('id'),
-      },
-    });
+      })
+      .run();
 
-    expect(results).toStrictEqual([
-      new TestGraph(new Node(id.get('id'), 'restored', 'not transformed')),
-    ]);
+    expect(result).toStrictEqual(
+      new TestGraph(new Node(id.get('id'), 'restored', 'not transformed'))
+    );
   });
 });

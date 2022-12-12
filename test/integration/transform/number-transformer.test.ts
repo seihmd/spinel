@@ -4,24 +4,18 @@ import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { Integer } from 'neo4j-driver';
-import { QueryPlan } from 'query/builder/match/QueryPlan';
-import { SaveQueryPlan } from 'query/builder/save/SaveQueryPlan';
-import { WhereQueries } from 'query/builder/where/WhereQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import 'reflect-metadata';
-import { IdFixture } from '../../fixtures/IdFixture';
-import { Neo4jFixture } from '../../fixtures/neo4jFixture';
+import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { IdFixture } from '../fixtures/IdFixture';
+import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-
-const int = (value: number) => Integer.fromValue(value);
+const qb = new QueryBuilder(neo4jFixture.getDriver());
 
 describe('Number Transformer', () => {
   beforeAll(async () => {
-    const saveQueryPlan = SaveQueryPlan.new(neo4jFixture.getDriver());
-    const entity = new Node(id.get('id'), 1, 1.1);
-    await saveQueryPlan.execute(entity);
+    await qb.save(new Node(id.get('id'), 1, 1.1)).run();
   });
 
   afterAll(async () => {
@@ -65,20 +59,12 @@ describe('Number Transformer', () => {
   });
 
   test('restore', async () => {
-    const queryPlan = QueryPlan.new(neo4jFixture.getDriver());
-    const whereQueries = new WhereQueries([
-      new WhereQuery(null, '{n}.id = $id'),
-    ]);
+    const result = await qb
+      .findOne(TestGraph, 'tg')
+      .where(null, '{n}.id = $id')
+      .buildQuery({ id: id.get('id') })
+      .run();
 
-    const results = await queryPlan.execute(TestGraph, {
-      whereQueries,
-      parameters: {
-        id: id.get('id'),
-      },
-    });
-
-    expect(results).toStrictEqual([
-      new TestGraph(new Node(id.get('id'), 1, 1.1)),
-    ]);
+    expect(result).toStrictEqual(new TestGraph(new Node(id.get('id'), 1, 1.1)));
   });
 });
