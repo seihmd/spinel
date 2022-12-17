@@ -18,6 +18,10 @@ describe('indexes', () => {
     await neo4jFixture.teardown();
   });
 
+  afterAll(async () => {
+    await neo4jFixture.close();
+  });
+
   @NodeEntity({
     indexes: [
       {

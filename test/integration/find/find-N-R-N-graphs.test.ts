@@ -9,7 +9,7 @@ import { Date as Neo4jDate } from 'neo4j-driver';
 import { Node } from 'neo4j-driver-core';
 import { Sort } from 'query/literal/OrderByLiteral';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -61,7 +61,7 @@ class ShopCustomer {
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find N-R-N graphs', () => {
   const addShop = async (id: string, name: string) => {
@@ -113,10 +113,12 @@ describe('Find N-R-N graphs', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('find', async () => {
-    const query = qb
+    const query = qd
+      .builder()
       .find(ShopCustomer, 'sc')
       .where(null, '{shop}.id=$shop.id')
       .buildQuery({
@@ -172,7 +174,8 @@ describe('Find N-R-N graphs', () => {
   ] as [Sort, ShopCustomer[]][])(
     'find with sort',
     async (sort: Sort, expected: ShopCustomer[]) => {
-      const query = qb
+      const query = qd
+        .builder()
         .find(ShopCustomer, 'sc')
         .where(null, '{shop}.id IN $shopIds')
         .orderBy('{isCustomer}.visited', sort)

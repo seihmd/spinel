@@ -5,7 +5,7 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -37,7 +37,7 @@ class IsCustomer {
 }
 
 @NodeEntity()
-export class Item {
+class Item {
   @Primary() private id: string;
 
   constructor(id: string) {
@@ -80,11 +80,12 @@ class ShopCustomer {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('save N-:R-N-G[] graph', () => {
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test.each([
@@ -175,7 +176,7 @@ describe('save N-:R-N-G[] graph', () => {
         favoriteSimilarities,
         neighborhoodShops
       );
-      const query = qb.save(shopCustomer);
+      const query = qd.builder().save(shopCustomer);
       expect(query.getStatement()).toBe(expected);
     }
   );
@@ -192,7 +193,7 @@ describe('save N-:R-N-G[] graph', () => {
       ],
       [new Shop(id.get('shop1')), new Shop(id.get('shop2'))]
     );
-    await qb.save(shopCustomer).run();
+    await qd.builder().save(shopCustomer).run();
 
     expect(
       await neo4jFixture.findGraph(

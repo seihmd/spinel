@@ -218,7 +218,9 @@ export class Neo4jFixture {
       DETACH DELETE n;`,
       { ids }
     );
+  }
 
+  async close(): Promise<void> {
     await this.driver.close();
   }
 

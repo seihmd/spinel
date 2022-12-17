@@ -7,7 +7,7 @@ import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { Integer } from 'neo4j-driver';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -59,11 +59,12 @@ class ShopCustomer {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('save N-R-N graph', () => {
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('save', async () => {
@@ -72,7 +73,7 @@ describe('save N-R-N graph', () => {
       new IsCustomer(id.get('isCustomer'), '2022-01-01'),
       new User(id.get('user'), 20)
     );
-    const query = qb.save(shopCustomer);
+    const query = qd.builder().save(shopCustomer);
     expect(query.getStatement()).toBe(
       'MERGE (n0:Shop{id:$n0.id}) ' +
         'MERGE (n4:Customer{id:$n4.id}) ' +

@@ -4,7 +4,7 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -60,11 +60,12 @@ class ShopItemTags {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('save N-:R-G[] graph', () => {
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test.each([
@@ -141,7 +142,7 @@ describe('save N-:R-G[] graph', () => {
     ],
   ])('statement', (itemTags: ItemTags[], expected: string) => {
     const shopCustomer = new ShopItemTags(new Shop(id.get('shop')), itemTags);
-    const query = qb.save(shopCustomer);
+    const query = qd.builder().save(shopCustomer);
     expect(query.getStatement()).toBe(expected);
   });
 
@@ -157,7 +158,7 @@ describe('save N-:R-G[] graph', () => {
       ]),
     ]);
 
-    await qb.save(shopItemTags).run();
+    await qd.builder().save(shopItemTags).run();
 
     const savedValue =
       await neo4jFixture.findGraph(`MATCH (shop:Shop{id:"${id.get(

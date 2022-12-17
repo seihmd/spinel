@@ -12,8 +12,13 @@ describe('relationship constraints', () => {
   beforeEach(async () => {
     await neo4jFixture.clearMeta();
   });
+
   afterEach(async () => {
     await neo4jFixture.teardown();
+  });
+
+  afterAll(async () => {
+    await neo4jFixture.close();
   });
 
   test('ConstraintQueryPlan.exec', async () => {

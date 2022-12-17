@@ -3,7 +3,7 @@ import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { Sort } from 'query/literal/OrderByLiteral';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -20,7 +20,7 @@ class Shop {
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find nodes', () => {
   beforeAll(async () => {
@@ -37,10 +37,12 @@ describe('Find nodes', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('find', async () => {
-    const shops = await qb
+    const shops = await qd
+      .builder()
       .find(Shop, 's')
       .where(null, '{*}.id IN $shopIds')
       .buildQuery({
@@ -66,7 +68,8 @@ describe('Find nodes', () => {
   ] as [Sort, Shop[]][])(
     'find with sort',
     async (sort: Sort, expected: Shop[]) => {
-      const shops = await qb
+      const shops = await qd
+        .builder()
         .find(Shop, 's')
         .where(null, '{*}.id IN $shopIds')
         .orderBy('{*}.name', sort)

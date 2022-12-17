@@ -4,7 +4,7 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -52,7 +52,7 @@ class ShopItems {
 }
 
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('map Neo4j Record into N-:R-G[] Graph class', () => {
   beforeAll(async () => {
@@ -80,10 +80,11 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('find', async () => {
-    const query = qb
+    const query = qd
       .find(ShopItems, 'si')
       .where(null, '{shop}.id = $shopId')
       .where('setItems', '{*}.id IN $setItemIds')

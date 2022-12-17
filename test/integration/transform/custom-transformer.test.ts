@@ -5,21 +5,22 @@ import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import { TransformerInterface } from 'metadata/schema/transformation/transformer/TransformerInterface';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Custom Transformer', () => {
   beforeAll(async () => {
-    await qb.save(new Node(id.get('id'), '_', 'not transformed')).run();
+    await qd.save(new Node(id.get('id'), '_', 'not transformed'));
   });
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   class TestTransformer implements TransformerInterface {
@@ -69,7 +70,7 @@ describe('Custom Transformer', () => {
   });
 
   test('restore', async () => {
-    const result = await qb
+    const result = await qd
       .findOne(TestGraph, 'tg')
       .where(null, '{n}.id = $id')
       .buildQuery({

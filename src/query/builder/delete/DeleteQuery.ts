@@ -1,5 +1,5 @@
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { DeleteNodeStatement } from './DeleteNodeStatement';
 import { DeleteRelationshipStatement } from './DeleteRelationshipStatement';
 
@@ -27,8 +27,6 @@ export class DeleteQuery {
   }
 
   async run(): Promise<void> {
-    await this.sessionProvider
-      .get()
-      .run(this.getStatement(), this.getParameters());
+    await this.sessionProvider.run(this.getStatement(), this.getParameters());
   }
 }

@@ -9,6 +9,7 @@ import {
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { NodeLabelElement } from '../../element/NodeLabelElement';
@@ -16,7 +17,6 @@ import { RelationshipTypeElement } from '../../element/RelationshipTypeElement';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { DetachQuery } from './DetachQuery';
 import { DetachStatement } from './DetachStatement';
 

@@ -1,7 +1,7 @@
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { toInstance } from '../../../util/toInstance';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 
@@ -32,9 +32,10 @@ export class FindQuery<T> {
   }
 
   async run(): Promise<T[]> {
-    const result = await this.sessionProvider
-      .get()
-      .run(this.getStatement(), this.getParameters());
+    const result = await this.sessionProvider.run(
+      this.getStatement(),
+      this.getParameters()
+    );
 
     return result.records.map((record) => {
       return toInstance(this.cstr, record.toObject()[this.statement.as()]);

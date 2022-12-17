@@ -3,7 +3,7 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -20,7 +20,7 @@ class Shop {
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('FindOne node', () => {
   beforeAll(async () => {
@@ -37,10 +37,12 @@ describe('FindOne node', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('findOne', async () => {
-    const shops = await qb
+    const shops = await qd
+      .builder()
       .findOne(Shop, 's')
       .where(null, '{*}.id = $shopId')
       .buildQuery({
@@ -52,7 +54,8 @@ describe('FindOne node', () => {
   });
 
   test('findOne null', async () => {
-    const shops = await qb
+    const shops = await qd
+      .builder()
       .findOne(Shop, 's')
       .where(null, '{*}.id = $shopId')
       .buildQuery({

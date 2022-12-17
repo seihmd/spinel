@@ -1,7 +1,7 @@
 import { RelationshipEntity } from 'decorator/class/RelationshipEntity';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -16,7 +16,7 @@ class Has {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Delete relationship', () => {
   beforeAll(async () => {
@@ -33,12 +33,13 @@ describe('Delete relationship', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('delete', async () => {
     const has = new Has(id.get('has'));
 
-    const query = qb.delete(has);
+    const query = qd.builder().delete(has);
     expect(query.getStatement()).toBe(
       'MATCH ()-[r0:HAS{id:$r0.id}]-() DELETE r0'
     );

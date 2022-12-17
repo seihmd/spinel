@@ -1,9 +1,9 @@
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { toInstance } from '../../../util/toInstance';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindGraphStatement } from '../find/FindGraphStatement';
 import { FindNodeStatement } from '../find/FindNodeStatement';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 
 export class FindOneQuery<T> {
   private readonly sessionProvider: SessionProviderInterface;
@@ -32,9 +32,10 @@ export class FindOneQuery<T> {
   }
 
   async run(): Promise<T | null> {
-    const result = await this.sessionProvider
-      .get()
-      .run(this.getStatement(), this.getParameters());
+    const result = await this.sessionProvider.run(
+      this.getStatement(),
+      this.getParameters()
+    );
 
     if (result.records.length > 1) {
       throw new Error();
