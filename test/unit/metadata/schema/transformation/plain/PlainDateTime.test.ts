@@ -2,6 +2,13 @@ import { instanceToPlain } from 'class-transformer';
 import { PlainDateTime } from 'metadata/schema/transformation/plain/PlainDateTime';
 import { DateTime } from 'neo4j-driver';
 
+function normalizeNegZero(value: number): number {
+  if (Object.is(value, -0)) {
+    return 0;
+  }
+  return value;
+}
+
 describe(`PlainDateTime`, () => {
   test.each([
     [
@@ -71,7 +78,9 @@ describe(`PlainDateTime`, () => {
         second: 5,
         nanosecond: 123000000,
         timeZoneId: undefined,
-        timeZoneOffsetSeconds: new Date().getTimezoneOffset() * -60,
+        timeZoneOffsetSeconds: normalizeNegZero(
+          new Date().getTimezoneOffset() * -60
+        ),
       },
     ],
     [
@@ -87,7 +96,9 @@ describe(`PlainDateTime`, () => {
         second: 5,
         nanosecond: 123000000,
         timeZoneId: undefined,
-        timeZoneOffsetSeconds: new Date().getTimezoneOffset() * -60,
+        timeZoneOffsetSeconds: normalizeNegZero(
+          new Date().getTimezoneOffset() * -60
+        ),
       },
     ],
   ])(

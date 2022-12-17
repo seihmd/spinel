@@ -9,7 +9,7 @@ export class Neo4jFixture {
       'neo4j://localhost',
       neo4j.auth.basic('neo4j', 'password')
     );
-    return new Neo4jFixture(driver);
+    return new Neo4jFixture(driver, 'neo4j');
   }
 
   private readonly driver: Driver;
