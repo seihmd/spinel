@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { Graph } from '../../../src/decorator/class/Graph';
 import { GraphBranch } from '../../../src/decorator/property/GraphBranch';
 import { GraphNode } from '../../../src/decorator/property/GraphNode';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -55,13 +55,12 @@ class ShopItems {
 }
 
 const id = new IdFixture();
-let neo4jFixture: Neo4jFixture | null = null;
-let qb: QueryBuilder | null = null;
+let neo4jFixture: Neo4jFixture = Neo4jFixture.new();
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('DetachDelete graph', () => {
   beforeEach(async () => {
     neo4jFixture = Neo4jFixture.new();
-    qb = new QueryBuilder(neo4jFixture.getDriver());
 
     await neo4jFixture.addRelationship(
       'HAS',
@@ -84,12 +83,16 @@ describe('DetachDelete graph', () => {
     await neo4jFixture.teardown();
   });
 
+  afterAll(async () => {
+    await neo4jFixture.close();
+  });
+
   test('detach and delete', async () => {
     const shop = new Shop(id.get('shop'));
     const item = new Item(id.get('item1'));
     const shopItem = new ShopItem(shop, item);
 
-    const query = qb.detachDelete(shopItem);
+    const query = qd.builder().detachDelete(shopItem);
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop{id:$n0.id}) ' +
@@ -111,7 +114,7 @@ describe('DetachDelete graph', () => {
       new Item(id.get('item2')),
     ]);
 
-    const query = qb.detachDelete(shopItems);
+    const query = qd?.builder().detachDelete(shopItems);
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop{id:$n0.id}) ' +

@@ -2,7 +2,7 @@ import { NodeEntity } from 'decorator/class/NodeEntity';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
 import { RelationshipEntity } from '../../../src/decorator/class/RelationshipEntity';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -35,7 +35,7 @@ class Has {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Detach nodes', () => {
   beforeAll(async () => {
@@ -50,6 +50,7 @@ describe('Detach nodes', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   async function assertDetached(): Promise<void> {
@@ -60,7 +61,7 @@ describe('Detach nodes', () => {
   test('detach any relationship', async () => {
     const shop = new Shop(id.get('shop'));
     const item = new Item(id.get('item'));
-    const query = qb.detach(shop, item);
+    const query = qd.builder().detach(shop, item);
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop)-[r]->(n4:Item) DELETE r'
@@ -72,7 +73,7 @@ describe('Detach nodes', () => {
   test('detach with relationship type', async () => {
     const shop = new Shop(id.get('shop'));
     const item = new Item(id.get('item'));
-    const query = qb.detach(shop, item, 'HAS');
+    const query = qd.builder().detach(shop, item, 'HAS');
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop)-[r2:HAS]->(n4:Item) DELETE r2'
@@ -84,7 +85,7 @@ describe('Detach nodes', () => {
   test('detach with relationship constructor', async () => {
     const shop = new Shop(id.get('shop'));
     const item = new Item(id.get('item'));
-    const query = qb.detach(item, shop, Has, '<-');
+    const query = qd.builder().detach(item, shop, Has, '<-');
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Item)<-[r2:HAS]-(n4:Shop) DELETE r2'

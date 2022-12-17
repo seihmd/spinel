@@ -5,11 +5,9 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
-
-const neo4jFixture = Neo4jFixture.new();
 
 @NodeEntity()
 class Shop {
@@ -51,7 +49,8 @@ class ShopCustomerFavorites {
 }
 
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const neo4jFixture = Neo4jFixture.new();
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find N-F[] graphs', () => {
   beforeAll(async () => {
@@ -81,10 +80,12 @@ describe('Find N-F[] graphs', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('find', async () => {
-    const query = qb
+    const query = qd
+      .builder()
       .find(ShopCustomerFavorites, 'scf')
       .where(null, '{shop}.id=$shop.id')
       .buildQuery({
@@ -107,7 +108,8 @@ describe('Find N-F[] graphs', () => {
   });
 
   test('find with branch where', async () => {
-    const query = qb
+    const query = qd
+      .builder()
       .find(ShopCustomerFavorites, 'scf')
       .where(null, '{shop}.id=$shop.id')
       .where('favoriteItems', '{*.item}.id=$item.id')

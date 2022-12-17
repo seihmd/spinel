@@ -4,7 +4,7 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -39,11 +39,12 @@ class ShopCustomer {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('save N-:R-N[] graph', () => {
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test.each([
@@ -72,7 +73,7 @@ describe('save N-:R-N[] graph', () => {
       new Shop(id.get('shop')),
       userIds.map((id) => new User(id))
     );
-    const query = qb.save(shopCustomer);
+    const query = qd.builder().save(shopCustomer);
     expect(query.getStatement()).toBe(expected);
   });
 
@@ -81,7 +82,7 @@ describe('save N-:R-N[] graph', () => {
       new Shop(id.get('shop')),
       [id.get('user1'), id.get('user2')].map((id) => new User(id))
     );
-    await qb.save(shopCustomer).run();
+    await qd.builder().save(shopCustomer).run();
 
     expect(
       await neo4jFixture.findGraph(

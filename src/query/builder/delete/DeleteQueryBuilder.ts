@@ -5,13 +5,13 @@ import {
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { RelationshipInstanceElement } from '../../element/RelationshipInstanceElement';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { DeleteNodeStatement } from './DeleteNodeStatement';
 import { DeleteQuery } from './DeleteQuery';
 import { DeleteRelationshipStatement } from './DeleteRelationshipStatement';

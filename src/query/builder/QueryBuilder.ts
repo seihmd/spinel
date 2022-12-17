@@ -1,8 +1,8 @@
-import { Driver } from 'neo4j-driver';
 import { Direction } from '../../domain/graph/Direction';
 import { ClassConstructor } from '../../domain/type/ClassConstructor';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
+import { SessionProviderInterface } from '../driver/SessionProviderInterface';
 import { DeleteQuery } from './delete/DeleteQuery';
 import { DeleteQueryBuilder } from './delete/DeleteQueryBuilder';
 import { DetachQuery } from './detach/DetachQuery';
@@ -13,21 +13,19 @@ import { FindQueryBuilder } from './find/FindQueryBuilder';
 import { FindOneQueryBuilder } from './findOne/FindOneQueryBuilder';
 import { SaveQuery } from './save/SaveQuery';
 import { SaveQueryBuilder } from './save/SaveQueryBuilder';
-import { SessionProvider } from './session/SessionProvider';
-import { SessionProviderInterface } from './session/SessionProviderInterface';
 
 type Instance = InstanceType<ClassConstructor<object>>;
 
 export class QueryBuilder {
-  private readonly driver: Driver;
+  private readonly sessionProvider: SessionProviderInterface;
 
-  constructor(driver: Driver) {
-    this.driver = driver;
+  constructor(sessionProvider: SessionProviderInterface) {
+    this.sessionProvider = sessionProvider;
   }
 
   find<T>(cstr: ClassConstructor<T>, alias: string): FindQueryBuilder<T> {
     return new FindQueryBuilder<T>(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       cstr,
       alias
@@ -36,7 +34,7 @@ export class QueryBuilder {
 
   findOne<T>(cstr: ClassConstructor<T>, alias: string): FindOneQueryBuilder<T> {
     return new FindOneQueryBuilder<T>(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       cstr,
       alias
@@ -45,7 +43,7 @@ export class QueryBuilder {
 
   save(instance: Instance): SaveQuery {
     return new SaveQueryBuilder(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       instance
     ).buildQuery();
@@ -53,7 +51,7 @@ export class QueryBuilder {
 
   delete(instance: Instance): DeleteQuery {
     return new DeleteQueryBuilder(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       instance
     ).buildQuery();
@@ -66,7 +64,7 @@ export class QueryBuilder {
     direction?: Direction
   ): DetachQuery {
     return new DetachQueryBuilder(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       node1,
       node2,
@@ -77,14 +75,10 @@ export class QueryBuilder {
 
   detachDelete(instance: Instance): DetachDeleteQuery {
     return new DetachDeleteQueryBuilder(
-      this.sessionProvider(),
+      this.sessionProvider,
       this.metadataStore(),
       instance
     ).buildQuery();
-  }
-
-  private sessionProvider(): SessionProviderInterface {
-    return new SessionProvider(this.driver);
   }
 
   private metadataStore(): MetadataStoreInterface {

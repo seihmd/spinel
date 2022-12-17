@@ -1,6 +1,6 @@
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { AbstractFindQueryBuilder } from './AbstractFindQueryBuilder';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';

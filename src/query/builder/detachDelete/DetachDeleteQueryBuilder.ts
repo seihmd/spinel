@@ -7,6 +7,7 @@ import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchM
 import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { PlainEntity } from '../../element/PlainEntity';
@@ -24,7 +25,6 @@ import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { Parameter } from '../../parameter/Parameter';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { Branch } from '../../path/Branch';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { DetachDeleteGraphStatement } from './DetachDeleteGraphStatement';
 import { DetachDeleteNodeStatement } from './DetachDeleteNodeStatement';
 import { DetachDeleteQuery } from './DetachDeleteQuery';

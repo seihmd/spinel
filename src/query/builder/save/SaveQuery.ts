@@ -1,5 +1,5 @@
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { SaveStatement } from './SaveStatement';
 
 export class SaveQuery {
@@ -26,8 +26,6 @@ export class SaveQuery {
   }
 
   async run(): Promise<void> {
-    await this.sessionProvider
-      .get()
-      .run(this.getStatement(), this.getParameters());
+    await this.sessionProvider.run(this.getStatement(), this.getParameters());
   }
 }

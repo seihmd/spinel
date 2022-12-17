@@ -7,7 +7,7 @@ import { GraphNode } from 'decorator/property/GraphNode';
 import { GraphRelationship } from 'decorator/property/GraphRelationship';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -63,11 +63,12 @@ class CustomerFavorites {
 
 const id = new IdFixture();
 const neo4jFixture = Neo4jFixture.new();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Save N-F[] graph', () => {
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
   test.each([
     [[], 'MERGE (n0:User{id:$n0.id}) SET n0=$n0'],
@@ -114,7 +115,7 @@ describe('Save N-F[] graph', () => {
       new User(id.get('user')),
       favoriteItems
     );
-    const query = qb.save(customerFavorites);
+    const query = qd.builder().save(customerFavorites);
     expect(query.getStatement()).toBe(expected);
   });
 
@@ -129,7 +130,7 @@ describe('Save N-F[] graph', () => {
         new HasFavorite(id.get('hasFavorite2'))
       ),
     ]);
-    await qb.save(customerFavorites).run();
+    await qd.builder().save(customerFavorites).run();
 
     const saved = await neo4jFixture.findGraph(
       `MATCH (user:User{id:"${id.get('user')}"})

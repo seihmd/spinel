@@ -1,9 +1,9 @@
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { AbstractFindQueryBuilder } from '../find/AbstractFindQueryBuilder';
 import { FindGraphStatement } from '../find/FindGraphStatement';
 import { FindNodeStatement } from '../find/FindNodeStatement';
-import { SessionProviderInterface } from '../session/SessionProviderInterface';
 import { FindOneQuery } from './FindOneQuery';
 
 export class FindOneQueryBuilder<T> extends AbstractFindQueryBuilder<

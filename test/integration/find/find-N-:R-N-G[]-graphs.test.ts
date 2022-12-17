@@ -5,7 +5,7 @@ import { GraphBranch } from 'decorator/property/GraphBranch';
 import { GraphNode } from 'decorator/property/GraphNode';
 import { Primary } from 'decorator/property/Primary';
 import 'reflect-metadata';
-import { QueryBuilder } from '../../../src/query/builder/QueryBuilder';
+import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -80,7 +80,7 @@ class ShopCustomer {
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
-const qb = new QueryBuilder(neo4jFixture.getDriver());
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find N-:R-N-G[] graphs', () => {
   beforeAll(async () => {
@@ -143,10 +143,12 @@ describe('Find N-:R-N-G[] graphs', () => {
 
   afterAll(async () => {
     await neo4jFixture.teardown();
+    await neo4jFixture.close();
   });
 
   test('find', async () => {
-    const query = qb
+    const query = qd
+      .builder()
       .find(ShopCustomer, 'sc')
       .where(null, '{shop}.id=$shop.id')
       .buildQuery({ shop: { id: id.get('shop') } });
