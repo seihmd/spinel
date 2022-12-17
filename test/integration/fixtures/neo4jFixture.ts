@@ -206,7 +206,7 @@ export class Neo4jFixture {
     });
   }
 
-  async teardown(): Promise<this> {
+  async teardown(): Promise<void> {
     const ids: number[] = [
       ...this.nodes.map((n) => n.identity.toNumber()),
       ...this.relationships.map((r) => r.identity.toNumber()),
@@ -218,8 +218,6 @@ export class Neo4jFixture {
       DETACH DELETE n;`,
       { ids }
     );
-
-    return this;
   }
 
   async close(): Promise<void> {
