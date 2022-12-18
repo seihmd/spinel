@@ -1,18 +1,19 @@
-import { BranchMaterialBuilderInterface } from './BranchMaterialBuilderInterface';
-import { NodeBranchMaterial } from './NodeBranchMaterial';
-import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
-import { BranchIndexes } from '../BranchIndexes';
-import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
-import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
-import { DirectionElement } from '../../element/DirectionElement';
-import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
-import { ElementContext } from '../../element/ElementContext';
 import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
-import { Path } from '../../path/Path';
-import { ElementBuilderInterface } from './ElementBuilderInterface';
-import { StemMaterial } from '../stem/StemMaterial';
-import { BranchMaterialInterface } from './BranchMaterialInterface';
+import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
+import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
+import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
+import { DirectionElement } from '../../element/DirectionElement';
+import { ElementContext } from '../../element/ElementContext';
 import { PlainEntity } from '../../element/PlainEntity';
+import { Path } from '../../path/Path';
+import { BranchIndexes } from '../BranchIndexes';
+import { StemMaterial } from '../stem/StemMaterial';
+import { BranchMaterialBuilderInterface } from './BranchMaterialBuilderInterface';
+import { BranchMaterialInterface } from './BranchMaterialInterface';
+import { ElementBuilderInterface } from './ElementBuilderInterface';
+import { NodeBranchMaterial } from './NodeBranchMaterial';
 
 export class NodeBranchMaterialBuilder
   implements BranchMaterialBuilderInterface<NodeBranchMaterial>
@@ -57,7 +58,7 @@ export class NodeBranchMaterialBuilder
       });
 
     const terminalElement = this.elementBuilder.buildNodeElement(
-      new BranchEndTerm('*'),
+      new BranchEndTerm(BRANCH_END),
       new ElementContext(branchIndexes, ++index, true),
       branchEndMetadata,
       plainEntity

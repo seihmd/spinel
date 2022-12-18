@@ -44,7 +44,7 @@ describe('FindOne node', () => {
     const shops = await qd
       .builder()
       .findOne(Shop, 's')
-      .where('{*}.id = $shopId')
+      .where('{@}.id = $shopId')
       .buildQuery({
         shopId: id.get('shop1'),
       })
@@ -57,7 +57,7 @@ describe('FindOne node', () => {
     const shops = await qd
       .builder()
       .findOne(Shop, 's')
-      .where('{*}.id = $shopId')
+      .where('{@}.id = $shopId')
       .buildQuery({
         shopId: randomUUID(),
       })

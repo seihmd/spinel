@@ -50,7 +50,7 @@ export class FindNodeStatement extends AbstractStatement {
     }
     const orderBy = new OrderByClause(
       this.orderByQueries.getLiterals(
-        new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
+        new VariableMap(new Map([['@', this.nodeLiteral.getVariableName()]]))
       )
     ).get();
 
