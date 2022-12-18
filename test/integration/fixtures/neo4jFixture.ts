@@ -7,9 +7,9 @@ export class Neo4jFixture {
   static new(): Neo4jFixture {
     const driver = neo4j.driver(
       'neo4j://localhost',
-      neo4j.auth.basic('neo4j', 'password')
+      neo4j.auth.basic('neo4j', 'neo4j')
     );
-    return new Neo4jFixture(driver);
+    return new Neo4jFixture(driver, 'neo4j');
   }
 
   private readonly driver: Driver;

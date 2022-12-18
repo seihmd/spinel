@@ -2,6 +2,13 @@ import { PlainDateTime } from 'metadata/schema/transformation/plain/PlainDateTim
 import { DateTimeTransformer } from 'metadata/schema/transformation/transformer/default/DateTimeTransformer';
 import { DateTime } from 'neo4j-driver';
 
+function normalizeNegZero(value: number): number {
+  if (Object.is(value, -0)) {
+    return 0;
+  }
+  return value;
+}
+
 describe(`${DateTimeTransformer.name}`, () => {
   const dateTimeTransformer = new DateTimeTransformer();
 
@@ -79,7 +86,7 @@ describe(`${DateTimeTransformer.name}`, () => {
         4,
         5,
         6000000,
-        new Date().getTimezoneOffset() * -60
+        normalizeNegZero(new Date().getTimezoneOffset() * -60)
       ),
     ],
     [
@@ -92,7 +99,7 @@ describe(`${DateTimeTransformer.name}`, () => {
         4,
         5,
         6000000,
-        new Date().getTimezoneOffset() * -60
+        normalizeNegZero(new Date().getTimezoneOffset() * -60)
       ),
     ],
     [null, null],
