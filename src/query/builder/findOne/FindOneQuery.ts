@@ -38,7 +38,9 @@ export class FindOneQuery<T> {
     );
 
     if (result.records.length > 1) {
-      throw new Error();
+      throw new Error(
+        `Expected 1 result, but ${result.records.length} results found.`
+      );
     }
 
     if (result.records.length === 0) {

@@ -1,4 +1,5 @@
 import { Depth } from '../../../domain/graph/branch/Depth';
+import { LimitClause } from '../../clause/LimitClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { PathLiteral } from '../../literal/PathLiteral';
@@ -37,6 +38,15 @@ export class StemQueryContext {
     return this.stem
       .getOrderByQueries()
       .getLiterals(VariableMap.new(this.stem.getPath()));
+  }
+
+  getLimitClause(): LimitClause | null {
+    const limit = this.stem.getLimit();
+    if (limit === null) {
+      return null;
+    }
+
+    return new LimitClause(limit);
   }
 
   getMapEntries(): [string, string][] {

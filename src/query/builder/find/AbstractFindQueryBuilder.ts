@@ -3,6 +3,7 @@ import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { LimitClause } from '../../clause/LimitClause';
 import { WhereStatement } from '../../clause/where/WhereStatement';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
@@ -79,6 +80,7 @@ export abstract class AbstractFindQueryBuilder<
         this.whereStatement,
         new BranchFilters(this.branchFilters),
         this.getOrderByQueries(),
+        this.limitValue,
         this.depthValue
       );
       const stemQueryContext = new StemQueryContext(stem, this.depthValue);
@@ -107,7 +109,8 @@ export abstract class AbstractFindQueryBuilder<
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
           this.whereStatement,
-          this.getOrderByQueries()
+          this.getOrderByQueries(),
+          this.limitValue ? new LimitClause(this.limitValue) : null
         ),
         ParameterBag.new(parameters),
         this.cstr
