@@ -1,6 +1,6 @@
 import { VariableMap } from './VariableMap';
 
-const regex = new RegExp(/{ *(\*|(\*\.)?\w+ *)}/, 'gm');
+const regex = new RegExp(/{ *(@|(@\.)?\w+ *)}/, 'gm');
 
 export function placeholder(query: string, variableMap: VariableMap): string {
   return query.replace(regex, (matched: string) => {

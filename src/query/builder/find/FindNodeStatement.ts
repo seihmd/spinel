@@ -1,3 +1,4 @@
+import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
@@ -36,7 +37,9 @@ export class FindNodeStatement extends AbstractStatement {
 
     return ` ${new WhereClause(
       this.whereStatement.assign(
-        new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
+        new VariableMap(
+          new Map([[BRANCH_END, this.nodeLiteral.getVariableName()]])
+        )
       )
     ).get()} `;
   }

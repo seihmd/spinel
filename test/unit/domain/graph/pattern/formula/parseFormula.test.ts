@@ -58,14 +58,14 @@ describe('parseFormula', () => {
     ],
     [
       (): Term[] => {
-        return parseFormula('n1-r->*', 0);
+        return parseFormula('n1-r->@', 0);
       },
       [
         new NodeKeyTerm('n1'),
         new DirectionTerm('-'),
         new RelationshipKeyTerm('r'),
         new DirectionTerm('->'),
-        new BranchEndTerm('*'),
+        new BranchEndTerm('@'),
       ],
     ],
   ])('parse valid formula', (parse: () => Term[], expected: Term[]) => {

@@ -1,14 +1,15 @@
-import { NodeLabel } from '../../domain/node/NodeLabel';
-import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
-import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetadata';
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
-import { BranchIndexes } from '../meterial/BranchIndexes';
-import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
-import { EntityElementInterface } from './EntityElementInterface';
-import { ElementContext } from './ElementContext';
+import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
+import { NodeLabel } from '../../domain/node/NodeLabel';
+import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
+import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetadata';
+import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
+import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchIndexes } from '../meterial/BranchIndexes';
+import { ElementContext } from './ElementContext';
+import { EntityElementInterface } from './EntityElementInterface';
 
 export class NodeElement implements EntityElementInterface {
   private readonly term: NodeKeyTerm | BranchEndTerm;
@@ -51,9 +52,11 @@ export class NodeElement implements EntityElementInterface {
 
   getWhereVariableName(): string {
     if (this.term instanceof BranchEndTerm) {
-      return '*';
+      return BRANCH_END;
     }
-    return `${this.context.isOnBranch() ? '*.' : ''}${this.term.getValue()}`;
+    return `${
+      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
+    }${this.term.getValue()}`;
   }
 
   getIndex(): number {

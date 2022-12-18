@@ -1,7 +1,8 @@
 import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
+import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
-import { BranchIndexes } from '../meterial/BranchIndexes';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchIndexes } from '../meterial/BranchIndexes';
 import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
 
@@ -39,7 +40,9 @@ export class NodeLabelElement implements EntityElementInterface {
     if (graphParameterKey === null) {
       return null;
     }
-    return `${this.context.isOnBranch() ? '*.' : ''}${graphParameterKey}`;
+    return `${
+      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
+    }${graphParameterKey}`;
   }
 
   getLabel(): NodeLabel {

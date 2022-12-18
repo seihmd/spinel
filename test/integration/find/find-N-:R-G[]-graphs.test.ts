@@ -115,9 +115,9 @@ describe('Find N-:R-G[] graphs', () => {
       .where('{shop}.id=$shop.id')
       .filterBranch(
         'itemTags',
-        '{shop}.id=$shop.id AND [{hasStock}] AND {*.item}.id=$itemId'
+        '@shop.id=$shop.id AND [{hasStock}] AND @.item.id=$itemId'
       )
-      .filterBranch('itemTags.tags', '{*}.id=$tagId AND [{hasTag}]')
+      .filterBranch('itemTags.tags', '@.id=$tagId AND [@hasTag]')
       .buildQuery({
         shop: { id: id.get('shop') },
         itemId: id.get('item'),
