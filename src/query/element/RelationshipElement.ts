@@ -1,13 +1,14 @@
-import { RelationshipType } from '../../domain/relationship/RelationshipType';
-import { GraphRelationshipMetadata } from '../../metadata/schema/graph/GraphRelationshipMetadata';
-import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { RelationshipEntityMetadata } from '../../metadata/schema/entity/RelationshipEntityMetadata';
+import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { RelationshipKeyTerm } from '../../domain/graph/pattern/term/RelationshipKeyTerm';
+import { RelationshipType } from '../../domain/relationship/RelationshipType';
+import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
+import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
+import { RelationshipEntityMetadata } from '../../metadata/schema/entity/RelationshipEntityMetadata';
+import { GraphRelationshipMetadata } from '../../metadata/schema/graph/GraphRelationshipMetadata';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchIndexes } from '../meterial/BranchIndexes';
 import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
-import { BranchIndexes } from '../meterial/BranchIndexes';
-import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
 
 export class RelationshipElement implements EntityElementInterface {
   private readonly term: RelationshipKeyTerm;
@@ -53,7 +54,9 @@ export class RelationshipElement implements EntityElementInterface {
   }
 
   getWhereVariableName(): string {
-    return `${this.context.isOnBranch() ? '*.' : ''}${this.term.getValue()}`;
+    return `${
+      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
+    }${this.term.getValue()}`;
   }
 
   getIndex(): number {

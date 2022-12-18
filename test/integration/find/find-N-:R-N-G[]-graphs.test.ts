@@ -48,7 +48,7 @@ class Item {
 @Graph('item')
 class SimilarItems {
   @GraphNode() private item: Item;
-  @GraphBranch(Item, 'item<-:IS_SIMILAR-*') private similarities: Item[];
+  @GraphBranch(Item, 'item<-:IS_SIMILAR-@') private similarities: Item[];
 
   constructor(item: Item, similarities: Item[]) {
     this.item = item;
@@ -60,9 +60,9 @@ class SimilarItems {
 class ShopCustomer {
   @GraphNode() private shop: Shop;
   @GraphNode() private customer: User;
-  @GraphBranch(SimilarItems, 'customer-:HAS_FAVORITE->*.item')
+  @GraphBranch(SimilarItems, 'customer-:HAS_FAVORITE->@.item')
   private favoriteSimilarities: SimilarItems[];
-  @GraphBranch(Shop, 'shop-:HAS_NEIGHBORHOOD->*')
+  @GraphBranch(Shop, 'shop-:HAS_NEIGHBORHOOD->@')
   private neighborhoodShops: Shop[];
 
   constructor(
@@ -149,8 +149,8 @@ describe('Find N-:R-N-G[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
-      .where(null, '{shop}.id=$shop.id')
+      .find(ShopCustomer)
+      .where('{shop}.id=$shop.id')
       .buildQuery({ shop: { id: id.get('shop') } });
 
     expect(query.getStatement()).toBe(

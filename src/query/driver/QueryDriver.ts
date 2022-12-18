@@ -24,12 +24,12 @@ export class QueryDriver {
     return new QueryBuilder(this.sessionProvider());
   }
 
-  find<T>(cstr: ClassConstructor<T>, alias: string): FindQueryBuilder<T> {
-    return this.builder().find(cstr, alias);
+  find<T>(cstr: ClassConstructor<T>): FindQueryBuilder<T> {
+    return this.builder().find(cstr);
   }
 
-  findOne<T>(cstr: ClassConstructor<T>, alias: string): FindOneQueryBuilder<T> {
-    return this.builder().findOne(cstr, alias);
+  findOne<T>(cstr: ClassConstructor<T>): FindOneQueryBuilder<T> {
+    return this.builder().findOne(cstr);
   }
 
   async save(instance: Instance): Promise<void> {

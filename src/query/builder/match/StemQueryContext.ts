@@ -1,11 +1,10 @@
+import { Depth } from '../../../domain/graph/branch/Depth';
 import { NodeLiteral } from '../../literal/NodeLiteral';
-import { Stem } from '../../path/Stem';
+import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { PathLiteral } from '../../literal/PathLiteral';
 import { PathStepLiteral } from '../../literal/PathStepLiteral';
-import { Depth } from '../../../domain/graph/branch/Depth';
-import { WhereLiteral } from '../../literal/WhereLiteral';
-import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { VariableMap } from '../../literal/util/VariableMap';
+import { Stem } from '../../path/Stem';
 
 export class StemQueryContext {
   private readonly stem: Stem;
@@ -25,13 +24,13 @@ export class StemQueryContext {
     );
   }
 
-  getWhereLiteral(): WhereLiteral | null {
-    const whereQuery = this.stem.getWhereQuery();
-    if (whereQuery === null) {
+  getWhereStatement(): string | null {
+    const whereStatement = this.stem.getWhereStatement();
+    if (whereStatement === null) {
       return null;
     }
 
-    return WhereLiteral.new(whereQuery.getQuery(), this.stem.getPath());
+    return whereStatement.assign(VariableMap.new(this.stem.getPath()));
   }
 
   getOrderByLiterals(): OrderByLiteral[] {

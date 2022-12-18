@@ -1,4 +1,5 @@
 import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
 import {
   AnyClassConstructor,
   ClassConstructor,
@@ -104,7 +105,7 @@ export class SaveQueryBuilder {
         this.instance,
         nodeMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
-        new BranchEndTerm('*')
+        new BranchEndTerm(BRANCH_END)
       );
       parameterBag.add(
         Parameter.new(

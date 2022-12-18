@@ -23,21 +23,19 @@ export class QueryBuilder {
     this.sessionProvider = sessionProvider;
   }
 
-  find<T>(cstr: ClassConstructor<T>, alias: string): FindQueryBuilder<T> {
+  find<T>(cstr: ClassConstructor<T>): FindQueryBuilder<T> {
     return new FindQueryBuilder<T>(
       this.sessionProvider,
       this.metadataStore(),
-      cstr,
-      alias
+      cstr
     );
   }
 
-  findOne<T>(cstr: ClassConstructor<T>, alias: string): FindOneQueryBuilder<T> {
+  findOne<T>(cstr: ClassConstructor<T>): FindOneQueryBuilder<T> {
     return new FindOneQueryBuilder<T>(
       this.sessionProvider,
       this.metadataStore(),
-      cstr,
-      alias
+      cstr
     );
   }
 

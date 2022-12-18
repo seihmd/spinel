@@ -1,7 +1,7 @@
 import { LEFT, NONE, RIGHT } from '../../Direction';
 
 export const LabelPrefix = ':';
-export const BRANCH_END = '*';
+export const BRANCH_END = '@';
 
 export abstract class PatternTerm {
   protected readonly value: string;

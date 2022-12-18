@@ -31,7 +31,7 @@ class User {
 @Graph('shop')
 class ShopCustomer {
   @GraphNode() private shop: Shop;
-  @GraphBranch(User, 'shop<-:IS_CUSTOMER-*') private customers: User[];
+  @GraphBranch(User, 'shop<-:IS_CUSTOMER-@') private customers: User[];
 
   constructor(shop: Shop, customers: User[]) {
     this.shop = shop;
@@ -80,8 +80,8 @@ describe('Find N-:R-N[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
-      .where(null, '{shop}.id=$shop.id')
+      .find(ShopCustomer)
+      .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
       });
@@ -105,8 +105,8 @@ describe('Find N-:R-N[] graphs', () => {
   test('find no customers', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
-      .where(null, '{shop}.id=$shop.id')
+      .find(ShopCustomer)
+      .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop2') },
       });

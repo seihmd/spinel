@@ -1,28 +1,20 @@
-import { PatternComprehensionLiteral } from '../literal/PatternComprehensionLiteral';
-import { PathLiteral } from '../literal/PathLiteral';
-import { NodeLiteral } from '../literal/NodeLiteral';
-import { PathStepLiteral } from '../literal/PathStepLiteral';
-import { EntityElement } from '../element/Element';
-import { WhereQuery } from '../builder/where/WhereQuery';
+import { BranchFilter } from '../builder/where/BranchFilter';
 import { WhereClause } from '../clause/WhereClause';
-import { WhereLiteral } from '../literal/WhereLiteral';
+import { EntityElement } from '../element/Element';
+import { NodeLiteral } from '../literal/NodeLiteral';
+import { PathLiteral } from '../literal/PathLiteral';
+import { PathStepLiteral } from '../literal/PathStepLiteral';
+import { PatternComprehensionLiteral } from '../literal/PatternComprehensionLiteral';
+import { VariableMap } from '../literal/util/VariableMap';
 import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
 import { Path } from './Path';
 
 export class Branch {
-  private readonly branchMaterial: BranchMaterialInterface;
-  private readonly whereQuery: WhereQuery | null;
-  private readonly branches: Branch[];
-
   constructor(
-    branchMaterial: BranchMaterialInterface,
-    whereQuery: WhereQuery | null,
-    branches: Branch[]
-  ) {
-    this.branchMaterial = branchMaterial;
-    this.branches = branches;
-    this.whereQuery = whereQuery;
-  }
+    private readonly branchMaterial: BranchMaterialInterface,
+    private readonly branchFilter: BranchFilter | null,
+    private readonly branches: Branch[]
+  ) {}
 
   toPatternComprehensionLiteral(): PatternComprehensionLiteral {
     return new PatternComprehensionLiteral(
@@ -58,20 +50,19 @@ export class Branch {
     return this.branchMaterial.getPath().getEntityElements();
   }
 
-  getWhereQuery(): WhereQuery | null {
-    return this.whereQuery;
+  getBranchFilter(): BranchFilter | null {
+    return this.branchFilter;
   }
 
   private getWhereClause(): WhereClause | null {
-    if (this.whereQuery === null) {
+    if (this.branchFilter === null) {
       return null;
     }
 
-    const whereLiteral = WhereLiteral.new(
-      this.whereQuery.getQuery(),
-      this.branchMaterial.getPath()
+    return new WhereClause(
+      this.branchFilter
+        .getWhereStatement()
+        .assign(VariableMap.new(this.branchMaterial.getPath()))
     );
-
-    return new WhereClause(whereLiteral);
   }
 }

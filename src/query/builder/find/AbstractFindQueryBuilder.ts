@@ -3,6 +3,7 @@ import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { WhereStatement } from '../../clause/where/WhereStatement';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
@@ -16,8 +17,8 @@ import { StemBuilder } from '../match/StemBuilder';
 import { StemQueryContext } from '../match/StemQueryContext';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
 import { OrderByQuery } from '../orderBy/OrderByQuery';
-import { WhereQueries } from '../where/WhereQueries';
-import { WhereQuery } from '../where/WhereQuery';
+import { BranchFilter } from '../where/BranchFilter';
+import { BranchFilters } from '../where/BranchFilters';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 import { FindQuery } from './FindQuery';
@@ -26,30 +27,28 @@ export abstract class AbstractFindQueryBuilder<
   T,
   Q extends FindQuery<T> | FindOneQuery<T>
 > {
-  protected readonly sessionProvider: SessionProviderInterface;
-  protected readonly metadataStore: MetadataStoreInterface;
-  protected readonly cstr: ClassConstructor<T>;
-  protected readonly alias: string;
-
-  private whereClauses: [string | null, string][] = [];
+  private whereStatement: WhereStatement | null = null;
+  private branchFilters: BranchFilter[] = [];
   private orderByClauses: [string, Sort][] = [];
   private limitValue: PositiveInt | null = null;
   private depthValue: Depth = Depth.withDefault();
 
   constructor(
-    sessionProvider: SessionProviderInterface,
-    metadataStore: MetadataStoreInterface,
-    cstr: ClassConstructor<T>,
-    alias: string
-  ) {
-    this.sessionProvider = sessionProvider;
-    this.metadataStore = metadataStore;
-    this.cstr = cstr;
-    this.alias = alias;
+    protected readonly sessionProvider: SessionProviderInterface,
+    protected readonly metadataStore: MetadataStoreInterface,
+    protected readonly cstr: ClassConstructor<T>
+  ) {}
+
+  where(statement: string): AbstractFindQueryBuilder<T, Q> {
+    if (this.whereStatement !== null) {
+      throw new Error('where() can only be called once.');
+    }
+    this.whereStatement = new WhereStatement(statement);
+    return this;
   }
 
-  where(key: string | null, clause: string): AbstractFindQueryBuilder<T, Q> {
-    this.whereClauses.push([key, clause]);
+  filterBranch(key: string, statement: string): AbstractFindQueryBuilder<T, Q> {
+    this.branchFilters.push(new BranchFilter(key, statement));
     return this;
   }
 
@@ -77,7 +76,8 @@ export abstract class AbstractFindQueryBuilder<
     if (graphMetadata) {
       const stem = StemBuilder.new().build(
         graphMetadata,
-        this.getWhereQueries(),
+        this.whereStatement,
+        new BranchFilters(this.branchFilters),
         this.getOrderByQueries(),
         this.depthValue
       );
@@ -106,7 +106,7 @@ export abstract class AbstractFindQueryBuilder<
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.getWhereQueries().ofStem(),
+          this.whereStatement,
           this.getOrderByQueries()
         ),
         ParameterBag.new(parameters),
@@ -128,12 +128,6 @@ export abstract class AbstractFindQueryBuilder<
     parameterBag: ParameterBag,
     cstr: ClassConstructor<T>
   ): Q;
-
-  private getWhereQueries(): WhereQueries {
-    return new WhereQueries(
-      this.whereClauses.map(([key, value]) => new WhereQuery(key, value))
-    );
-  }
 
   private getOrderByQueries(): OrderByQueries {
     return new OrderByQueries(

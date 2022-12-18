@@ -45,7 +45,7 @@ class ShopItems {
   @GraphNode()
   private shop: Shop;
 
-  @GraphBranch(Item, 'shop-:HAS->*')
+  @GraphBranch(Item, 'shop-:HAS->@')
   private items: Item[];
 
   constructor(shop: Shop, items: Item[]) {

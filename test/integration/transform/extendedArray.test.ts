@@ -41,8 +41,8 @@ class ItemArray extends Array<Item> {
 @Graph('shop')
 class ShopItems {
   @GraphNode() private shop: Shop;
-  @GraphBranch(Item, 'shop-:HAS->*') private setItems: Set<Item>;
-  @GraphBranch(Item, 'shop-:HAS->*') private itemArray: ItemArray;
+  @GraphBranch(Item, 'shop-:HAS->@') private setItems: Set<Item>;
+  @GraphBranch(Item, 'shop-:HAS->@') private itemArray: ItemArray;
 
   constructor(shop: Shop, setItems: Set<Item>, itemArray: ItemArray) {
     this.shop = shop;
@@ -85,10 +85,10 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
 
   test('find', async () => {
     const query = qd
-      .find(ShopItems, 'si')
-      .where(null, '{shop}.id = $shopId')
-      .where('setItems', '{*}.id IN $setItemIds')
-      .where('itemArray', '{*}.id IN $itemArrayIds')
+      .find(ShopItems)
+      .where('{shop}.id = $shopId')
+      .filterBranch('setItems', '{@}.id IN $setItemIds')
+      .filterBranch('itemArray', '{@}.id IN $itemArrayIds')
       .buildQuery({
         shopId: id.get('shop'),
         setItemIds: [id.get('setItem1'), id.get('setItem2')],

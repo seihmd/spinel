@@ -1,9 +1,10 @@
-import { RelationshipType } from '../../domain/relationship/RelationshipType';
+import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { RelationshipTypeTerm } from '../../domain/graph/pattern/term/RelationshipTypeTerm';
+import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchIndexes } from '../meterial/BranchIndexes';
 import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
-import { BranchIndexes } from '../meterial/BranchIndexes';
 
 export class RelationshipTypeElement implements EntityElementInterface {
   private readonly term: RelationshipTypeTerm;
@@ -43,7 +44,9 @@ export class RelationshipTypeElement implements EntityElementInterface {
     if (graphParameterKey === null) {
       return null;
     }
-    return `${this.context.isOnBranch() ? '*.' : ''}${graphParameterKey}`;
+    return `${
+      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
+    }${graphParameterKey}`;
   }
 
   withContext(newContext: ElementContext): EntityElementInterface {

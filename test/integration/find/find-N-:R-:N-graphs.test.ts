@@ -38,7 +38,7 @@ class Tag {
 @Graph('item')
 class ItemTags {
   @GraphNode() private item: Item;
-  @GraphBranch(Tag, 'item-:HAS_TAG->*') private tags: Tag[];
+  @GraphBranch(Tag, 'item-:HAS_TAG->@') private tags: Tag[];
 
   constructor(item: Item, tags: Tag[]) {
     this.item = item;
@@ -49,7 +49,7 @@ class ItemTags {
 @Graph('shop')
 class ShopItemTags {
   @GraphNode() private shop: Shop;
-  @GraphBranch(ItemTags, 'shop-:HAS_STOCK->*.item')
+  @GraphBranch(ItemTags, 'shop-:HAS_STOCK->@.item')
   private itemTags: ItemTags[];
 
   constructor(shop: Shop, itemTags: ItemTags[]) {
@@ -82,8 +82,8 @@ describe('Find N-:R-:N graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopItemTags, 'sit')
-      .where(null, '{shop}.id = $shopId')
+      .find(ShopItemTags)
+      .where('{shop}.id = $shopId')
       .buildQuery({ shopId: id.get('shop') });
 
     expect(query.getStatement()).toBe(

@@ -61,8 +61,8 @@ describe('Number Transformer', () => {
 
   test('restore', async () => {
     const result = await qd
-      .findOne(TestGraph, 'tg')
-      .where(null, '{n}.id = $id')
+      .findOne(TestGraph)
+      .where('{n}.id = $id')
       .buildQuery({ id: id.get('id') })
       .run();
 
