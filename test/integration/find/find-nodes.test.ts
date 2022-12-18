@@ -81,4 +81,25 @@ describe('Find nodes', () => {
       expect(shops).toStrictEqual(expected);
     }
   );
+
+  test.each([
+    ['ASC', [new Shop(id.get('shop1'), 'Shop1')]],
+    ['DESC', [new Shop(id.get('shop2'), 'Shop2')]],
+  ] as [Sort, Shop[]][])(
+    'find with sort and limit',
+    async (sort: Sort, expected: Shop[]) => {
+      const shops = await qd
+        .builder()
+        .find(Shop)
+        .where('{@}.id IN $shopIds')
+        .orderBy('{@}.name', sort)
+        .limit(1)
+        .buildQuery({
+          shopIds: [id.get('shop1'), id.get('shop2')],
+        })
+        .run();
+
+      expect(shops).toStrictEqual(expected);
+    }
+  );
 });

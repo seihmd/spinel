@@ -151,4 +151,32 @@ describe('FindOne N-R-N graph', () => {
 
     expect(await query.run()).toBeNull();
   });
+
+  test('findOne with limit', async () => {
+    const query = qd
+      .builder()
+      .findOne(ShopCustomer)
+      .where('{shop}.id IN $shopIds')
+      .limit(1)
+      .orderBy('{shop}.name', 'ASC')
+      .buildQuery({
+        shopIds: [id.get('shop1'), id.get('shop2')],
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+        'WHERE n0.id IN $shopIds ' +
+        'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _ ' +
+        'ORDER BY n0.name ASC ' +
+        'LIMIT 1'
+    );
+
+    expect(await query.run()).toStrictEqual(
+      new ShopCustomer(
+        new Shop(id.get('shop1'), 'MyShop1'),
+        new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
+        new User(id.get('customer1'), new Date('2000-01-01'))
+      )
+    );
+  });
 });

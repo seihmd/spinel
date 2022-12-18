@@ -1,6 +1,7 @@
 import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
 import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
 import { Depth } from '../../../domain/graph/branch/Depth';
+import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
@@ -52,6 +53,7 @@ export class StemBuilder {
     whereStatement: WhereStatement | null,
     branchFilters: BranchFilters,
     orderByQueries: OrderByQueries,
+    limit: PositiveInt | null,
     depth: Depth
   ): Stem {
     const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
@@ -60,6 +62,7 @@ export class StemBuilder {
       stemMaterial.getPath(),
       whereStatement,
       orderByQueries,
+      limit,
       this.buildBranches(
         graphMetadata,
         stemMaterial,

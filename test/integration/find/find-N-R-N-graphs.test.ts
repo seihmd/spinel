@@ -192,4 +192,48 @@ describe('Find N-R-N graphs', () => {
       expect(await query.run()).toStrictEqual(expected);
     }
   );
+
+  test.each([
+    [
+      'ASC',
+      [
+        new ShopCustomer(
+          new Shop(id.get('shop1'), 'MyShop1'),
+          new IsCustomer(id.get('isCustomer1'), new Date('2022-01-01')),
+          new User(id.get('customer1'), new Date('2000-01-01'))
+        ),
+      ],
+    ],
+    [
+      'DESC',
+      [
+        new ShopCustomer(
+          new Shop(id.get('shop2'), 'MyShop2'),
+          new IsCustomer(id.get('isCustomer2'), new Date('2022-02-01')),
+          new User(id.get('customer2'), new Date('2000-02-01'))
+        ),
+      ],
+    ],
+  ] as [Sort, ShopCustomer[]][])(
+    'find with sort and limit',
+    async (sort: Sort, expected: ShopCustomer[]) => {
+      const query = qd
+        .builder()
+        .find(ShopCustomer)
+        .where('{shop}.id IN $shopIds')
+        .orderBy('{isCustomer}.visited', sort)
+        .limit(1)
+        .buildQuery({
+          shopIds: [id.get('shop1'), id.get('shop2')],
+        });
+
+      expect(query.getStatement()).toBe(
+        'MATCH (n0:Shop)<-[r2:IS_CUSTOMER]-(n4:Customer) ' +
+          'WHERE n0.id IN $shopIds ' +
+          'RETURN {shop:n0{.*},isCustomer:r2{.*},customer:n4{.*}} AS _ ' +
+          `ORDER BY r2.visited ${sort} LIMIT 1`
+      );
+      expect(await query.run()).toStrictEqual(expected);
+    }
+  );
 });

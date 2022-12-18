@@ -1,4 +1,5 @@
 import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
@@ -13,7 +14,8 @@ export class FindNodeStatement extends AbstractStatement {
   constructor(
     private readonly nodeLiteral: NodeLiteral,
     private readonly whereStatement: WhereStatement | null,
-    private readonly orderByQueries: OrderByQueries | null
+    private readonly orderByQueries: OrderByQueries | null,
+    private readonly limitClause: LimitClause | null
   ) {
     super();
   }
@@ -22,7 +24,9 @@ export class FindNodeStatement extends AbstractStatement {
     return (
       `${
         this.getMatchClause() + this.getWhereClause() + this.getReturnClause()
-      } AS ${this.as()}` + this.getOrderByClause()
+      } AS ${this.as()}` +
+      this.getOrderByClause() +
+      this.getLimitClause()
     );
   }
 
@@ -58,6 +62,14 @@ export class FindNodeStatement extends AbstractStatement {
       return '';
     }
     return ` ${orderBy}`;
+  }
+
+  private getLimitClause(): string {
+    if (this.limitClause === null) {
+      return '';
+    }
+
+    return ` ${this.limitClause.get()}`;
   }
 
   private getReturnClause(): string {

@@ -65,4 +65,19 @@ describe('FindOne node', () => {
 
     expect(shops).toBeNull();
   });
+
+  test('findOne with limit', async () => {
+    const shops = await qd
+      .builder()
+      .findOne(Shop)
+      .where('{@}.id IN $shopIds')
+      .limit(1)
+      .orderBy('{@}.name', 'ASC')
+      .buildQuery({
+        shopIds: [id.get('shop1'), id.get('shop2')],
+      })
+      .run();
+
+    expect(shops).toStrictEqual(new Shop(id.get('shop1'), 'Shop1'));
+  });
 });
