@@ -80,7 +80,7 @@ describe('Find N-:R-N[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
+      .find(ShopCustomer)
       .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
@@ -105,7 +105,7 @@ describe('Find N-:R-N[] graphs', () => {
   test('find no customers', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
+      .find(ShopCustomer)
       .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop2') },

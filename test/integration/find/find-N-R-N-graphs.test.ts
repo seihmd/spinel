@@ -119,7 +119,7 @@ describe('Find N-R-N graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
+      .find(ShopCustomer)
       .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
@@ -176,7 +176,7 @@ describe('Find N-R-N graphs', () => {
     async (sort: Sort, expected: ShopCustomer[]) => {
       const query = qd
         .builder()
-        .find(ShopCustomer, 'sc')
+        .find(ShopCustomer)
         .where('{shop}.id IN $shopIds')
         .orderBy('{isCustomer}.visited', sort)
         .buildQuery({

@@ -85,7 +85,7 @@ describe('Find N-:R-G[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopItemTags, 'sit')
+      .find(ShopItemTags)
       .where('{shop}.id = $shopId')
       .buildQuery({ shopId: id.get('shop') });
 
@@ -111,7 +111,7 @@ describe('Find N-:R-G[] graphs', () => {
   test('find with branch where', async () => {
     const query = qd
       .builder()
-      .find(ShopItemTags, 'sit')
+      .find(ShopItemTags)
       .where('{shop}.id=$shop.id')
       .filterBranch(
         'itemTags',

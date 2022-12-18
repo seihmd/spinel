@@ -149,7 +149,7 @@ describe('Find N-:R-N-G[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomer, 'sc')
+      .find(ShopCustomer)
       .where('{shop}.id=$shop.id')
       .buildQuery({ shop: { id: id.get('shop') } });
 

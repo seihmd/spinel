@@ -43,7 +43,7 @@ describe('Find nodes', () => {
   test('find', async () => {
     const shops = await qd
       .builder()
-      .find(Shop, 's')
+      .find(Shop)
       .where('{@}.id IN $shopIds')
       .buildQuery({
         shopIds: [id.get('shop1'), id.get('shop2')],
@@ -70,7 +70,7 @@ describe('Find nodes', () => {
     async (sort: Sort, expected: Shop[]) => {
       const shops = await qd
         .builder()
-        .find(Shop, 's')
+        .find(Shop)
         .where('{@}.id IN $shopIds')
         .orderBy('{@}.name', sort)
         .buildQuery({

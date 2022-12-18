@@ -86,7 +86,7 @@ describe('Find N-F[] graphs', () => {
   test('find', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomerFavorites, 'scf')
+      .find(ShopCustomerFavorites)
       .where('{shop}.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop') },
@@ -110,7 +110,7 @@ describe('Find N-F[] graphs', () => {
   test('find with branch where', async () => {
     const query = qd
       .builder()
-      .find(ShopCustomerFavorites, 'scf')
+      .find(ShopCustomerFavorites)
       .where('{shop}.id=$shop.id')
       .filterBranch('favoriteItems', '{@.item}.id=$item.id')
       .buildQuery({

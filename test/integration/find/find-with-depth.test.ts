@@ -112,7 +112,7 @@ describe('Find graph with depth', () => {
   ])('find', async (depth: number, expected: SimilarItems) => {
     const query = qd
       .builder()
-      .find(SimilarItems, 'si')
+      .find(SimilarItems)
       .where('{item}.id=$item.id')
       .depth(depth)
       .buildQuery({

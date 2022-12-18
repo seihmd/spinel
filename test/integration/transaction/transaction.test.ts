@@ -93,7 +93,7 @@ describe('Transactional query', () => {
   test('commit successfully', async () => {
     await qd.transactional(async (qd) => {
       const shopCustomer = await qd
-        .findOne(ShopCustomer, 'sc')
+        .findOne(ShopCustomer)
         .where('{shop}.id=$shop.id')
         .buildQuery({
           shop: { id: id.get('shop') },
@@ -127,7 +127,7 @@ describe('Transactional query', () => {
     await qd.transactional(async (qd) => {
       const shopCustomer = await qd
         .builder()
-        .findOne(ShopCustomer, 'sc')
+        .findOne(ShopCustomer)
         .where('{shop}.id=$shop.id')
         .buildQuery({
           shop: { id: id.get('shop') },

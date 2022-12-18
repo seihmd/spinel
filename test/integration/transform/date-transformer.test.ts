@@ -85,7 +85,7 @@ describe('Date Transformer', () => {
 
   test('restore', async () => {
     const result = await qd
-      .findOne(TestGraph, 'tg')
+      .findOne(TestGraph)
       .where('{n}.id = $id')
       .buildQuery({
         id: id.get('id'),

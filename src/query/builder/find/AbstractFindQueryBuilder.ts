@@ -36,8 +36,7 @@ export abstract class AbstractFindQueryBuilder<
   constructor(
     protected readonly sessionProvider: SessionProviderInterface,
     protected readonly metadataStore: MetadataStoreInterface,
-    protected readonly cstr: ClassConstructor<T>,
-    protected readonly alias: string
+    protected readonly cstr: ClassConstructor<T>
   ) {}
 
   where(statement: string): AbstractFindQueryBuilder<T, Q> {
