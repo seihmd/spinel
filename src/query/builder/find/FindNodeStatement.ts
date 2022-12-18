@@ -1,29 +1,20 @@
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
+import { WhereStatement } from '../../clause/where/WhereStatement';
 import { WhereClause } from '../../clause/WhereClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { VariableMap } from '../../literal/util/VariableMap';
-import { WhereLiteral } from '../../literal/WhereLiteral';
 import { AbstractStatement } from '../AbstractStatement';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
-import { WhereQuery } from '../where/WhereQuery';
 
 export class FindNodeStatement extends AbstractStatement {
-  private readonly nodeLiteral: NodeLiteral;
-  private readonly whereQuery: WhereQuery | null;
-  private readonly orderByQueries: OrderByQueries | null;
-
   constructor(
-    nodeLiteral: NodeLiteral,
-    whereQuery: WhereQuery | null,
-    orderByQueries: OrderByQueries | null
+    private readonly nodeLiteral: NodeLiteral,
+    private readonly whereStatement: WhereStatement | null,
+    private readonly orderByQueries: OrderByQueries | null
   ) {
     super();
-
-    this.nodeLiteral = nodeLiteral;
-    this.whereQuery = whereQuery;
-    this.orderByQueries = orderByQueries;
   }
 
   protected build(): string {
@@ -39,13 +30,12 @@ export class FindNodeStatement extends AbstractStatement {
   }
 
   private getWhereClause(): string {
-    if (this.whereQuery === null) {
+    if (this.whereStatement === null) {
       return ' ';
     }
 
     return ` ${new WhereClause(
-      WhereLiteral.newWithVariableMap(
-        this.whereQuery.getQuery(),
+      this.whereStatement.assign(
         new VariableMap(new Map([['*', this.nodeLiteral.getVariableName()]]))
       )
     ).get()} `;

@@ -1,8 +1,8 @@
 import { NodeLabel } from 'domain/node/NodeLabel';
 import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
-import { WhereQuery } from 'query/builder/where/WhereQuery';
 import { NodeLiteral } from 'query/literal/NodeLiteral';
 import { FindNodeStatement } from '../../../../../src/query/builder/find/FindNodeStatement';
+import { WhereStatement } from '../../../../../src/query/clause/where/WhereStatement';
 
 describe(`${FindNodeStatement.name}`, () => {
   test('get', () => {
@@ -18,7 +18,7 @@ describe(`${FindNodeStatement.name}`, () => {
   test('with WhereQuery', () => {
     const findNodeStatement = new FindNodeStatement(
       new NodeLiteral('u', new NodeLabel('User'), null),
-      new WhereQuery(null, 'u.id = $id'),
+      new WhereStatement('u.id = $id'),
       new OrderByQueries([])
     );
 

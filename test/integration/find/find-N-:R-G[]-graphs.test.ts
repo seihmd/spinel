@@ -40,7 +40,9 @@ class Tag {
 @Graph('item')
 class ItemTags {
   @GraphNode() private item: Item;
-  @GraphBranch(Tag, 'item-:HAS_TAG@hasTag->*') private tags: Tag[];
+
+  @GraphBranch(Tag, 'item-:HAS_TAG@hasTag->*')
+  private tags: Tag[];
 
   constructor(item: Item, tags: Tag[]) {
     this.item = item;
@@ -84,7 +86,7 @@ describe('Find N-:R-G[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopItemTags, 'sit')
-      .where(null, '{shop}.id = $shopId')
+      .where('{shop}.id = $shopId')
       .buildQuery({ shopId: id.get('shop') });
 
     expect(query.getStatement()).toBe(
@@ -110,12 +112,12 @@ describe('Find N-:R-G[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopItemTags, 'sit')
-      .where(null, '{shop}.id=$shop.id')
-      .where(
+      .where('{shop}.id=$shop.id')
+      .filterBranch(
         'itemTags',
         '{shop}.id=$shop.id AND [{hasStock}] AND {*.item}.id=$itemId'
       )
-      .where('itemTags.tags', '{*}.id=$tagId AND [{hasTag}]')
+      .filterBranch('itemTags.tags', '{*}.id=$tagId AND [{hasTag}]')
       .buildQuery({
         shop: { id: id.get('shop') },
         itemId: id.get('item'),

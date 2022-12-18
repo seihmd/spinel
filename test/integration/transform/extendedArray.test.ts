@@ -86,9 +86,9 @@ describe('map Neo4j Record into N-:R-G[] Graph class', () => {
   test('find', async () => {
     const query = qd
       .find(ShopItems, 'si')
-      .where(null, '{shop}.id = $shopId')
-      .where('setItems', '{*}.id IN $setItemIds')
-      .where('itemArray', '{*}.id IN $itemArrayIds')
+      .where('{shop}.id = $shopId')
+      .filterBranch('setItems', '{*}.id IN $setItemIds')
+      .filterBranch('itemArray', '{*}.id IN $itemArrayIds')
       .buildQuery({
         shopId: id.get('shop'),
         setItemIds: [id.get('setItem1'), id.get('setItem2')],

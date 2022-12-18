@@ -83,7 +83,7 @@ describe('Find N-:R-:N graphs', () => {
     const query = qd
       .builder()
       .find(ShopItemTags, 'sit')
-      .where(null, '{shop}.id = $shopId')
+      .where('{shop}.id = $shopId')
       .buildQuery({ shopId: id.get('shop') });
 
     expect(query.getStatement()).toBe(

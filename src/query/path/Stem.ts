@@ -1,27 +1,17 @@
-import { Branch } from './Branch';
-import { PathStep } from './PathStep';
-import { AnyNodeElement, EntityElement } from '../element/Element';
-import { Path } from './Path';
-import { WhereQuery } from '../builder/where/WhereQuery';
 import { OrderByQueries } from '../builder/orderBy/OrderByQueries';
+import { WhereStatement } from '../clause/where/WhereStatement';
+import { AnyNodeElement, EntityElement } from '../element/Element';
+import { Branch } from './Branch';
+import { Path } from './Path';
+import { PathStep } from './PathStep';
 
 export class Stem {
-  private readonly path: Path;
-  private readonly whereQuery: WhereQuery | null;
-  private readonly branches: Branch[];
-  private readonly orderByQueries: OrderByQueries;
-
   constructor(
-    path: Path,
-    whereQuery: WhereQuery | null,
-    orderByQueries: OrderByQueries,
-    branches: Branch[]
-  ) {
-    this.orderByQueries = orderByQueries;
-    this.whereQuery = whereQuery;
-    this.path = path;
-    this.branches = branches;
-  }
+    private readonly path: Path,
+    private readonly whereStatement: WhereStatement | null,
+    private readonly orderByQueries: OrderByQueries,
+    private readonly branches: Branch[]
+  ) {}
 
   getRoot(): AnyNodeElement {
     return this.path.getRoot();
@@ -43,8 +33,8 @@ export class Stem {
     return this.path.getEntityElements();
   }
 
-  getWhereQuery(): WhereQuery | null {
-    return this.whereQuery;
+  getWhereStatement(): WhereStatement | null {
+    return this.whereStatement;
   }
 
   getOrderByQueries(): OrderByQueries {

@@ -72,7 +72,7 @@ describe('Custom Transformer', () => {
   test('restore', async () => {
     const result = await qd
       .findOne(TestGraph, 'tg')
-      .where(null, '{n}.id = $id')
+      .where('{n}.id = $id')
       .buildQuery({
         id: id.get('id'),
       })

@@ -35,7 +35,7 @@ export class FindGraphStatement extends AbstractStatement {
   }
 
   private getWhereClause(): string {
-    const whereLiteral = this.stemQueryContext.getWhereLiteral();
+    const whereLiteral = this.stemQueryContext.getWhereStatement();
     if (whereLiteral === null) {
       return ' ';
     }

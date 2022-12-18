@@ -150,7 +150,7 @@ describe('Find N-:R-N-G[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomer, 'sc')
-      .where(null, '{shop}.id=$shop.id')
+      .where('{shop}.id=$shop.id')
       .buildQuery({ shop: { id: id.get('shop') } });
 
     expect(query.getStatement()).toBe(
