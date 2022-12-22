@@ -1,12 +1,12 @@
 import { RelationshipEntity } from 'decorator/class/RelationshipEntity';
 import { Primary } from 'decorator/property/Primary';
 import { Property } from 'decorator/property/Property';
-import { getMetadataStore } from 'metadata/store/MetadataStore';
-import { ConstraintQueryPlan } from 'query/builder/constraint/ConstraintQueryPlan';
 import 'reflect-metadata';
+import { QueryDriver } from '../../../../src/query/driver/QueryDriver';
 import { Neo4jFixture } from '../../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
+const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('relationship constraints', () => {
   beforeEach(async () => {
@@ -33,11 +33,7 @@ describe('relationship constraints', () => {
       private date: Date;
     }
 
-    const constraintQueryPlan = new ConstraintQueryPlan(
-      getMetadataStore(),
-      neo4jFixture.getDriver()
-    );
-    await constraintQueryPlan.exec(true, true);
+    await qd.syncConstraints();
 
     const result = await neo4jFixture
       .getDriver()

@@ -1,31 +1,42 @@
 import { ConstraintInterface } from '../../../domain/constraint/ConstraintInterface';
-import { DropConstraintClause } from '../../clause/constraint/DropConstraintClause';
-import { CreateConstraintClause } from '../../clause/constraint/CreateConstraintClause';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
+import { CreateConstraintQuery } from './CreateConstraintQuery';
+import { CreateConstraintStatement } from './CreateConstraintStatement';
+import { DropConstraintQuery } from './DropConstraintQuery';
+import { DropConstraintStatement } from './DropConstraintStatement';
 
 export class ConstraintQueryBuilder {
-  private constraints: ConstraintInterface[];
-  private existingConstraintNames: string[];
-
   constructor(
-    indexes: ConstraintInterface[],
-    existingConstraintNames: string[]
-  ) {
-    this.constraints = indexes;
-    this.existingConstraintNames = existingConstraintNames;
-  }
+    private readonly sessionProvider: SessionProviderInterface,
+    private readonly constraints: ConstraintInterface[],
+    private readonly existingConstraintNames: string[]
+  ) {}
 
-  getCreateClauses(): CreateConstraintClause[] {
+  buildCreateQueries(): CreateConstraintQuery[] {
     return this.constraints
       .filter(
-        (index) => !this.existingConstraintNames.includes(index.getName())
+        (constraint) =>
+          !this.existingConstraintNames.includes(constraint.getName())
       )
-      .map((index) => new CreateConstraintClause(index));
+      .map(
+        (constraint) =>
+          new CreateConstraintQuery(
+            this.sessionProvider,
+            new CreateConstraintStatement(constraint)
+          )
+      );
   }
 
-  getDropClauses(): DropConstraintClause[] {
-    const indexNames = this.constraints.map((index) => index.getName());
+  buildDropQueries(): DropConstraintQuery[] {
+    const constraintNames = this.constraints.map((index) => index.getName());
     return this.existingConstraintNames
-      .filter((indexName) => !indexNames.includes(indexName))
-      .map((indexName) => new DropConstraintClause(indexName));
+      .filter((constraintName) => !constraintNames.includes(constraintName))
+      .map(
+        (constraintName) =>
+          new DropConstraintQuery(
+            this.sessionProvider,
+            new DropConstraintStatement(constraintName)
+          )
+      );
   }
 }

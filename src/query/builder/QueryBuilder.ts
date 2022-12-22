@@ -3,6 +3,10 @@ import { ClassConstructor } from '../../domain/type/ClassConstructor';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
 import { SessionProviderInterface } from '../driver/SessionProviderInterface';
+import { ConstraintQueryBuilder } from './constraint/ConstraintQueryBuilder';
+import { CreateConstraintQuery } from './constraint/CreateConstraintQuery';
+import { DropConstraintQuery } from './constraint/DropConstraintQuery';
+import { ShowConstraintsQuery } from './constraint/ShowConstraintsQuery';
 import { DeleteQuery } from './delete/DeleteQuery';
 import { DeleteQueryBuilder } from './delete/DeleteQueryBuilder';
 import { DetachQuery } from './detach/DetachQuery';
@@ -11,6 +15,10 @@ import { DetachDeleteQuery } from './detachDelete/DetachDeleteQuery';
 import { DetachDeleteQueryBuilder } from './detachDelete/DetachDeleteQueryBuilder';
 import { FindQueryBuilder } from './find/FindQueryBuilder';
 import { FindOneQueryBuilder } from './findOne/FindOneQueryBuilder';
+import { CreateIndexQuery } from './index/CreateIndexQuery';
+import { DropIndexQuery } from './index/DropIndexQuery';
+import { IndexQueryBuilder } from './index/IndexQueryBuilder';
+import { ShowIndexesQuery } from './index/ShowIndexesQuery';
 import { SaveQuery } from './save/SaveQuery';
 import { SaveQueryBuilder } from './save/SaveQueryBuilder';
 
@@ -77,6 +85,36 @@ export class QueryBuilder {
       this.metadataStore(),
       instance
     ).buildQuery();
+  }
+
+  showConstraints(): ShowConstraintsQuery {
+    return new ShowConstraintsQuery(this.sessionProvider);
+  }
+
+  showIndexes(): ShowIndexesQuery {
+    return new ShowIndexesQuery(this.sessionProvider);
+  }
+
+  syncConstraints(
+    existingNames: string[]
+  ): (CreateConstraintQuery | DropConstraintQuery)[] {
+    const builder = new ConstraintQueryBuilder(
+      this.sessionProvider,
+      this.metadataStore().getAllConstraints(),
+      existingNames
+    );
+
+    return [...builder.buildCreateQueries(), ...builder.buildDropQueries()];
+  }
+
+  syncIndexes(existingNames: string[]): (CreateIndexQuery | DropIndexQuery)[] {
+    const builder = new IndexQueryBuilder(
+      this.sessionProvider,
+      this.metadataStore().getAllIndexes(),
+      existingNames
+    );
+
+    return [...builder.buildCreateQueries(), ...builder.buildDropQueries()];
   }
 
   private metadataStore(): MetadataStoreInterface {

@@ -53,6 +53,22 @@ export class QueryDriver {
     await this.builder().detachDelete(instance).run();
   }
 
+  async syncConstraints(): Promise<void> {
+    await this.transactional(async (qd) => {
+      const builder = qd.builder();
+
+      const existingConstraintNames = await builder.showConstraints().run();
+      const existingIndexNames = await builder.showIndexes().run();
+
+      await Promise.all(
+        [
+          ...builder.syncConstraints(existingConstraintNames),
+          ...builder.syncIndexes(existingIndexNames),
+        ].map(async (query) => await query.run())
+      );
+    });
+  }
+
   async transactional(callback: (api: QueryDriver) => Promise<void>) {
     const session = this.driver.session();
     const txc = session.beginTransaction();

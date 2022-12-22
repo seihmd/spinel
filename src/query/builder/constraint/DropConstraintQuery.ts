@@ -1,17 +1,10 @@
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
-import { CreateConstraintStatement } from './CreateConstraintStatement';
-import { CreateIndexStatement } from './CreateIndexStatement';
 import { DropConstraintStatement } from './DropConstraintStatement';
-import { DropIndexStatement } from './DropIndexStatement';
 
-export class UpdateConstraintQuery {
+export class DropConstraintQuery {
   constructor(
     private readonly sessionProvider: SessionProviderInterface,
-    private readonly statement:
-      | CreateConstraintStatement
-      | CreateIndexStatement
-      | DropConstraintStatement
-      | DropIndexStatement
+    private readonly statement: DropConstraintStatement
   ) {}
 
   getStatement(): string {
