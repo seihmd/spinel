@@ -9,6 +9,7 @@ jobs:
         id: coverage
         with:
           output: report-markdown
+          test-script: npm run test:unit
         env:
           HUSKY: 0
       - uses: marocchino/sticky-pull-request-comment@v2
