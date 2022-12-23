@@ -8,7 +8,7 @@ jobs:
       - uses: ArtiomTr/jest-coverage-report-action@v2
         id: coverage
         with:
-          output: report-markdown
+          output: comment
           test-script: npm run test:unit
         env:
           HUSKY: 0
