@@ -1,5 +1,5 @@
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
-import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
+import { AssociationReferenceTerm } from '../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
@@ -12,12 +12,12 @@ import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
 
 export class NodeElement implements EntityElementInterface {
-  private readonly term: NodeKeyTerm | BranchEndTerm;
+  private readonly term: NodeKeyTerm | AssociationReferenceTerm;
   private readonly graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata;
   private readonly context: ElementContext;
 
   constructor(
-    term: NodeKeyTerm | BranchEndTerm,
+    term: NodeKeyTerm | AssociationReferenceTerm,
     graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata,
     context: ElementContext
   ) {
@@ -51,7 +51,7 @@ export class NodeElement implements EntityElementInterface {
   }
 
   getWhereVariableName(): string {
-    if (this.term instanceof BranchEndTerm) {
+    if (this.term instanceof AssociationReferenceTerm) {
       return BRANCH_END;
     }
     return `${

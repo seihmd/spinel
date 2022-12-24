@@ -1,16 +1,16 @@
-import { PatternFormula } from './PatternFormula';
-import { Term } from '../term/Term';
+import { AssociationReferenceTerm } from '../term/AssociationReferenceTerm';
 import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
-import { BranchEndTerm } from '../term/BranchEndTerm';
+import { Term } from '../term/Term';
+import { PatternFormula } from './PatternFormula';
 
 export class GraphPatternFormula extends PatternFormula {
   constructor(formula: string) {
     super(formula);
   }
 
-  get(): Exclude<Term, BranchEndTerm>[] {
-    return super.get() as Exclude<Term, BranchEndTerm>[];
+  get(): Exclude<Term, AssociationReferenceTerm>[] {
+    return super.get() as Exclude<Term, AssociationReferenceTerm>[];
   }
 
   protected getParseStartIndex(): 0 | 1 {
@@ -32,7 +32,7 @@ export class GraphPatternFormula extends PatternFormula {
     if (new Set(keys).size !== keys.length) {
       throw new Error(`Pattern has duplicate keys.`);
     }
-    if (terms.find((term) => term instanceof BranchEndTerm)) {
+    if (terms.find((term) => term instanceof AssociationReferenceTerm)) {
       throw new Error(`${GraphPatternFormula.name} cannot have `);
     }
   }

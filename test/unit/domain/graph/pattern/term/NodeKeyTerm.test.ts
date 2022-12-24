@@ -4,6 +4,7 @@ describe(`${NodeKeyTerm.name}`, () => {
   it.each([
     ['node', true],
     ['node_name', true],
+    ['node.key', false],
     ['', false],
     [':node', false],
     ['<-', false],

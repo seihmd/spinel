@@ -1,4 +1,4 @@
-import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
+import { AssociationReferenceTerm } from '../../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
 import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
@@ -58,7 +58,7 @@ export class NodeBranchMaterialBuilder
       });
 
     const terminalElement = this.elementBuilder.buildNodeElement(
-      new BranchEndTerm(BRANCH_END),
+      new AssociationReferenceTerm(BRANCH_END),
       new ElementContext(branchIndexes, ++index, true),
       branchEndMetadata,
       plainEntity

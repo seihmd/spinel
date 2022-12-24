@@ -1,4 +1,5 @@
 import { LEFT, NONE, RIGHT } from '../../Direction';
+import { AssociationReferenceTerm } from '../term/AssociationReferenceTerm';
 import { DirectionTerm } from '../term/DirectionTerm';
 import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { NodeLabelTerm } from '../term/NodeLabelTerm';
@@ -7,7 +8,7 @@ import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
 import { RelationshipTypeTerm } from '../term/RelationshipTypeTerm';
 import { Term } from '../term/Term';
 
-export function parseFormula(formula: string, start: 0 | 1): Term[] {
+export function parseAssociationFormula(formula: string, start: 0 | 1): Term[] {
   const values = formula
     .split(new RegExp(`(${LEFT}|${RIGHT}|${NONE})`, 'g'))
     .filter((value) => value !== '');
@@ -17,6 +18,10 @@ export function parseFormula(formula: string, start: 0 | 1): Term[] {
     if (patternIndex.isNode()) {
       if (NodeLabelTerm.maybe(value)) {
         return new NodeLabelTerm(value);
+      }
+
+      if (index === values.length - 1) {
+        return new AssociationReferenceTerm(value);
       }
 
       return new NodeKeyTerm(value);

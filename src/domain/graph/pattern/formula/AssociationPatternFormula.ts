@@ -1,12 +1,13 @@
-import { BranchEndTerm } from '../term/BranchEndTerm';
+import { AssociationReferenceTerm } from '../term/AssociationReferenceTerm';
 import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
-import { Term } from '../term/Term';
+import { isEntityKeyTerm, Term } from '../term/Term';
+import { parseAssociationFormula } from './parseAssociationFormula';
 import { PatternFormula } from './PatternFormula';
 
 export type IntermediateTerm = Exclude<
   Term,
-  NodeKeyTerm | RelationshipKeyTerm | BranchEndTerm
+  NodeKeyTerm | RelationshipKeyTerm | AssociationReferenceTerm
 >;
 
 export class AssociationPatternFormula extends PatternFormula {
@@ -14,8 +15,13 @@ export class AssociationPatternFormula extends PatternFormula {
     return this.terms
       .slice(1)
       .filter(
-        (term): term is IntermediateTerm => !(term instanceof BranchEndTerm)
+        (term): term is IntermediateTerm =>
+          !(term instanceof AssociationReferenceTerm)
       );
+  }
+
+  protected parse(formula: string): Term[] {
+    return parseAssociationFormula(formula, 0);
   }
 
   protected getParseStartIndex(): 0 | 1 {
@@ -24,5 +30,26 @@ export class AssociationPatternFormula extends PatternFormula {
 
   protected reverse(): AssociationPatternFormula {
     return new AssociationPatternFormula(this.reverseFormula());
+  }
+
+  protected assert(terms: Term[]): void {
+    super.assert(terms);
+
+    terms.slice(1).forEach((term, index) => {
+      if (isEntityKeyTerm(term)) {
+        throw new Error(
+          `${AssociationPatternFormula.name} must have no key except at the root`
+        );
+      }
+
+      if (
+        index !== terms.length - 2 &&
+        term instanceof AssociationReferenceTerm
+      ) {
+        throw new Error(
+          `${AssociationPatternFormula.name} must have no reference term except at the terminal`
+        );
+      }
+    });
   }
 }
