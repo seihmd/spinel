@@ -1,13 +1,13 @@
-import { DirectionTerm } from '../term/DirectionTerm';
 import { LEFT, NONE, RIGHT } from '../../Direction';
+import { BranchEndTerm } from '../term/BranchEndTerm';
+import { DirectionTerm } from '../term/DirectionTerm';
+import { BRANCH_END, LABEL_PREFIX } from '../term/modifiers';
+import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { NodeLabelTerm } from '../term/NodeLabelTerm';
-import { RelationshipTypeTerm } from '../term/RelationshipTypeTerm';
-import { BRANCH_END, LabelPrefix } from '../term/PatternTerm';
-import { Term } from '../term/Term';
 import { PatternIndex } from '../term/PatternIndex';
 import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
-import { NodeKeyTerm } from '../term/NodeKeyTerm';
-import { BranchEndTerm } from '../term/BranchEndTerm';
+import { RelationshipTypeTerm } from '../term/RelationshipTypeTerm';
+import { Term } from '../term/Term';
 
 export function parseFormula(formula: string, start: 0 | 1): Term[] {
   const values = formula
@@ -17,7 +17,7 @@ export function parseFormula(formula: string, start: 0 | 1): Term[] {
   return values.map((value, index) => {
     const patternIndex = new PatternIndex(start + index);
     if (patternIndex.isNode()) {
-      if (value.startsWith(LabelPrefix)) {
+      if (value.startsWith(LABEL_PREFIX)) {
         return new NodeLabelTerm(value);
       }
 
@@ -27,7 +27,7 @@ export function parseFormula(formula: string, start: 0 | 1): Term[] {
 
       return new NodeKeyTerm(value);
     } else if (patternIndex.isRelationship()) {
-      if (value.startsWith(LabelPrefix)) {
+      if (value.startsWith(LABEL_PREFIX)) {
         return new RelationshipTypeTerm(value);
       }
 

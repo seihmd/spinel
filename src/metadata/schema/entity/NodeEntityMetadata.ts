@@ -1,5 +1,5 @@
 import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import { NodeLabel } from '../../../domain/node/NodeLabel';
 import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { NodeConstraints } from '../constraint/NodeConstraints';

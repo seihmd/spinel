@@ -8,9 +8,9 @@ describe('placeholder', () => {
     ['({user}:User)', new Map([['user', 'n0']]), '(n0:User)'],
     ['[{has}:HAS]', new Map([['has', 'r2']]), '[r2:HAS]'],
     ['{ user }', new Map([['user', 'n0']]), 'n0'],
-    ['{@.item}.id', new Map([['@.item', 'b0_n0']]), 'b0_n0.id'],
+    ['{*.item}.id', new Map([['@.item', 'b0_n0']]), 'b0_n0.id'],
     [
-      '{shop}.id = $shopId AND {@.item}.id = $itemId',
+      '{shop}.id = $shopId AND {*.item}.id = $itemId',
       new Map([
         ['shop', 'n0'],
         ['@.item', 'b0_n0'],

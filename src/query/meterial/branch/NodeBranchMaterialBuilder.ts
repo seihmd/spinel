@@ -1,7 +1,7 @@
 import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
 import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
 import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { DirectionElement } from '../../element/DirectionElement';

@@ -1,5 +1,6 @@
-import { LabelPrefix, PatternTerm } from './PatternTerm';
 import { NodeLabel } from '../../../node/NodeLabel';
+import { LABEL_PREFIX } from './modifiers';
+import { PatternTerm } from './PatternTerm';
 
 export class NodeLabelTerm extends PatternTerm {
   static withNodeLabel(nodeLabel: NodeLabel): NodeLabelTerm {
@@ -13,7 +14,7 @@ export class NodeLabelTerm extends PatternTerm {
   }
 
   getValueWithoutLabelPrefix(): string {
-    return this.value.replace(LabelPrefix, '');
+    return this.value.replace(LABEL_PREFIX, '');
   }
 
   getLabel(): string | null {

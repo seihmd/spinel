@@ -1,4 +1,4 @@
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
+import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { RelationshipKeyTerm } from '../../domain/graph/pattern/term/RelationshipKeyTerm';
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';

@@ -1,7 +1,7 @@
 import { AssociationPatternFormula } from 'domain/graph/pattern/formula/AssociationPatternFormula';
 
 describe(`${AssociationPatternFormula.name}`, () => {
-  test.each([['n'], ['n-:R->:N'], ['n-:R-@'], [':N-:R->@.key']])(
+  test.each([['n'], ['n-:R->:N'], ['n-:R-*'], [':N-:R->*.key']])(
     'Constructor takes valid description string',
     (formula: string) => {
       expect(() => {
@@ -21,7 +21,7 @@ describe(`${AssociationPatternFormula.name}`, () => {
     }
   );
 
-  test.each([['@'], ['@-:R->@'], ['n-:R->@-:R->@']])(
+  test.each([['*'], ['*-:R->*'], ['n-:R->*-:R->*']])(
     'cannot have branch end term except at the terminal',
     (formula: string) => {
       expect(() => {

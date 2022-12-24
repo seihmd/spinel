@@ -1,5 +1,6 @@
-import { LabelPrefix, PatternTerm } from './PatternTerm';
 import { RelationshipType } from '../../../relationship/RelationshipType';
+import { LABEL_PREFIX } from './modifiers';
+import { PatternTerm } from './PatternTerm';
 
 export class RelationshipTypeTerm extends PatternTerm {
   static withRelationshipType(
@@ -15,7 +16,7 @@ export class RelationshipTypeTerm extends PatternTerm {
   }
 
   getValueWithoutLabelPrefix(): string {
-    return this.value.replace(LabelPrefix, '');
+    return this.value.replace(LABEL_PREFIX, '');
   }
 
   getKey(): string | null {

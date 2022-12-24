@@ -44,7 +44,7 @@ describe('FindOne node', () => {
     const shops = await qd
       .builder()
       .findOne(Shop)
-      .where('{@}.id = $shopId')
+      .where('{*}.id = $shopId')
       .buildQuery({
         shopId: id.get('shop1'),
       })
@@ -57,7 +57,7 @@ describe('FindOne node', () => {
     const shops = await qd
       .builder()
       .findOne(Shop)
-      .where('{@}.id = $shopId')
+      .where('{*}.id = $shopId')
       .buildQuery({
         shopId: randomUUID(),
       })
@@ -70,9 +70,9 @@ describe('FindOne node', () => {
     const shops = await qd
       .builder()
       .findOne(Shop)
-      .where('{@}.id IN $shopIds')
+      .where('{*}.id IN $shopIds')
       .limit(1)
-      .orderBy('{@}.name', 'ASC')
+      .orderBy('{*}.name', 'ASC')
       .buildQuery({
         shopIds: [id.get('shop1'), id.get('shop2')],
       })

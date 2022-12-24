@@ -1,5 +1,5 @@
 import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import {
   AnyClassConstructor,
   ClassConstructor,

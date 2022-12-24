@@ -1,7 +1,5 @@
 import { LEFT, NONE, RIGHT } from '../../Direction';
-
-export const LabelPrefix = ':';
-export const BRANCH_END = '@';
+import { ALIAS, BRANCH_END, LABEL_PREFIX } from './modifiers';
 
 export abstract class PatternTerm {
   protected readonly value: string;
@@ -15,7 +13,9 @@ export abstract class PatternTerm {
   }
 
   getValueWithoutModifier() {
-    return this.value.replace(LabelPrefix, '').replace(/@.+$/, '');
+    return this.value
+      .replace(LABEL_PREFIX, '')
+      .replace(new RegExp(`${ALIAS}.+$`), '');
   }
 
   abstract getKey(): string | null;
@@ -29,12 +29,12 @@ export abstract class PatternTerm {
   }
 
   protected hasParameterModifier(): boolean {
-    return this.value.includes('@');
+    return this.value.includes(ALIAS);
   }
 
   getParameterModifier(): string | null {
     if (this.hasParameterModifier()) {
-      return this.value.replace(/^.+@/, '');
+      return this.value.replace(new RegExp(`^.+${ALIAS}`), '');
     }
 
     return null;
@@ -45,7 +45,7 @@ export abstract class PatternTerm {
   }
 
   protected hasLabelModifier(): boolean {
-    return this.value.startsWith(LabelPrefix);
+    return this.value.startsWith(LABEL_PREFIX);
   }
 
   protected throwInvalidValueError(): void {

@@ -21,7 +21,7 @@ class Item {
 @Graph('item')
 class SimilarItems {
   @GraphNode() private item: Item;
-  @GraphBranch(SimilarItems, 'item-:IS_SIMILAR->@.item')
+  @GraphBranch(SimilarItems, 'item-:IS_SIMILAR->*.item')
   private similarItems: SimilarItems[] = [];
 
   constructor(item: Item, similarItems: SimilarItems[]) {

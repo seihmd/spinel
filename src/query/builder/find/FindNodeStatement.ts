@@ -1,4 +1,4 @@
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/OrderByClause';
@@ -54,7 +54,9 @@ export class FindNodeStatement extends AbstractStatement {
     }
     const orderBy = new OrderByClause(
       this.orderByQueries.getLiterals(
-        new VariableMap(new Map([['@', this.nodeLiteral.getVariableName()]]))
+        new VariableMap(
+          new Map([[BRANCH_END, this.nodeLiteral.getVariableName()]])
+        )
       )
     ).get();
 

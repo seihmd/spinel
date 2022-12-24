@@ -1,4 +1,5 @@
-import { BRANCH_END, PatternTerm } from './PatternTerm';
+import { BRANCH_END } from './modifiers';
+import { PatternTerm } from './PatternTerm';
 
 export class BranchEndTerm extends PatternTerm {
   private readonly key: string | null;

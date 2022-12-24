@@ -1,5 +1,5 @@
+import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { BranchIndexes } from '../meterial/BranchIndexes';

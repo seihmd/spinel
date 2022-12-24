@@ -1,6 +1,6 @@
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
 import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
+import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
