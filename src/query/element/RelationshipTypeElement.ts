@@ -15,8 +15,12 @@ export class RelationshipTypeElement implements EntityElementInterface {
     this.context = context;
   }
 
-  getType(): RelationshipType {
-    return new RelationshipType(this.term.getValueWithoutModifier());
+  getType(): RelationshipType | null {
+    const typeValue = this.term.getType();
+    if (typeValue === null) {
+      return null;
+    }
+    return new RelationshipType(typeValue);
   }
 
   getVariableName(): string {
@@ -32,11 +36,7 @@ export class RelationshipTypeElement implements EntityElementInterface {
   }
 
   getGraphParameterKey(): string | null {
-    const parameterModifier = this.term.getParameterModifier();
-    if (parameterModifier !== null) {
-      return parameterModifier;
-    }
-    return null;
+    return this.term.getAlias();
   }
 
   getWhereVariableName(): string | null {

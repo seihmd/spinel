@@ -24,7 +24,7 @@ export class NodeLabelElement implements EntityElementInterface {
   }
 
   getGraphParameterKey(): string | null {
-    const parameterModifier = this.term.getParameterModifier();
+    const parameterModifier = this.term.getAlias();
     if (parameterModifier !== null) {
       return parameterModifier;
     }
@@ -45,8 +45,12 @@ export class NodeLabelElement implements EntityElementInterface {
     }${graphParameterKey}`;
   }
 
-  getLabel(): NodeLabel {
-    return new NodeLabel(this.term.getValueWithoutModifier());
+  getLabel(): NodeLabel | null {
+    const labelValue = this.term.getLabel();
+    if (labelValue === null) {
+      return null;
+    }
+    return new NodeLabel(labelValue);
   }
 
   isArray(): boolean {

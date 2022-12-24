@@ -29,7 +29,7 @@ describe(`${BranchQueryContext.name}`, () => {
     ]);
   });
 
-  test('N-:R-:N-R-N', () => {
+  test('N-[:R]-(:N)-R-N', () => {
     const ef = new ElementFixture();
 
     const branchQueryContext = new BranchQueryContext(
@@ -38,9 +38,9 @@ describe(`${BranchQueryContext.name}`, () => {
           Path.new([
             ef.newNodeElement('User', 'user'),
             ef.newDirectionElement('-'),
-            ef.newRelationshipTypeElement(':LIKES'),
+            ef.newRelationshipTypeElement('[:LIKES]'),
             ef.newDirectionElement('->'),
-            ef.newNodeLabelElement(':Item'),
+            ef.newNodeLabelElement('(:Item)'),
             ef.newDirectionElement('<-'),
             ef.newRelationshipElement('HAS_STOCK', 'hasStock'),
             ef.newDirectionElement('-'),

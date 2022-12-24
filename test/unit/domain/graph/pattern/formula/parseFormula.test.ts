@@ -1,5 +1,4 @@
 import { parseFormula } from 'domain/graph/pattern/formula/parseFormula';
-import { BranchEndTerm } from 'domain/graph/pattern/term/BranchEndTerm';
 import { DirectionTerm } from 'domain/graph/pattern/term/DirectionTerm';
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
 import { NodeLabelTerm } from 'domain/graph/pattern/term/NodeLabelTerm';
@@ -17,9 +16,9 @@ describe('parseFormula', () => {
     ],
     [
       (): Term[] => {
-        return parseFormula(':User', 0);
+        return parseFormula('(:User)', 0);
       },
-      [new NodeLabelTerm(':User')],
+      [new NodeLabelTerm('(:User)')],
     ],
     [
       (): Term[] => {
@@ -35,14 +34,14 @@ describe('parseFormula', () => {
     ],
     [
       (): Term[] => {
-        return parseFormula(':User@user<-:FOLLOWS@follows-:User@user2', 0);
+        return parseFormula('(user:User)<-[follows:FOLLOWS]-(user2:User)', 0);
       },
       [
-        new NodeLabelTerm(':User@user'),
+        new NodeLabelTerm('(user:User)'),
         new DirectionTerm('<-'),
-        new RelationshipTypeTerm(':FOLLOWS@follows'),
+        new RelationshipTypeTerm('[follows:FOLLOWS]'),
         new DirectionTerm('-'),
-        new NodeLabelTerm(':User@user2'),
+        new NodeLabelTerm('(user2:User)'),
       ],
     ],
     [
@@ -54,18 +53,6 @@ describe('parseFormula', () => {
         new RelationshipKeyTerm('r'),
         new DirectionTerm('->'),
         new NodeKeyTerm('n2'),
-      ],
-    ],
-    [
-      (): Term[] => {
-        return parseFormula('n1-r->*', 0);
-      },
-      [
-        new NodeKeyTerm('n1'),
-        new DirectionTerm('-'),
-        new RelationshipKeyTerm('r'),
-        new DirectionTerm('->'),
-        new BranchEndTerm('*'),
       ],
     ],
   ])('parse valid formula', (parse: () => Term[], expected: Term[]) => {

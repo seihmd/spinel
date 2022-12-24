@@ -12,11 +12,6 @@ export class DirectionTerm extends PatternTerm {
     return this.value as Direction;
   }
 
-  //
-  // getVariableName(): string {
-  //   return '';
-  // }
-
   getKey(): null {
     return null;
   }

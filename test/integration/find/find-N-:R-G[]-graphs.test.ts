@@ -53,7 +53,8 @@ class ItemTags {
 @Graph('shop')
 class ShopItemTags {
   @GraphNode() private shop: Shop;
-  @GraphBranch(ItemTags, 'shop-:HAS_STOCK@hasStock->*.item')
+
+  @GraphBranch(ItemTags, 'shop-hasStock:HAS_STOCK->itemTags.item')
   private itemTags: ItemTags[];
 
   constructor(shop: Shop, itemTags: ItemTags[]) {

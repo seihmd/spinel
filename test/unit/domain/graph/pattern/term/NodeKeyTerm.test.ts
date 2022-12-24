@@ -3,6 +3,8 @@ import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
 describe(`${NodeKeyTerm.name}`, () => {
   it.each([
     ['node', true],
+    ['node_name', true],
+    ['', false],
     [':node', false],
     ['<-', false],
     ['-', false],

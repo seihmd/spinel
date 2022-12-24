@@ -1,33 +1,40 @@
 import { NodeLabel } from '../../../node/NodeLabel';
-import { EntityTerm } from './EntityTerm';
-import { LABEL_PREFIX } from './modifiers';
+import { EntityNotionTerm, LABEL_PREFIX } from './EntityNotionTerm';
 
-export class NodeLabelTerm extends EntityTerm {
-  static withNodeLabel(nodeLabel: NodeLabel): NodeLabelTerm {
-    return new NodeLabelTerm(`:${nodeLabel.toString()}`);
+export class NodeLabelTerm extends EntityNotionTerm {
+  static maybe(value: string): boolean {
+    return value.startsWith('(');
   }
+
+  static withNodeLabel(label: NodeLabel, alias = ''): NodeLabelTerm {
+    return new NodeLabelTerm(`(${alias}:${label.toString()})`);
+  }
+
+  private readonly alias: string | null = null;
+  private readonly label: string | null = null;
 
   constructor(value: string) {
     super(value);
 
-    this.assert();
-  }
+    if (value === '' || !/^\((\w+)?(:\w+)?\)$/.test(value)) {
+      this.throwInvalidValueError();
+    }
 
-  getValueWithoutLabelPrefix(): string {
-    return this.value.replace(LABEL_PREFIX, '');
+    const body = this.value.slice(1, -1);
+    if (body === '') {
+      return;
+    }
+
+    const elms = body.split(LABEL_PREFIX);
+    this.alias = elms[0] !== '' ? elms[0] : null;
+    this.label = elms[1] ?? null;
   }
 
   getLabel(): string | null {
-    return this.getValueWithoutModifier();
+    return this.label;
   }
 
-  getKey(): string | null {
-    return this.getParameterModifier();
-  }
-
-  private assert(): void {
-    if (this.isDirection() || this.isBranchEnd() || !this.hasLabelModifier()) {
-      this.throwInvalidValueError();
-    }
+  getAlias(): string | null {
+    return this.alias;
   }
 }

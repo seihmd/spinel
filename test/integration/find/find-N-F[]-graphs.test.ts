@@ -39,7 +39,10 @@ class FavoriteItem {
 @Graph('shop')
 class ShopCustomerFavorites {
   @GraphNode() private shop: Shop;
-  @GraphBranch(FavoriteItem, 'shop<-:IS_CUSTOMER-:Customer@customer')
+  @GraphBranch(
+    FavoriteItem,
+    'shop<-[:IS_CUSTOMER]-(customer:Customer)-[]-favoriteItems.item'
+  )
   private favoriteItems: FavoriteItem[];
 
   constructor(shop: Shop, favoriteItems: FavoriteItem[]) {

@@ -1,4 +1,5 @@
-import { ALIAS, BRANCH_END, LABEL_PREFIX } from './modifiers';
+import { LABEL_PREFIX } from './EntityNotionTerm';
+import { ALIAS, BRANCH_END } from './modifiers';
 import { PatternTerm } from './PatternTerm';
 
 export abstract class EntityTerm extends PatternTerm {

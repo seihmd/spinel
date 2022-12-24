@@ -1,8 +1,8 @@
-import { isEntityKeyTerm, Term } from '../term/Term';
-import { PatternFormula } from './PatternFormula';
 import { BranchEndTerm } from '../term/BranchEndTerm';
 import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
+import { Term } from '../term/Term';
+import { PatternFormula } from './PatternFormula';
 
 export type IntermediateTerm = Exclude<
   Term,
@@ -24,28 +24,5 @@ export class AssociationPatternFormula extends PatternFormula {
 
   protected reverse(): AssociationPatternFormula {
     return new AssociationPatternFormula(this.reverseFormula());
-  }
-
-  protected assert(terms: Term[]): void {
-    super.assert(terms);
-
-    terms.slice(1).forEach((term) => {
-      if (isEntityKeyTerm(term)) {
-        throw new Error(
-          `${AssociationPatternFormula.name} must have no key except at the root`
-        );
-      }
-    });
-
-    if (
-      terms.filter(
-        (term, i) =>
-          (i === 0 || i !== terms.length - 1) && term instanceof BranchEndTerm
-      ).length > 0
-    ) {
-      throw new Error(
-        `${AssociationPatternFormula.name} must have no branchEnd except at the terminal`
-      );
-    }
   }
 }
