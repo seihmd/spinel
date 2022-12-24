@@ -1,6 +1,5 @@
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
 import { AssociationReferenceTerm } from '../../domain/graph/pattern/term/AssociationReferenceTerm';
-import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
@@ -51,12 +50,7 @@ export class NodeElement implements EntityElementInterface {
   }
 
   getWhereVariableName(): string {
-    if (this.term instanceof AssociationReferenceTerm) {
-      return BRANCH_END;
-    }
-    return `${
-      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
-    }${this.term.getValue()}`;
+    return this.term.getValue();
   }
 
   getIndex(): number {

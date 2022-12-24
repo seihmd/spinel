@@ -8,13 +8,7 @@ import { VariableMap } from '../../literal/util/VariableMap';
 import { Stem } from '../../path/Stem';
 
 export class StemQueryContext {
-  private readonly stem: Stem;
-  private readonly depth: Depth;
-
-  constructor(stem: Stem, depth: Depth) {
-    this.stem = stem;
-    this.depth = depth;
-  }
+  constructor(private readonly stem: Stem, private readonly depth: Depth) {}
 
   getPathLiteral(): PathLiteral {
     return new PathLiteral(
@@ -31,13 +25,13 @@ export class StemQueryContext {
       return null;
     }
 
-    return whereStatement.assign(VariableMap.new(this.stem.getPath()));
+    return whereStatement.assign(VariableMap.withPath(this.stem.getPath()));
   }
 
   getOrderByLiterals(): OrderByLiteral[] {
     return this.stem
       .getOrderByQueries()
-      .getLiterals(VariableMap.new(this.stem.getPath()));
+      .getLiterals(VariableMap.withPath(this.stem.getPath()));
   }
 
   getLimitClause(): LimitClause | null {

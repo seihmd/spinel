@@ -1,10 +1,10 @@
-import { placeholder } from './util/placeholder';
 import { Path } from '../path/Path';
+import { placeholder } from './util/placeholder';
 import { VariableMap } from './util/VariableMap';
 
 export class WhereLiteral {
   static new(query: string, path: Path): WhereLiteral {
-    return new WhereLiteral(placeholder(query, VariableMap.new(path)));
+    return new WhereLiteral(placeholder(query, VariableMap.withPath(path)));
   }
 
   static newWithVariableMap(

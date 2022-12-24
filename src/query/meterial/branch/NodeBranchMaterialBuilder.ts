@@ -1,6 +1,5 @@
 import { AssociationReferenceTerm } from '../../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
-import { BRANCH_END } from '../../../domain/graph/pattern/term/modifiers';
 import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
 import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
@@ -58,7 +57,9 @@ export class NodeBranchMaterialBuilder
       });
 
     const terminalElement = this.elementBuilder.buildNodeElement(
-      new AssociationReferenceTerm(BRANCH_END),
+      new AssociationReferenceTerm(
+        graphBranchMetadata.getTerminalTerm().getValue()
+      ),
       new ElementContext(branchIndexes, ++index, true),
       branchEndMetadata,
       plainEntity

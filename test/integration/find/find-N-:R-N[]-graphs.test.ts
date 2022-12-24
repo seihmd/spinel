@@ -31,7 +31,9 @@ class User {
 @Graph('shop')
 class ShopCustomer {
   @GraphNode() private shop: Shop;
-  @GraphBranch(User, 'shop<-:IS_CUSTOMER-*') private customers: User[];
+
+  @GraphBranch(User, 'shop<-[isCustomer:IS_CUSTOMER]-customers')
+  private customers: User[];
 
   constructor(shop: Shop, customers: User[]) {
     this.shop = shop;
@@ -81,7 +83,7 @@ describe('Find N-:R-N[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomer)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
       });
@@ -106,7 +108,29 @@ describe('Find N-:R-N[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomer)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
+      .buildQuery({
+        shop: { id: id.get('shop2') },
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Shop) ' +
+        'WHERE n0.id=$shop.id ' +
+        'RETURN {shop:n0{.*},' +
+        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} ' +
+        'AS _'
+    );
+    expect(await query.run()).toStrictEqual([
+      new ShopCustomer(new Shop(id.get('shop2')), []),
+    ]);
+  });
+
+  test('find with filterBranch', async () => {
+    const query = qd
+      .builder()
+      .find(ShopCustomer)
+      .where('shop.id=$shop.id')
+      .filterBranch('customers', 'customers.id IN $customerIds')
       .buildQuery({
         shop: { id: id.get('shop2') },
       });

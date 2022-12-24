@@ -23,7 +23,8 @@ describe(`FindNodeStatement`, () => {
       new NodeLiteral('u', new NodeLabel('User'), null),
       new WhereStatement('u.id = $id'),
       new OrderByQueries([]),
-      null
+      null,
+      'n'
     );
 
     expect(findNodeStatement.get()).toBe(

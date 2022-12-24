@@ -62,7 +62,7 @@ export class Branch {
     return new WhereClause(
       this.branchFilter
         .getWhereStatement()
-        .assign(VariableMap.new(this.branchMaterial.getPath()))
+        .assign(VariableMap.withPath(this.branchMaterial.getPath()))
     );
   }
 }

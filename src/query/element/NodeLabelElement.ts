@@ -1,4 +1,3 @@
-import { BRANCH_END } from '../../domain/graph/pattern/term/modifiers';
 import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
@@ -24,11 +23,7 @@ export class NodeLabelElement implements EntityElementInterface {
   }
 
   getGraphParameterKey(): string | null {
-    const parameterModifier = this.term.getAlias();
-    if (parameterModifier !== null) {
-      return parameterModifier;
-    }
-    return null;
+    return this.term.getAlias();
   }
 
   getGraphKey(): string {
@@ -40,9 +35,7 @@ export class NodeLabelElement implements EntityElementInterface {
     if (graphParameterKey === null) {
       return null;
     }
-    return `${
-      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
-    }${graphParameterKey}`;
+    return graphParameterKey;
   }
 
   getLabel(): NodeLabel | null {
