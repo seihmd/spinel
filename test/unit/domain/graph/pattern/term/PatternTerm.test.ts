@@ -1,7 +1,7 @@
-import { PatternTerm } from 'domain/graph/pattern/term/PatternTerm';
+import { EntityTerm } from '../../../../../../src/domain/graph/pattern/term/EntityTerm';
 
-describe(`${PatternTerm.name}`, () => {
-  class Sut extends PatternTerm {
+describe(`EntityTerm`, () => {
+  class Sut extends EntityTerm {
     constructor(value: string) {
       super(value);
     }

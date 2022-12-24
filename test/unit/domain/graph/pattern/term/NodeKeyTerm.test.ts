@@ -7,7 +7,7 @@ describe(`${NodeKeyTerm.name}`, () => {
     ['<-', false],
     ['-', false],
     ['->', false],
-    ['@', false],
+    ['*', false],
   ])('throw error with invalid value', (value: string, isValid: boolean) => {
     const exp = expect(() => {
       new NodeKeyTerm(value);

@@ -1,8 +1,8 @@
 import { RelationshipType } from '../../../relationship/RelationshipType';
+import { EntityTerm } from './EntityTerm';
 import { LABEL_PREFIX } from './modifiers';
-import { PatternTerm } from './PatternTerm';
 
-export class RelationshipTypeTerm extends PatternTerm {
+export class RelationshipTypeTerm extends EntityTerm {
   static withRelationshipType(
     relationshipType: RelationshipType
   ): RelationshipTypeTerm {

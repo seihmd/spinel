@@ -1,7 +1,7 @@
+import { EntityTerm } from './EntityTerm';
 import { BRANCH_END } from './modifiers';
-import { PatternTerm } from './PatternTerm';
 
-export class BranchEndTerm extends PatternTerm {
+export class BranchEndTerm extends EntityTerm {
   private readonly key: string | null;
 
   constructor(value: string) {

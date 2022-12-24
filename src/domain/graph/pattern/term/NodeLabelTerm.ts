@@ -1,8 +1,8 @@
 import { NodeLabel } from '../../../node/NodeLabel';
+import { EntityTerm } from './EntityTerm';
 import { LABEL_PREFIX } from './modifiers';
-import { PatternTerm } from './PatternTerm';
 
-export class NodeLabelTerm extends PatternTerm {
+export class NodeLabelTerm extends EntityTerm {
   static withNodeLabel(nodeLabel: NodeLabel): NodeLabelTerm {
     return new NodeLabelTerm(`:${nodeLabel.toString()}`);
   }

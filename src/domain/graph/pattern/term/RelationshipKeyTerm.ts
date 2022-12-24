@@ -1,6 +1,6 @@
-import { PatternTerm } from './PatternTerm';
+import { EntityTerm } from './EntityTerm';
 
-export class RelationshipKeyTerm extends PatternTerm {
+export class RelationshipKeyTerm extends EntityTerm {
   constructor(value: string) {
     super(value);
 
@@ -12,7 +12,7 @@ export class RelationshipKeyTerm extends PatternTerm {
   }
 
   private assert(): void {
-    if (this.isDirection() || this.isBranchEnd() || this.hasModifier()) {
+    if (this.isDirection() || this.isBranchEnd() || this.hasAlias()) {
       this.throwInvalidValueError();
     }
   }
