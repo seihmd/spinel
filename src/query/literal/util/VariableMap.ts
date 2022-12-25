@@ -43,4 +43,10 @@ export class VariableMap {
   get(key: string): string | null {
     return this.map.get(key) ?? null;
   }
+
+  sortedKeys(): string[] {
+    return Array.from(this.map.keys()).sort((a, b) =>
+      a.length > b.length ? 1 : -1
+    );
+  }
 }
