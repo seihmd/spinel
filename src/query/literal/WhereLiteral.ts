@@ -1,17 +1,19 @@
 import { Path } from '../path/Path';
-import { placeholder } from './util/placeholder';
+import { assignVariables } from './util/assignVariables';
 import { VariableMap } from './util/VariableMap';
 
 export class WhereLiteral {
-  static new(query: string, path: Path): WhereLiteral {
-    return new WhereLiteral(placeholder(query, VariableMap.withPath(path)));
+  static new(statement: string, path: Path): WhereLiteral {
+    return new WhereLiteral(
+      assignVariables(statement, VariableMap.withPath(path))
+    );
   }
 
   static newWithVariableMap(
-    query: string,
+    statement: string,
     variableMap: VariableMap
   ): WhereLiteral {
-    return new WhereLiteral(placeholder(query, variableMap));
+    return new WhereLiteral(assignVariables(statement, variableMap));
   }
 
   private readonly query: string;

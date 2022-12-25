@@ -1,17 +1,15 @@
 import { NodeLabel } from 'domain/node/NodeLabel';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
 import { NodeLiteral } from 'query/literal/NodeLiteral';
 import { PositiveInt } from '../../../../../src/domain/type/PositiveInt';
 import { FindNodeStatement } from '../../../../../src/query/builder/find/FindNodeStatement';
 import { LimitClause } from '../../../../../src/query/clause/LimitClause';
-import { WhereStatement } from '../../../../../src/query/clause/where/WhereStatement';
 
 describe(`FindNodeStatement`, () => {
   test('get', () => {
     const findNodeStatement = new FindNodeStatement(
       new NodeLiteral('u', new NodeLabel('User'), null),
       null,
-      new OrderByQueries([]),
+      [],
       null
     );
 
@@ -21,10 +19,9 @@ describe(`FindNodeStatement`, () => {
   test('with WhereQuery', () => {
     const findNodeStatement = new FindNodeStatement(
       new NodeLiteral('u', new NodeLabel('User'), null),
-      new WhereStatement('u.id = $id'),
-      new OrderByQueries([]),
-      null,
-      'n'
+      'u.id = $id',
+      [],
+      null
     );
 
     expect(findNodeStatement.get()).toBe(
@@ -35,8 +32,8 @@ describe(`FindNodeStatement`, () => {
   test('with Limit', () => {
     const findNodeStatement = new FindNodeStatement(
       new NodeLiteral('u', new NodeLabel('User'), null),
-      new WhereStatement('u.id = $id'),
-      new OrderByQueries([]),
+      'u.id = $id',
+      [],
       new LimitClause(new PositiveInt(3))
     );
 

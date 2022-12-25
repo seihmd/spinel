@@ -1,15 +1,15 @@
-import { placeholder } from './util/placeholder';
+import { assignVariables } from './util/assignVariables';
 import { VariableMap } from './util/VariableMap';
 
 export type Sort = 'ASC' | 'DESC';
 
 export class OrderByLiteral {
   static new(
-    query: string,
+    statement: string,
     sort: Sort,
     variableMap: VariableMap
   ): OrderByLiteral {
-    return new OrderByLiteral(placeholder(query, variableMap), sort);
+    return new OrderByLiteral(assignVariables(statement, variableMap), sort);
   }
 
   private readonly query: string;
