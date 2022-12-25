@@ -120,7 +120,7 @@ describe('FindOne N-R-N graph', () => {
     const query = qd
       .builder()
       .findOne(ShopCustomer)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
       });
@@ -144,7 +144,7 @@ describe('FindOne N-R-N graph', () => {
     const query = qd
       .builder()
       .findOne(ShopCustomer)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
       .buildQuery({
         shop: { id: randomUUID() },
       });
@@ -156,9 +156,9 @@ describe('FindOne N-R-N graph', () => {
     const query = qd
       .builder()
       .findOne(ShopCustomer)
-      .where('{shop}.id IN $shopIds')
+      .where('shop.id IN $shopIds')
       .limit(1)
-      .orderBy('{shop}.name', 'ASC')
+      .orderBy('shop.name', 'ASC')
       .buildQuery({
         shopIds: [id.get('shop1'), id.get('shop2')],
       });

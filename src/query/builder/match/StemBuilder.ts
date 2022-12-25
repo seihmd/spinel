@@ -97,7 +97,7 @@ export class StemBuilder {
   private buildBranch(
     graphBranchMetadata: GraphBranchMetadata,
     stemMaterial: StemMaterial | BranchMaterialInterface,
-    whereQueries: BranchFilters,
+    branchFilters: BranchFilters,
     depth: Depth,
     branchIndexes: BranchIndexes
   ): Branch {
@@ -116,11 +116,11 @@ export class StemBuilder {
 
       return new Branch(
         branchMaterial,
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         this.buildBranches(
           branchGraphMetadata,
           branchMaterial,
-          whereQueries,
+          branchFilters,
           reducedDepth,
           branchIndexes
         )
@@ -141,11 +141,11 @@ export class StemBuilder {
 
       return new Branch(
         branchFragmentMaterial,
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         this.buildBranches(
           graphFragmentMetadata,
           branchFragmentMaterial,
-          whereQueries,
+          branchFilters,
           reducedDepth,
           branchIndexes
         )
@@ -163,7 +163,7 @@ export class StemBuilder {
           nodeEntityMetadata,
           branchIndexes
         ),
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         []
       );
     }

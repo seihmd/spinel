@@ -27,7 +27,7 @@ class Item {
   }
 }
 
-@GraphFragment('-:HAS_FAVORITE@hasFavorite->item')
+@GraphFragment('-[hasFavorite:HAS_FAVORITE]->item')
 class FavoriteItem {
   @GraphNode() private item: Item;
 
@@ -39,10 +39,7 @@ class FavoriteItem {
 @Graph('shop')
 class ShopCustomerFavorites {
   @GraphNode() private shop: Shop;
-  @GraphBranch(
-    FavoriteItem,
-    'shop<-[:IS_CUSTOMER]-(customer:Customer)-[]-favoriteItems.item'
-  )
+  @GraphBranch(FavoriteItem, 'shop<-[:IS_CUSTOMER]-(customer:Customer)')
   private favoriteItems: FavoriteItem[];
 
   constructor(shop: Shop, favoriteItems: FavoriteItem[]) {
@@ -90,7 +87,7 @@ describe('Find N-F[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomerFavorites)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop') },
       });
@@ -114,8 +111,8 @@ describe('Find N-F[] graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomerFavorites)
-      .where('{shop}.id=$shop.id')
-      .filterBranch('favoriteItems', '{*.item}.id=$item.id')
+      .where('shop.id=$shop.id')
+      .filterBranch('favoriteItems', 'favoriteItems.item.id=$item.id')
       .buildQuery({
         shop: { id: id.get('shop') },
         item: { id: id.get('item1') },

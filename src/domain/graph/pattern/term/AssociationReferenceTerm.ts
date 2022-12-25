@@ -18,6 +18,6 @@ export class AssociationReferenceTerm extends EntityTerm {
   }
 
   getKey(): string | null {
-    return this.keys[-1];
+    return this.keys.join('.');
   }
 }

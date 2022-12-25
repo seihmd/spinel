@@ -49,8 +49,11 @@ export abstract class AbstractFindQueryBuilder<
     return this;
   }
 
-  filterBranch(key: string, statement: string): AbstractFindQueryBuilder<T, Q> {
-    this.branchFilters.push(new BranchFilter(key, statement));
+  filterBranch(
+    path: string,
+    statement: string
+  ): AbstractFindQueryBuilder<T, Q> {
+    this.branchFilters.push(new BranchFilter(path, statement));
     return this;
   }
 
@@ -84,7 +87,11 @@ export abstract class AbstractFindQueryBuilder<
         this.limitValue,
         this.depthValue
       );
-      const stemQueryContext = new StemQueryContext(stem, this.depthValue);
+      const stemQueryContext = new StemQueryContext(
+        stem,
+        graphMetadata,
+        this.depthValue
+      );
       const branchQueryContexts = stem.getBranches().map((branch) => {
         return new BranchQueryContext(branch);
       });

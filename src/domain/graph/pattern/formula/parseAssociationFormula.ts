@@ -9,17 +9,13 @@ import { RelationshipTypeTerm } from '../term/RelationshipTypeTerm';
 import { Term } from '../term/Term';
 
 export function parseAssociationFormula(formula: string, start: 0 | 1): Term[] {
-  const values = formula
-    .split(new RegExp(`(${LEFT}|${RIGHT}|${NONE})`, 'g'))
-    .filter((value) => value !== '');
-
+  const values = formula.split(new RegExp(`(${LEFT}|${RIGHT}|${NONE})`, 'g'));
   return values.map((value, index) => {
     const patternIndex = new PatternIndex(start + index);
     if (patternIndex.isNode()) {
       if (NodeLabelTerm.maybe(value)) {
         return new NodeLabelTerm(value);
       }
-
       if (index === values.length - 1) {
         return new AssociationReferenceTerm(value);
       }

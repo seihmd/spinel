@@ -15,7 +15,7 @@ export function assignVariables(
       }
 
       const elms = value
-        .split(/([ ()[\]])/)
+        .split(/([ ()[\]=])/)
         .filter((value) => value !== undefined && value !== '');
 
       function findNext(index: number): string | null {

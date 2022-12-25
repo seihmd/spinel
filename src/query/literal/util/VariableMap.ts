@@ -3,7 +3,7 @@ import { NodeElement } from '../../element/NodeElement';
 import { Path } from '../../path/Path';
 
 export class VariableMap {
-  static withPath(path: Path, includesBranch = true): VariableMap {
+  static withPath(path: Path, isGraphBranch = false): VariableMap {
     const map: Map<string, string> = new Map();
     const rootKey = path.getRoot().getGraphParameterKey();
 
@@ -16,16 +16,16 @@ export class VariableMap {
       .map((step) => [step.getRelationship(), step.getNode()])
       .flat();
 
-    if (includesBranch) {
-      for (const element of elements) {
-        const graphKey = element.getWhereVariableName();
-        if (graphKey === null) {
-          continue;
-        }
-
-        map.set(graphKey, element.getVariableName());
+    elements.forEach((element, index) => {
+      const graphKey = element.getWhereVariableName(
+        isGraphBranch && index === elements.length - 1
+      );
+      if (graphKey === null) {
+        return;
       }
-    }
+
+      map.set(graphKey, element.getVariableName());
+    });
 
     return new VariableMap(map);
   }

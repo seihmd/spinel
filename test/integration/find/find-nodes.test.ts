@@ -70,9 +70,9 @@ describe('Find nodes', () => {
     async (sort: Sort, expected: Shop[]) => {
       const shops = await qd
         .builder()
-        .find(Shop, 's')
-        .where('s.id IN $shopIds')
-        .orderBy('s.name', sort)
+        .find(Shop)
+        .where('shop.id IN $shopIds')
+        .orderBy('shop.name', sort)
         .buildQuery({
           shopIds: [id.get('shop1'), id.get('shop2')],
         })
@@ -90,9 +90,9 @@ describe('Find nodes', () => {
     async (sort: Sort, expected: Shop[]) => {
       const shops = await qd
         .builder()
-        .find(Shop, 's')
-        .where('s.id IN $shopIds')
-        .orderBy('s.name', sort)
+        .find(Shop)
+        .where('shop.id IN $shopIds')
+        .orderBy('shop.name', sort)
         .limit(1)
         .buildQuery({
           shopIds: [id.get('shop1'), id.get('shop2')],

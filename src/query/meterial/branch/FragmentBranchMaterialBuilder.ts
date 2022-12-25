@@ -81,6 +81,16 @@ export class FragmentBranchMaterialBuilder
             plainGraph?.getEntity(term.getKey())
           );
         }
+        if (term instanceof AssociationReferenceTerm) {
+          return this.elementBuilder.buildNodeElement(
+            term,
+            new ElementContext(branchIndexes, index, true),
+            branchEndMetadata
+              .getGraphNodeMetadata(term.getValue())
+              .getEntityMetadata(),
+            plainGraph?.getEntity(term.getKeys().join('.'))
+          );
+        }
         if (term instanceof RelationshipTypeTerm) {
           return this.elementBuilder.buildRelationshipTypeElement(
             term,

@@ -132,18 +132,21 @@ describe('Find N-:R-N[] graphs', () => {
       .where('shop.id=$shop.id')
       .filterBranch('customers', 'customers.id IN $customerIds')
       .buildQuery({
-        shop: { id: id.get('shop2') },
+        shop: { id: id.get('shop1') },
+        customerIds: [id.get('customer2')],
       });
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop) ' +
         'WHERE n0.id=$shop.id ' +
         'RETURN {shop:n0{.*},' +
-        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer)|b0_n4{.*}]} ' +
+        'customers:[(n0)<-[b0_r2:IS_CUSTOMER]-(b0_n4:Customer) WHERE b0_n4.id IN $customerIds|b0_n4{.*}]} ' +
         'AS _'
     );
     expect(await query.run()).toStrictEqual([
-      new ShopCustomer(new Shop(id.get('shop2')), []),
+      new ShopCustomer(new Shop(id.get('shop1')), [
+        new User(id.get('customer2')),
+      ]),
     ]);
   });
 });

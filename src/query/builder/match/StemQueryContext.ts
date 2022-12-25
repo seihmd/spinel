@@ -1,4 +1,5 @@
 import { Depth } from '../../../domain/graph/branch/Depth';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { LimitClause } from '../../clause/LimitClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral } from '../../literal/OrderByLiteral';
@@ -8,7 +9,15 @@ import { VariableMap } from '../../literal/util/VariableMap';
 import { Stem } from '../../path/Stem';
 
 export class StemQueryContext {
-  constructor(private readonly stem: Stem, private readonly depth: Depth) {}
+  constructor(
+    private readonly stem: Stem,
+    private readonly graphMetadata: GraphMetadata,
+    private readonly depth: Depth
+  ) {}
+
+  getGraphMetadata(): GraphMetadata {
+    return this.graphMetadata;
+  }
 
   getPathLiteral(): PathLiteral {
     return new PathLiteral(
