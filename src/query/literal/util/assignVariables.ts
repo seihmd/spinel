@@ -18,8 +18,6 @@ export function assignVariables(
         .split(/([ ()[\]])/)
         .filter((value) => value !== undefined && value !== '');
 
-      const len = elms.length;
-
       function findNext(index: number): string | null {
         while (index < elms.length - 1) {
           const value = elms[index];
@@ -38,19 +36,7 @@ export function assignVariables(
 
       return elms
         .map((value, index) => {
-          if (
-            value === ' ' ||
-            value === '(' ||
-            value === ')' ||
-            value === '[' ||
-            value === ']' ||
-            value === '-' ||
-            value === '->' ||
-            value === '<-' ||
-            value.startsWith('$') ||
-            value.startsWith(':') ||
-            isReservedKeyword(value)
-          ) {
+          if (/^\W/.test(value) || isReservedKeyword(value)) {
             return value;
           }
 
@@ -60,7 +46,8 @@ export function assignVariables(
             next === '[' ||
             next === ']' ||
             next === ')' ||
-            isTerm(next ?? '')
+            next === '=' ||
+            /[\w:.]+/.test(next ?? '')
           ) {
             const keys = variableMap.sortedKeys().join('|');
 
