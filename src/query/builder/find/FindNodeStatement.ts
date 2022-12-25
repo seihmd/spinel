@@ -1,20 +1,17 @@
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
 import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
-import { WhereStatement } from '../../clause/where/WhereStatement';
 import { WhereClause } from '../../clause/WhereClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
-import { VariableMap } from '../../literal/util/VariableMap';
+import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { AbstractStatement } from '../AbstractStatement';
-import { OrderByQueries } from '../orderBy/OrderByQueries';
 
 export class FindNodeStatement extends AbstractStatement {
   constructor(
     private readonly nodeLiteral: NodeLiteral,
-    private readonly whereStatement: WhereStatement | null,
-    private readonly orderByQueries: OrderByQueries | null,
+    private readonly whereStatement: string | null,
+    private readonly orderByLiterals: OrderByLiteral[],
     private readonly limitClause: LimitClause | null
   ) {
     super();
@@ -39,28 +36,14 @@ export class FindNodeStatement extends AbstractStatement {
       return ' ';
     }
 
-    return ` ${new WhereClause(
-      this.whereStatement.assign(
-        new VariableMap(
-          new Map([[BRANCH_END, this.nodeLiteral.getVariableName()]])
-        )
-      )
-    ).get()} `;
+    return ` ${new WhereClause(this.whereStatement).get()} `;
   }
 
   private getOrderByClause(): string {
-    if (this.orderByQueries === null) {
+    if (this.orderByLiterals.length === 0) {
       return '';
     }
-    const orderBy = new OrderByClause(
-      this.orderByQueries.getLiterals(
-        new VariableMap(new Map([['@', this.nodeLiteral.getVariableName()]]))
-      )
-    ).get();
-
-    if (orderBy === '') {
-      return '';
-    }
+    const orderBy = new OrderByClause(this.orderByLiterals).get();
     return ` ${orderBy}`;
   }
 

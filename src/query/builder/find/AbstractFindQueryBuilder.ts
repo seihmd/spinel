@@ -10,6 +10,7 @@ import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { Sort } from '../../literal/OrderByLiteral';
+import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
@@ -48,8 +49,11 @@ export abstract class AbstractFindQueryBuilder<
     return this;
   }
 
-  filterBranch(key: string, statement: string): AbstractFindQueryBuilder<T, Q> {
-    this.branchFilters.push(new BranchFilter(key, statement));
+  filterBranch(
+    path: string,
+    statement: string
+  ): AbstractFindQueryBuilder<T, Q> {
+    this.branchFilters.push(new BranchFilter(path, statement));
     return this;
   }
 
@@ -108,8 +112,12 @@ export abstract class AbstractFindQueryBuilder<
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.whereStatement,
-          this.getOrderByQueries(),
+          this.whereStatement?.assign(
+            VariableMap.withNodeElement(nodeElement)
+          ) ?? null,
+          this.getOrderByQueries().getLiterals(
+            VariableMap.withNodeElement(nodeElement)
+          ),
           this.limitValue ? new LimitClause(this.limitValue) : null
         ),
         ParameterBag.new(parameters),

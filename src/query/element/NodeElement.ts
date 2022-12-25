@@ -1,6 +1,5 @@
 import { NodeKeyTerm } from 'domain/graph/pattern/term/NodeKeyTerm';
-import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
+import { AssociationReferenceTerm } from '../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { EntityPrimaryMetadata } from '../../metadata/schema/entity/EntityPrimaryMetadata';
@@ -12,12 +11,12 @@ import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
 
 export class NodeElement implements EntityElementInterface {
-  private readonly term: NodeKeyTerm | BranchEndTerm;
+  private readonly term: NodeKeyTerm | AssociationReferenceTerm;
   private readonly graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata;
   private readonly context: ElementContext;
 
   constructor(
-    term: NodeKeyTerm | BranchEndTerm,
+    term: NodeKeyTerm | AssociationReferenceTerm,
     graphNodeMetadata: GraphNodeMetadata | NodeEntityMetadata,
     context: ElementContext
   ) {
@@ -50,13 +49,12 @@ export class NodeElement implements EntityElementInterface {
     return this.term.getValue();
   }
 
-  getWhereVariableName(): string {
-    if (this.term instanceof BranchEndTerm) {
-      return BRANCH_END;
-    }
-    return `${
-      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
-    }${this.term.getValue()}`;
+  getWhereVariableName(isTerminal: boolean): string {
+    const prefix = isTerminal
+      ? this.context.getBranchIndexes().getGraphKeys().join('.') + '.'
+      : '';
+
+    return prefix + this.term.getValue();
   }
 
   getIndex(): number {

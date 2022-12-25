@@ -1,27 +1,27 @@
-import { InstanceElement } from './InstanceElement';
-import { ClassConstructor } from '../../domain/type/ClassConstructor';
+import { AssociationReferenceTerm } from '../../domain/graph/pattern/term/AssociationReferenceTerm';
+import { NodeKeyTerm } from '../../domain/graph/pattern/term/NodeKeyTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
+import { ClassConstructor } from '../../domain/type/ClassConstructor';
 import { NodeEntityMetadata } from '../../metadata/schema/entity/NodeEntityMetadata';
-import { EntityElementInterface } from './EntityElementInterface';
-import { ElementContext } from './ElementContext';
+import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
 import { BranchIndexes } from '../meterial/BranchIndexes';
-import { GraphNodeMetadata } from '../../metadata/schema/graph/GraphNodeMetadata';
-import { NodeKeyTerm } from '../../domain/graph/pattern/term/NodeKeyTerm';
-import { BranchEndTerm } from '../../domain/graph/pattern/term/BranchEndTerm';
+import { ElementContext } from './ElementContext';
+import { EntityElementInterface } from './EntityElementInterface';
+import { InstanceElement } from './InstanceElement';
 
 export class NodeInstanceElement
   extends InstanceElement<NodeEntityMetadata | GraphNodeMetadata>
   implements EntityElementInterface
 {
   private readonly context: ElementContext;
-  private readonly term: NodeKeyTerm | BranchEndTerm;
+  private readonly term: NodeKeyTerm | AssociationReferenceTerm;
 
   constructor(
     instance: InstanceType<ClassConstructor<object>>,
     metadata: NodeEntityMetadata | GraphNodeMetadata,
     context: ElementContext,
-    term: NodeKeyTerm | BranchEndTerm
+    term: NodeKeyTerm | AssociationReferenceTerm
   ) {
     super(instance, metadata);
     this.context = context;

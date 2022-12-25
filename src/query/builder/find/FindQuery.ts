@@ -6,22 +6,12 @@ import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 
 export class FindQuery<T> {
-  private readonly sessionProvider: SessionProviderInterface;
-  private readonly statement: FindNodeStatement | FindGraphStatement;
-  private readonly parameterBag: ParameterBag;
-  private readonly cstr: ClassConstructor<T>;
-
   constructor(
-    sessionProvider: SessionProviderInterface,
-    statement: FindNodeStatement | FindGraphStatement,
-    parameterBag: ParameterBag,
-    cstr: ClassConstructor<T>
-  ) {
-    this.cstr = cstr;
-    this.sessionProvider = sessionProvider;
-    this.statement = statement;
-    this.parameterBag = parameterBag;
-  }
+    private readonly sessionProvider: SessionProviderInterface,
+    private readonly statement: FindNodeStatement | FindGraphStatement,
+    private readonly parameterBag: ParameterBag,
+    private readonly cstr: ClassConstructor<T>
+  ) {}
 
   getStatement(): string {
     return this.statement.get();

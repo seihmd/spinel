@@ -1,23 +1,23 @@
-import { BranchMaterialBuilderInterface } from './BranchMaterialBuilderInterface';
-import { GraphBranchMaterial } from './GraphBranchMaterial';
-import { StemMaterial } from '../stem/StemMaterial';
-import { BranchMaterialInterface } from './BranchMaterialInterface';
-import { BranchIndexes } from '../BranchIndexes';
-import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
-import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
+import { AssociationReferenceTerm } from '../../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { DirectionTerm } from '../../../domain/graph/pattern/term/DirectionTerm';
-import { DirectionElement } from '../../element/DirectionElement';
-import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
-import { ElementContext } from '../../element/ElementContext';
-import { RelationshipTypeElement } from '../../element/RelationshipTypeElement';
-import { Element } from '../../element/Element';
 import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
+import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
 import { RelationshipTypeTerm } from '../../../domain/graph/pattern/term/RelationshipTypeTerm';
-import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
+import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { DirectionElement } from '../../element/DirectionElement';
+import { Element } from '../../element/Element';
+import { ElementContext } from '../../element/ElementContext';
+import { PlainGraph } from '../../element/PlainGraph';
+import { RelationshipTypeElement } from '../../element/RelationshipTypeElement';
 import { reverseElement } from '../../element/reverseElement';
 import { Path } from '../../path/Path';
+import { BranchIndexes } from '../BranchIndexes';
+import { StemMaterial } from '../stem/StemMaterial';
+import { BranchMaterialBuilderInterface } from './BranchMaterialBuilderInterface';
+import { BranchMaterialInterface } from './BranchMaterialInterface';
 import { ElementBuilderInterface } from './ElementBuilderInterface';
-import { PlainGraph } from '../../element/PlainGraph';
+import { GraphBranchMaterial } from './GraphBranchMaterial';
 
 export class GraphBranchMaterialBuilder
   implements BranchMaterialBuilderInterface<GraphBranchMaterial>
@@ -84,6 +84,16 @@ export class GraphBranchMaterialBuilder
             plainGraph?.getEntity(term.getKey())
           );
         }
+        if (term instanceof AssociationReferenceTerm) {
+          return this.elementBuilder.buildNodeElement(
+            term,
+            new ElementContext(branchIndexes, index, true),
+            branchEndMetadata
+              .getGraphNodeMetadata(term.getValue())
+              .getEntityMetadata(),
+            plainGraph?.getEntity(term.getKeys().join('.'))
+          );
+        }
         if (term instanceof RelationshipTypeTerm) {
           return new RelationshipTypeElement(
             term,
@@ -102,7 +112,7 @@ export class GraphBranchMaterialBuilder
       });
 
     const branchTerminalTerm = graphBranchMetadata.getTerminalTerm();
-    if (!(branchTerminalTerm instanceof BranchEndTerm)) {
+    if (!(branchTerminalTerm instanceof AssociationReferenceTerm)) {
       throw new Error();
     }
     const branchEndKey = branchTerminalTerm.getKey();

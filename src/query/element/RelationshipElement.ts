@@ -1,4 +1,3 @@
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { RelationshipKeyTerm } from '../../domain/graph/pattern/term/RelationshipKeyTerm';
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
@@ -54,9 +53,7 @@ export class RelationshipElement implements EntityElementInterface {
   }
 
   getWhereVariableName(): string {
-    return `${
-      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
-    }${this.term.getValue()}`;
+    return this.term.getValue();
   }
 
   getIndex(): number {

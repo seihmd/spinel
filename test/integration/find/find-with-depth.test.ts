@@ -21,7 +21,7 @@ class Item {
 @Graph('item')
 class SimilarItems {
   @GraphNode() private item: Item;
-  @GraphBranch(SimilarItems, 'item-:IS_SIMILAR->@.item')
+  @GraphBranch(SimilarItems, 'item-[:IS_SIMILAR]->similarItems.item')
   private similarItems: SimilarItems[] = [];
 
   constructor(item: Item, similarItems: SimilarItems[]) {
@@ -113,7 +113,7 @@ describe('Find graph with depth', () => {
     const query = qd
       .builder()
       .find(SimilarItems)
-      .where('{item}.id=$item.id')
+      .where('item.id=$item.id')
       .depth(depth)
       .buildQuery({
         item: { id: id.get('item') },

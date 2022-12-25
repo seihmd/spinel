@@ -14,7 +14,7 @@ function elementStub(variableName: string, graphKey: string): NodeElement {
 describe(`${WhereLiteral.name}`, () => {
   test('new', () => {
     const whereQuery = WhereLiteral.new(
-      '{user}.id = $userId',
+      'user.id = $userId',
       new Path(elementStub('n0', 'user'), [])
     );
 

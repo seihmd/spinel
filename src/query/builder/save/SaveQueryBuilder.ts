@@ -1,5 +1,5 @@
-import { BranchEndTerm } from '../../../domain/graph/pattern/term/BranchEndTerm';
-import { BRANCH_END } from '../../../domain/graph/pattern/term/PatternTerm';
+import { camelCase } from 'lodash';
+import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import {
   AnyClassConstructor,
   ClassConstructor,
@@ -105,7 +105,7 @@ export class SaveQueryBuilder {
         this.instance,
         nodeMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
-        new BranchEndTerm(BRANCH_END)
+        new NodeKeyTerm(camelCase(nodeMetadata.getCstr().name))
       );
       parameterBag.add(
         Parameter.new(

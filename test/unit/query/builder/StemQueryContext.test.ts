@@ -5,7 +5,7 @@ import { Path } from 'query/path/Path';
 import { Stem } from 'query/path/Stem';
 import { ElementFixture } from './ElementFixture';
 
-describe(`${StemQueryContext.name}`, () => {
+describe(`StemQueryContext`, () => {
   test('N-R-N', () => {
     const ef = new ElementFixture();
 
@@ -20,6 +20,7 @@ describe(`${StemQueryContext.name}`, () => {
         ]),
         null,
         new OrderByQueries([]),
+        null,
         []
       ),
       new Depth(2)
@@ -41,14 +42,15 @@ describe(`${StemQueryContext.name}`, () => {
     const stemQueryContext = new StemQueryContext(
       new Stem(
         Path.new([
-          ef.newNodeLabelElement(':User'),
+          ef.newNodeLabelElement('(:User)'),
           ef.newDirectionElement('-'),
-          ef.newRelationshipTypeElement(':LIKES'),
+          ef.newRelationshipTypeElement('[:LIKES]'),
           ef.newDirectionElement('->'),
-          ef.newNodeLabelElement(':Item'),
+          ef.newNodeLabelElement('(:Item)'),
         ]),
         null,
         new OrderByQueries([]),
+        null,
         []
       ),
       new Depth(2)
@@ -68,9 +70,9 @@ describe(`${StemQueryContext.name}`, () => {
         Path.new([
           ef.newNodeElement('User', 'user'),
           ef.newDirectionElement('-'),
-          ef.newRelationshipTypeElement(':LIKES'),
+          ef.newRelationshipTypeElement('[:LIKES]'),
           ef.newDirectionElement('->'),
-          ef.newNodeLabelElement(':Item'),
+          ef.newNodeLabelElement('(:Item)'),
           ef.newDirectionElement('<-'),
           ef.newRelationshipElement('HAS_STOCK', 'hasStock'),
           ef.newDirectionElement('-'),
@@ -78,6 +80,7 @@ describe(`${StemQueryContext.name}`, () => {
         ]),
         null,
         new OrderByQueries([]),
+        null,
         []
       ),
       new Depth(2)
@@ -107,6 +110,7 @@ describe(`${StemQueryContext.name}`, () => {
         ]),
         null,
         new OrderByQueries([]),
+        null,
         []
       ),
       new Depth(2)

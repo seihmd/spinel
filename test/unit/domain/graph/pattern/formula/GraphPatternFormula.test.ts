@@ -1,7 +1,7 @@
 import { GraphPatternFormula } from 'domain/graph/pattern/formula/GraphPatternFormula';
 
 describe(`${GraphPatternFormula.name}`, () => {
-  test.each([['n-r->n2'], ['n-:R-n2<-:R-:N']])(
+  test.each([['n-r->n2'], ['n-[:R]-n2<-[:R]-(:N)']])(
     'Constructor takes valid description string',
     (formula: string) => {
       expect(() => {

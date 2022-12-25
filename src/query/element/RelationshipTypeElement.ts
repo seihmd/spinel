@@ -1,4 +1,3 @@
-import { BRANCH_END } from '../../domain/graph/pattern/term/PatternTerm';
 import { RelationshipTypeTerm } from '../../domain/graph/pattern/term/RelationshipTypeTerm';
 import { RelationshipType } from '../../domain/relationship/RelationshipType';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
@@ -15,8 +14,12 @@ export class RelationshipTypeElement implements EntityElementInterface {
     this.context = context;
   }
 
-  getType(): RelationshipType {
-    return new RelationshipType(this.term.getValueWithoutModifier());
+  getType(): RelationshipType | null {
+    const typeValue = this.term.getType();
+    if (typeValue === null) {
+      return null;
+    }
+    return new RelationshipType(typeValue);
   }
 
   getVariableName(): string {
@@ -32,21 +35,11 @@ export class RelationshipTypeElement implements EntityElementInterface {
   }
 
   getGraphParameterKey(): string | null {
-    const parameterModifier = this.term.getParameterModifier();
-    if (parameterModifier !== null) {
-      return parameterModifier;
-    }
-    return null;
+    return this.term.getAlias();
   }
 
   getWhereVariableName(): string | null {
-    const graphParameterKey = this.getGraphParameterKey();
-    if (graphParameterKey === null) {
-      return null;
-    }
-    return `${
-      this.context.isOnBranch() ? `${BRANCH_END}.` : ''
-    }${graphParameterKey}`;
+    return this.term.getAlias();
   }
 
   withContext(newContext: ElementContext): EntityElementInterface {

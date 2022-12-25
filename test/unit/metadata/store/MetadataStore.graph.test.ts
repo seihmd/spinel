@@ -56,7 +56,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     m.addGraphBranch(
       GraphClass,
       new GraphBranchPropertyType('p3', GraphClass),
-      new AssociationPatternFormula('p1-:R->@'),
+      new AssociationPatternFormula('p1-[:R]->p3'),
       1
     );
     m.registerGraph(GraphClass, 'formula');
@@ -89,7 +89,7 @@ describe(`${MetadataStore.name} for ${GraphMetadata.name}`, () => {
     graphProperties.set(
       new GraphBranchMetadata(
         new GraphBranchPropertyType('p3', GraphClass),
-        new AssociationPatternFormula('p1-:R->@'),
+        new AssociationPatternFormula('p1-[:R]->p3'),
         new Depth(1)
       )
     );

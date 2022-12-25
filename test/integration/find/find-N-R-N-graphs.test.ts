@@ -120,7 +120,7 @@ describe('Find N-R-N graphs', () => {
     const query = qd
       .builder()
       .find(ShopCustomer)
-      .where('{shop}.id=$shop.id')
+      .where('shop.id=$shop.id')
       .buildQuery({
         shop: { id: id.get('shop1') },
       });
@@ -177,8 +177,8 @@ describe('Find N-R-N graphs', () => {
       const query = qd
         .builder()
         .find(ShopCustomer)
-        .where('{shop}.id IN $shopIds')
-        .orderBy('{isCustomer}.visited', sort)
+        .where('shop.id IN $shopIds')
+        .orderBy('isCustomer.visited', sort)
         .buildQuery({
           shopIds: [id.get('shop1'), id.get('shop2')],
         });
@@ -220,8 +220,8 @@ describe('Find N-R-N graphs', () => {
       const query = qd
         .builder()
         .find(ShopCustomer)
-        .where('{shop}.id IN $shopIds')
-        .orderBy('{isCustomer}.visited', sort)
+        .where('shop.id IN $shopIds')
+        .orderBy('isCustomer.visited', sort)
         .limit(1)
         .buildQuery({
           shopIds: [id.get('shop1'), id.get('shop2')],

@@ -1,10 +1,10 @@
-import { placeholder } from '../../literal/util/placeholder';
+import { assignVariables } from '../../literal/util/assignVariables';
 import { VariableMap } from '../../literal/util/VariableMap';
 
 export class WhereStatement {
   constructor(private statement: string) {}
 
   assign(variableMap: VariableMap): string {
-    return placeholder(this.statement, variableMap);
+    return assignVariables(this.statement, variableMap);
   }
 }

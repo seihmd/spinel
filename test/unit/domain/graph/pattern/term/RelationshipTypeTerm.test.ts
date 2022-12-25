@@ -2,33 +2,25 @@ import { RelationshipTypeTerm } from 'domain/graph/pattern/term/RelationshipType
 
 describe(`${RelationshipTypeTerm.name}`, () => {
   test.each([
-    [':rel', true],
-    [':rel@name', true],
-    ['rel', false],
-    ['<-', false],
-    ['-', false],
-    ['->', false],
-    ['*', false],
-  ])('throw error with not label', (value: string, isValid: boolean) => {
-    const exp = expect(() => {
-      new RelationshipTypeTerm(value);
-    });
-    isValid ? exp.not.toThrowError() : exp.toThrowError();
-  });
+    ['[:rel]', null, 'rel'],
+    ['[var:rel]', 'var', 'rel'],
+    ['[var]', 'var', null],
+    ['[]', null, null],
+  ])(
+    'valid value',
+    (value: string, alias: string | null, type: string | null) => {
+      const relationshipTypeTerm = new RelationshipTypeTerm(value);
+      expect(relationshipTypeTerm.getAlias()).toBe(alias);
+      expect(relationshipTypeTerm.getType()).toBe(type);
+    }
+  );
 
-  test.each([
-    [':rel', 'rel'],
-    [':rel@modifier', 'rel@modifier'],
-  ])('getValueWithoutLabelPrefix', (value: string, expected: string) => {
-    expect(new RelationshipTypeTerm(value).getValueWithoutLabelPrefix()).toBe(
-      expected
-    );
-  });
-
-  test.each([
-    [':rel', null],
-    [':rel@modifier', 'modifier'],
-  ])('getKey', (value: string, expected: string | null) => {
-    expect(new RelationshipTypeTerm(value).getKey()).toBe(expected);
-  });
+  test.each([[''], ['[:]'], ['[{}]'], ['rel']])(
+    'invalid value will throw error',
+    (value: string) => {
+      expect(() => {
+        new RelationshipTypeTerm(value);
+      }).toThrowError();
+    }
+  );
 });

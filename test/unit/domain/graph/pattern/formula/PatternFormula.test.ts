@@ -20,11 +20,11 @@ describe(`${PatternFormula.name}`, () => {
   }
 
   test.each([
-    [':User - :HAS_ITEM -> item <- :HAS_STOCK - shop'],
-    [':User-:HAS_ITEM-item-:HAS_STOCK-shop'],
+    ['(:User) - [:HAS_ITEM] -> item <- [:HAS_STOCK] - shop'],
+    ['(:User)-[:HAS_ITEM]-item-[:HAS_STOCK]-shop'],
     [
-      `:User - :HAS_ITEM -> item
-     <- :HAS_STOCK - shop`,
+      `(:User) - [:HAS_ITEM] -> item
+     <- [:HAS_STOCK] - shop`,
     ],
     ['user'],
   ])('Constructor takes valid description string', (formula: string) => {
@@ -34,7 +34,7 @@ describe(`${PatternFormula.name}`, () => {
   });
 
   test.each([
-    ['node <- :HAS_STOCK - node'],
+    ['node <- [:HAS_STOCK] - node'],
     ['node1 - hasItem -> node2 <- hasItem - node3'],
     ['node1 <- dup - dup'],
   ])('Constructor throw exception when duplicate keys', (formula: string) => {
@@ -44,8 +44,8 @@ describe(`${PatternFormula.name}`, () => {
   });
 
   test.each([
-    [':User - :HAS_ITEM -> :User <- :HAS_STOCK - user'],
-    [':User - :HAS_ITEM -> item <- :HAS_ITEM - shop'],
+    ['(:User) - [:HAS_ITEM] -> (:User) <- [:HAS_STOCK] - user'],
+    ['(:User) - [:HAS_ITEM] -> item <- [:HAS_ITEM] - shop'],
   ])(
     'Node label and Relationship Type are not counted as a duplicate',
     (formula: string) => {
