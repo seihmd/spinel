@@ -12,19 +12,31 @@ describe('assignVariables', () => {
     // console.log(reslt);
   });
 
+  const variablePatterns = ['a', 'abc', 'abc.d', 'abc.def', 'abc.def.ghi'];
+
+  const patterns = ['%s', '(%s)', '[%s]', '[%s:%s]', '%s["abc"]'];
+
   const testCases: [string, [string, string][], string][] = [
-    // ['user.id', [['user', 'n0']], 'n0.id'],
-    // ['(user)', [['user', 'n0']], '(n0)'],
-    // ['(user:User)', [['user', 'n0']], '(n0:User)'],
-    // ['[has:HAS]', [['has', 'r2']], '[r2:HAS]'],
-    // ['user', [['user', 'n0']], 'n0'],
-    // ['shopItems.item.id', [['shopItems.item', 'b0_n0']], 'b0_n0.id'],
-    // ['toLower(user.id)', [['user', 'n0']], 'toLower(n0.id)'],
+    ['user.id', [['user', 'n0']], 'n0.id'],
+    ['(user)', [['user', 'n0']], '(n0)'],
+    ['(user:User)', [['user', 'n0']], '(n0:User)'],
+    ['[has:HAS]', [['has', 'r2']], '[r2:HAS]'],
+    ['user', [['user', 'n0']], 'n0'],
+    [
+      'shopItems.item.id',
+      [
+        ['item', 'n0'],
+        ['shopItems.item', 'b0_n0'],
+      ],
+      'b0_n0.id',
+    ],
+    ['toLower(user.id)', [['user', 'n0']], 'toLower(n0.id)'],
     [
       'not exists((n)<-[:HAS]-())',
       [['n', 'n0']],
       'not exists((n0)<-[:HAS]-())',
     ],
+    ['n[toLower(propname)] < 30', [['n', 'n0']], 'n0[toLower(propname)] < 30'],
   ];
 
   test.each(testCases)(

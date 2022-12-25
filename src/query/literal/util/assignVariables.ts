@@ -1,3 +1,4 @@
+import { isReservedKeyword } from './isReservedKeyword';
 import { VariableMap } from './VariableMap';
 
 export function assignVariables(
@@ -5,7 +6,6 @@ export function assignVariables(
   variableMap: VariableMap
 ): string {
   const splits = statement.split(/("[^"]*")|('[^']*')/);
-  // console.log(splits);
 
   return splits
     .filter((value) => value !== undefined && value !== '')
@@ -44,12 +44,17 @@ export function assignVariables(
             value === ')' ||
             value === '[' ||
             value === ']' ||
-            value.startsWith('$')
+            value === '-' ||
+            value === '->' ||
+            value === '<-' ||
+            value.startsWith('$') ||
+            value.startsWith(':') ||
+            isReservedKeyword(value)
           ) {
             return value;
           }
 
-          const next = findNext(index);
+          const next = findNext(index + 1);
           if (
             next === null ||
             next === '[' ||
@@ -57,17 +62,24 @@ export function assignVariables(
             next === ')' ||
             isTerm(next ?? '')
           ) {
-            const keys = variableMap.sortedKeys();
-            for (const variable of keys) {
-              if (value.startsWith(variable)) {
-                const to = variableMap.get(variable);
-                if (to !== null) {
-                  return value.replace(variable, to);
-                } else {
-                  throw new Error(variable);
-                }
-              }
+            const keys = variableMap.sortedKeys().join('|');
+
+            const sp = value.split(':')[0];
+            const to = variableMap.get(sp);
+            if (to !== null) {
+              return value.replace(new RegExp(`^${sp}`), to);
             }
+            const l = sp.lastIndexOf('.');
+            if (l === -1) {
+              return value;
+            }
+            const sp2 = sp.slice(0, l);
+            const to2 = variableMap.get(sp2);
+            if (to2 !== null) {
+              return value.replace(new RegExp(`^${sp2}`), to2);
+            }
+
+            return value;
           }
 
           return value;

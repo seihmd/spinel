@@ -46,7 +46,7 @@ export class VariableMap {
 
   sortedKeys(): string[] {
     return Array.from(this.map.keys()).sort((a, b) =>
-      a.length > b.length ? 1 : -1
+      a.length > b.length ? -1 : 1
     );
   }
 }
