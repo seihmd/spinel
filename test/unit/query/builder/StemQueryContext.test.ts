@@ -5,7 +5,7 @@ import { Path } from 'query/path/Path';
 import { Stem } from 'query/path/Stem';
 import { ElementFixture } from './ElementFixture';
 
-describe(`${StemQueryContext.name}`, () => {
+describe(`StemQueryContext`, () => {
   test('N-R-N', () => {
     const ef = new ElementFixture();
 

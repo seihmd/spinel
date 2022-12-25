@@ -87,11 +87,7 @@ export abstract class AbstractFindQueryBuilder<
         this.limitValue,
         this.depthValue
       );
-      const stemQueryContext = new StemQueryContext(
-        stem,
-        graphMetadata,
-        this.depthValue
-      );
+      const stemQueryContext = new StemQueryContext(stem, this.depthValue);
       const branchQueryContexts = stem.getBranches().map((branch) => {
         return new BranchQueryContext(branch);
       });
