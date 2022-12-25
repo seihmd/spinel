@@ -94,7 +94,7 @@ describe('Transactional query', () => {
     await qd.transactional(async (qd) => {
       const shopCustomer = await qd
         .findOne(ShopCustomer)
-        .where('{shop}.id=$shop.id')
+        .where('shop.id=$shop.id')
         .buildQuery({
           shop: { id: id.get('shop') },
         })
@@ -128,7 +128,7 @@ describe('Transactional query', () => {
       const shopCustomer = await qd
         .builder()
         .findOne(ShopCustomer)
-        .where('{shop}.id=$shop.id')
+        .where('shop.id=$shop.id')
         .buildQuery({
           shop: { id: id.get('shop') },
         })

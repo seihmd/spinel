@@ -38,7 +38,8 @@ class Tag {
 @Graph('item')
 class ItemTags {
   @GraphNode() private item: Item;
-  @GraphBranch(Tag, 'item-:HAS_TAG->*') private tags: Tag[];
+  @GraphBranch(Tag, 'item-[:HAS_TAG]->tags')
+  private tags: Tag[];
 
   constructor(item: Item, tags: Tag[]) {
     this.item = item;
@@ -49,7 +50,7 @@ class ItemTags {
 @Graph('shop')
 class ShopItemTags {
   @GraphNode() private shop: Shop;
-  @GraphBranch(ItemTags, 'shop-:HAS_STOCK->*.item')
+  @GraphBranch(ItemTags, 'shop-[:HAS_STOCK]->itemTags.item')
   private itemTags: ItemTags[];
 
   constructor(shop: Shop, itemTags: ItemTags[]) {

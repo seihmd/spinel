@@ -16,7 +16,7 @@ class Shop {
   }
 }
 
-@Graph('shop<-:IS_CUSTOMER-:Customer')
+@Graph('shop<-[:IS_CUSTOMER]-(:Customer)')
 class ShopCustomer {
   @GraphNode() private shop: Shop;
 
