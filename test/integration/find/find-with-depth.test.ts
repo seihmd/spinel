@@ -20,7 +20,9 @@ class Item {
 
 @Graph('item')
 class SimilarItems {
-  @GraphNode() private item: Item;
+  @GraphNode()
+  private item: Item;
+
   @GraphBranch(SimilarItems, 'item-[:IS_SIMILAR]->similarItems.item')
   private similarItems: SimilarItems[] = [];
 
@@ -120,5 +122,42 @@ describe('Find graph with depth', () => {
       });
 
     expect(await query.run()).toStrictEqual([expected]);
+  });
+
+  test('find with nested filterBranch', async () => {
+    const query = qd
+      .builder()
+      .find(SimilarItems)
+      .where('item.id=$itemId')
+      .filterBranch('similarItems', 'similarItems.item.id=$similarItemId')
+      .filterBranch(
+        'similarItems.similarItems',
+        'similarItems.item.id=$similarItemId2'
+      )
+      .depth(2)
+      .buildQuery({
+        itemId: id.get('item'),
+        similarItemId: id.get('similar1'),
+        similarItemId2: id.get('similar1_2'),
+      });
+
+    expect(query.getStatement()).toBe(
+      'MATCH (n0:Item) ' +
+        'WHERE n0.id=$itemId ' +
+        'RETURN {item:n0{.*},' +
+        'similarItems:[(n0)-[b0_r2:IS_SIMILAR]->(b0_n4:Item) ' +
+        'WHERE b0_n4.id=$similarItemId|{item:b0_n4{.*},' +
+        'similarItems:[(b0_n4)-[b0_b0_r2:IS_SIMILAR]->(b0_b0_n4:Item) ' +
+        'WHERE b0_b0_n4.id=$similarItemId2|{item:b0_b0_n4{.*}}]}]} ' +
+        'AS _'
+    );
+
+    expect(await query.run()).toStrictEqual([
+      new SimilarItems(new Item(id.get('item')), [
+        new SimilarItems(new Item(id.get('similar1')), [
+          new SimilarItems(new Item(id.get('similar1_2')), []),
+        ]),
+      ]),
+    ]);
   });
 });
