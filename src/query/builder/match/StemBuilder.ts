@@ -1,11 +1,11 @@
-import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
-import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { StemMaterialBuilder } from '../../../query/meterial/stem/StemMaterialBuilder';
 import { WhereStatement } from '../../clause/where/WhereStatement';
 import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
 import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
