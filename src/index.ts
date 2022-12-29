@@ -1,6 +1,5 @@
-export { newRepository } from './api/repository';
-export { FindQuery } from './api/query';
 export { instantiate } from './api/api';
+export { getQueryDriver } from './api/driver';
 export * from './api/errors';
 
 export { Graph } from './decorator/class/Graph';
