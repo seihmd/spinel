@@ -49,15 +49,8 @@ export class NodeElement implements EntityElementInterface {
     return this.term.getValue();
   }
 
-  getWhereVariableName(isTerminal: boolean): string {
-    let prefix = '';
-    if (isTerminal) {
-      const graphkeys = this.context.getBranchIndexes().getGraphKeys();
-      const lastGraphKey = graphkeys.at(-1) ?? null;
-      prefix = lastGraphKey === null ? '' : `${lastGraphKey}.`;
-    }
-
-    return prefix + this.term.getValue();
+  getWhereVariableName(): string {
+    return this.term.getValue();
   }
 
   getIndex(): number {

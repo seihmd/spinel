@@ -1,17 +1,18 @@
-import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { AssociationReferenceTerm } from '../../../domain/graph/pattern/term/AssociationReferenceTerm';
 import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { NodeLabelTerm } from '../../../domain/graph/pattern/term/NodeLabelTerm';
 import { RelationshipKeyTerm } from '../../../domain/graph/pattern/term/RelationshipKeyTerm';
 import { RelationshipTypeTerm } from '../../../domain/graph/pattern/term/RelationshipTypeTerm';
+import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { DirectionElement } from '../../element/DirectionElement';
+import { ElementContext } from '../../element/ElementContext';
+import { NodeElement } from '../../element/NodeElement';
+import { PlainGraph } from '../../element/PlainGraph';
 import { Path } from '../../path/Path';
+import { BranchIndexes } from '../BranchIndexes';
 import { ElementBuilderInterface } from './ElementBuilderInterface';
 import { StemMaterial } from './StemMaterial';
-import { PlainGraph } from '../../element/PlainGraph';
-import { NodeEntityMetadata } from '../../../metadata/schema/entity/NodeEntityMetadata';
-import { NodeElement } from '../../element/NodeElement';
-import { ElementContext } from '../../element/ElementContext';
-import { BranchIndexes } from '../BranchIndexes';
 
 export class StemMaterialBuilder {
   private elementBuilder: ElementBuilderInterface;
@@ -50,6 +51,9 @@ export class StemMaterialBuilder {
         }
         if (term instanceof NodeLabelTerm) {
           return this.elementBuilder.createNodeLabelElement(term, i);
+        }
+        if (term instanceof AssociationReferenceTerm) {
+          throw new Error('AssociationReferenceTerm found.');
         }
         if (term instanceof RelationshipKeyTerm) {
           return this.elementBuilder.createRelationshipElement(

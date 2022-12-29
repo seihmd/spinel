@@ -11,26 +11,26 @@ describe('parseAssociationFormula', () => {
   test.each([
     [
       (): Term[] => {
-        return parseAssociationFormula('n1-r->n2', 0);
+        return parseAssociationFormula('n1-r->.', 0);
       },
       [
         new NodeKeyTerm('n1'),
         new DirectionTerm('-'),
         new RelationshipKeyTerm('r'),
         new DirectionTerm('->'),
-        new AssociationReferenceTerm('n2'),
+        new AssociationReferenceTerm('.'),
       ],
     ],
     [
       (): Term[] => {
-        return parseAssociationFormula('user<-[:FOLLOWS]-items.item', 0);
+        return parseAssociationFormula('user<-[:FOLLOWS]-.item', 0);
       },
       [
         new NodeKeyTerm('user'),
         new DirectionTerm('<-'),
         new RelationshipTypeTerm('[:FOLLOWS]'),
         new DirectionTerm('-'),
-        new AssociationReferenceTerm('items.item'),
+        new AssociationReferenceTerm('.item'),
       ],
     ],
     [

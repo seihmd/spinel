@@ -23,7 +23,7 @@ class SimilarItems {
   @GraphNode()
   private item: Item;
 
-  @GraphBranch(SimilarItems, 'item-[:IS_SIMILAR]->similarItems.item')
+  @GraphBranch(SimilarItems, 'item-[:IS_SIMILAR]->.item')
   private similarItems: SimilarItems[] = [];
 
   constructor(item: Item, similarItems: SimilarItems[]) {
@@ -129,11 +129,8 @@ describe('Find graph with depth', () => {
       .builder()
       .find(SimilarItems)
       .where('item.id=$itemId')
-      .filterBranch('similarItems', 'similarItems.item.id=$similarItemId')
-      .filterBranch(
-        'similarItems.similarItems',
-        'similarItems.item.id=$similarItemId2'
-      )
+      .filterBranch('similarItems', '.item.id=$similarItemId')
+      .filterBranch('similarItems.similarItems', '.item.id=$similarItemId2')
       .depth(2)
       .buildQuery({
         itemId: id.get('item'),

@@ -29,7 +29,7 @@ class User {
 @Graph('shop')
 class ShopCustomer {
   @GraphNode() private shop: Shop;
-  @GraphBranch(User, 'shop<-[:IS_CUSTOMER]-customers')
+  @GraphBranch(User, 'shop<-[:IS_CUSTOMER]-.')
   private customers: User[];
 
   constructor(shop: Shop, customers: User[]) {

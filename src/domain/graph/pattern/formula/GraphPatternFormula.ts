@@ -9,8 +9,8 @@ export class GraphPatternFormula extends PatternFormula {
     super(formula);
   }
 
-  get(): Exclude<Term, AssociationReferenceTerm>[] {
-    return super.get() as Exclude<Term, AssociationReferenceTerm>[];
+  get(): Term[] {
+    return super.get();
   }
 
   protected getParseStartIndex(): 0 | 1 {

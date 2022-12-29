@@ -7,8 +7,6 @@ import { PathStepLiteral } from '../literal/PathStepLiteral';
 import { PatternComprehensionLiteral } from '../literal/PatternComprehensionLiteral';
 import { VariableMap } from '../literal/util/VariableMap';
 import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
-import { FragmentBranchMaterial } from '../meterial/branch/FragmentBranchMaterial';
-import { GraphBranchMaterial } from '../meterial/branch/GraphBranchMaterial';
 import { Path } from './Path';
 
 export class Branch {
@@ -67,8 +65,7 @@ export class Branch {
         .assign(
           VariableMap.withPath(
             this.branchMaterial.getPath(),
-            this.branchMaterial instanceof GraphBranchMaterial ||
-              this.branchMaterial instanceof FragmentBranchMaterial
+            this.branchMaterial
           )
         )
     );

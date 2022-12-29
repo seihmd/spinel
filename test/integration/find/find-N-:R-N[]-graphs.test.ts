@@ -32,7 +32,7 @@ class User {
 class ShopCustomer {
   @GraphNode() private shop: Shop;
 
-  @GraphBranch(User, 'shop<-[isCustomer:IS_CUSTOMER]-customers')
+  @GraphBranch(User, `shop<-[isCustomer:IS_CUSTOMER]-.`)
   private customers: User[];
 
   constructor(shop: Shop, customers: User[]) {
@@ -130,7 +130,7 @@ describe('Find N-:R-N[] graphs', () => {
       .builder()
       .find(ShopCustomer)
       .where('shop.id=$shop.id')
-      .filterBranch('customers', 'customers.id IN $customerIds')
+      .filterBranch('customers', '.id IN $customerIds')
       .buildQuery({
         shop: { id: id.get('shop1') },
         customerIds: [id.get('customer2')],

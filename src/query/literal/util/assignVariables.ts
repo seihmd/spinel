@@ -30,13 +30,17 @@ export function assignVariables(
         return null;
       }
 
-      function isTerm(value: string): boolean {
-        return /[\w:.]+/.test(value);
-      }
-
       return elms
         .map((value, index) => {
-          if (/^\W/.test(value) || isReservedKeyword(value)) {
+          if (value === '.') {
+            value = '@';
+          }
+
+          if (value.startsWith('.')) {
+            value = '@' + value;
+          }
+
+          if (/^[^\w@]/.test(value) || isReservedKeyword(value)) {
             return value;
           }
 
@@ -49,8 +53,6 @@ export function assignVariables(
             next === '=' ||
             /[\w:.]+/.test(next ?? '')
           ) {
-            const keys = variableMap.sortedKeys().join('|');
-
             const sp = value.split(':')[0];
             const to = variableMap.get(sp);
             if (to !== null) {
