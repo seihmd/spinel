@@ -40,22 +40,6 @@ describe('Find nodes', () => {
     await neo4jFixture.close();
   });
 
-  test('find', async () => {
-    const shops = await qd
-      .builder()
-      .find(Shop)
-      .where('shop.id IN $shopIds')
-      .buildQuery({
-        shopIds: [id.get('shop1'), id.get('shop2')],
-      })
-      .run();
-
-    expect(shops).toStrictEqual([
-      new Shop(id.get('shop1'), 'Shop1'),
-      new Shop(id.get('shop2'), 'Shop2'),
-    ]);
-  });
-
   test.each([
     [
       'ASC',

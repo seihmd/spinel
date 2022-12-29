@@ -1,11 +1,10 @@
-import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
-import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
 import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { WhereStatement } from '../../clause/where/WhereStatement';
 import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
 import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
@@ -15,6 +14,7 @@ import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMater
 import { TermElementBuilder as BranchTermElementBuilder } from '../../meterial/branch/TermElementBuilder';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { StemMaterial } from '../../meterial/stem/StemMaterial';
+import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
 import { Branch } from '../../path/Branch';
 import { Stem } from '../../path/Stem';

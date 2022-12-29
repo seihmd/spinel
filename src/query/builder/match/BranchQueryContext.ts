@@ -1,4 +1,4 @@
-import { Branch } from 'query/path/Branch';
+import { Branch } from '../../path/Branch';
 
 export class BranchQueryContext {
   private readonly branch: Branch;
