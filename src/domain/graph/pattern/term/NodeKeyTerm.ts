@@ -1,19 +1,15 @@
-import { PatternTerm } from './PatternTerm';
+import { EntityKeyTerm } from './EntityKeyTerm';
 
-export class NodeKeyTerm extends PatternTerm {
+export class NodeKeyTerm extends EntityKeyTerm {
   constructor(value: string) {
     super(value);
 
-    this.assert();
+    if (!/^\w+$/.test(value)) {
+      this.throwInvalidValueError();
+    }
   }
 
   getKey(): string {
     return this.value;
-  }
-
-  private assert(): void {
-    if (this.isDirection() || this.isBranchEnd() || this.hasModifier()) {
-      this.throwInvalidValueError();
-    }
   }
 }

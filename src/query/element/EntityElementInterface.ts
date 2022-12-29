@@ -8,7 +8,7 @@ export interface EntityElementInterface {
 
   getGraphParameterKey(): string | null;
 
-  getWhereVariableName(): string | null;
+  getWhereVariableName(isTerminal: boolean): string | null;
 
   withContext(newContext: ElementContext): EntityElementInterface;
 

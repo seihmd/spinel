@@ -1,7 +1,7 @@
 import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
 import { NodeLabel } from '../../domain/node/NodeLabel';
-import { BranchIndexes } from '../meterial/BranchIndexes';
 import { BranchIndexesLiteral } from '../literal/BranchIndexesLiteral';
+import { BranchIndexes } from '../meterial/BranchIndexes';
 import { ElementContext } from './ElementContext';
 import { EntityElementInterface } from './EntityElementInterface';
 
@@ -23,11 +23,7 @@ export class NodeLabelElement implements EntityElementInterface {
   }
 
   getGraphParameterKey(): string | null {
-    const parameterModifier = this.term.getParameterModifier();
-    if (parameterModifier !== null) {
-      return parameterModifier;
-    }
-    return null;
+    return this.term.getAlias();
   }
 
   getGraphKey(): string {
@@ -39,11 +35,15 @@ export class NodeLabelElement implements EntityElementInterface {
     if (graphParameterKey === null) {
       return null;
     }
-    return `${this.context.isOnBranch() ? '*.' : ''}${graphParameterKey}`;
+    return graphParameterKey;
   }
 
-  getLabel(): NodeLabel {
-    return new NodeLabel(this.term.getValueWithoutModifier());
+  getLabel(): NodeLabel | null {
+    const labelValue = this.term.getLabel();
+    if (labelValue === null) {
+      return null;
+    }
+    return new NodeLabel(labelValue);
   }
 
   isArray(): boolean {

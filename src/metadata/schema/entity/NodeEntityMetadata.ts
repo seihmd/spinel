@@ -1,14 +1,13 @@
-import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { NodeLabel } from '../../../domain/node/NodeLabel';
+import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
+import { NodeConstraints } from '../constraint/NodeConstraints';
+import { BranchEndMetadata } from '../graph/BranchEndMetadata';
+import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
+import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
+import { Indexes } from '../index/Indexes';
 import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from './EntityPropertyMetadata';
 import { Properties } from './Properties';
-import { BranchEndMetadata } from '../graph/BranchEndMetadata';
-import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
-import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
-import { GraphPatternFormula } from '../../../domain/graph/pattern/formula/GraphPatternFormula';
-import { NodeConstraints } from '../constraint/NodeConstraints';
-import { Indexes } from '../index/Indexes';
 
 export class NodeEntityMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
@@ -61,10 +60,6 @@ export class NodeEntityMetadata implements BranchEndMetadata {
   // @ts-ignore
   getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
     throw new Error();
-  }
-
-  getFormula(): GraphPatternFormula {
-    return new GraphPatternFormula('*');
   }
 
   getConstraints(): NodeConstraints {

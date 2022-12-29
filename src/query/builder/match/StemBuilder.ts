@@ -1,23 +1,25 @@
-import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
-import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
-import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
-import { WhereQueries } from '../where/WhereQueries';
-import { BranchIndexes } from '../../meterial/BranchIndexes';
-import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { MetadataStoreInterface } from 'metadata/store/MetadataStoreInterface';
+import { StemMaterialBuilder } from 'query/meterial/stem/StemMaterialBuilder';
 import { Depth } from '../../../domain/graph/branch/Depth';
-import { Stem } from '../../path/Stem';
-import { GraphBranchMaterialBuilder } from '../../meterial/branch/GraphBranchMaterialBuilder';
-import { StemMaterial } from '../../meterial/stem/StemMaterial';
-import { Branch } from '../../path/Branch';
-import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
-import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
-import { getMetadataStore } from '../../../metadata/store/MetadataStore';
-import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
+import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { GraphBranchMetadata } from '../../../metadata/schema/graph/GraphBranchMetadata';
-import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
+import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragmentMetadata';
+import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
+import { getMetadataStore } from '../../../metadata/store/MetadataStore';
+import { WhereStatement } from '../../clause/where/WhereStatement';
+import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
+import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
+import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
+import { GraphBranchMaterialBuilder } from '../../meterial/branch/GraphBranchMaterialBuilder';
+import { NodeBranchMaterialBuilder } from '../../meterial/branch/NodeBranchMaterialBuilder';
 import { TermElementBuilder as BranchTermElementBuilder } from '../../meterial/branch/TermElementBuilder';
+import { BranchIndexes } from '../../meterial/BranchIndexes';
+import { StemMaterial } from '../../meterial/stem/StemMaterial';
+import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
+import { Branch } from '../../path/Branch';
+import { Stem } from '../../path/Stem';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
+import { BranchFilters } from '../where/BranchFilters';
 
 export class StemBuilder {
   static new(): StemBuilder {
@@ -48,20 +50,23 @@ export class StemBuilder {
 
   build(
     graphMetadata: GraphMetadata,
-    whereQueries: WhereQueries,
+    whereStatement: WhereStatement | null,
+    branchFilters: BranchFilters,
     orderByQueries: OrderByQueries,
+    limit: PositiveInt | null,
     depth: Depth
   ): Stem {
     const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
 
     return new Stem(
       stemMaterial.getPath(),
-      whereQueries.ofStem(),
+      whereStatement,
       orderByQueries,
+      limit,
       this.buildBranches(
         graphMetadata,
         stemMaterial,
-        whereQueries,
+        branchFilters,
         depth,
         new BranchIndexes([])
       )
@@ -71,7 +76,7 @@ export class StemBuilder {
   private buildBranches(
     graphMetadata: GraphMetadata | GraphFragmentMetadata,
     stemMaterial: StemMaterial | BranchMaterialInterface,
-    whereQueries: WhereQueries,
+    whereQueries: BranchFilters,
     depth: Depth,
     branchIndexes: BranchIndexes
   ): Branch[] {
@@ -92,7 +97,7 @@ export class StemBuilder {
   private buildBranch(
     graphBranchMetadata: GraphBranchMetadata,
     stemMaterial: StemMaterial | BranchMaterialInterface,
-    whereQueries: WhereQueries,
+    branchFilters: BranchFilters,
     depth: Depth,
     branchIndexes: BranchIndexes
   ): Branch {
@@ -111,11 +116,11 @@ export class StemBuilder {
 
       return new Branch(
         branchMaterial,
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         this.buildBranches(
           branchGraphMetadata,
           branchMaterial,
-          whereQueries,
+          branchFilters,
           reducedDepth,
           branchIndexes
         )
@@ -136,11 +141,11 @@ export class StemBuilder {
 
       return new Branch(
         branchFragmentMaterial,
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         this.buildBranches(
           graphFragmentMetadata,
           branchFragmentMaterial,
-          whereQueries,
+          branchFilters,
           reducedDepth,
           branchIndexes
         )
@@ -158,7 +163,7 @@ export class StemBuilder {
           nodeEntityMetadata,
           branchIndexes
         ),
-        whereQueries.of(branchIndexes),
+        branchFilters.of(branchIndexes),
         []
       );
     }

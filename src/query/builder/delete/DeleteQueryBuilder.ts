@@ -1,42 +1,44 @@
+import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
+import { RelationshipKeyTerm } from '../../../domain/graph/pattern/term/RelationshipKeyTerm';
 import {
   AnyClassConstructor,
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { DeleteNodeQuery } from './DeleteNodeQuery';
-import { DeleteRelationshipQuery } from './DeleteRelationshipQuery';
-import { getMetadataStore } from '../../../metadata/store/MetadataStore';
-import { ParameterBag } from '../../parameter/ParameterBag';
-import { Parameter } from '../../parameter/Parameter';
-import { NodeInstanceElement } from '../../element/NodeInstanceElement';
+import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
-import { BranchIndexes } from '../../meterial/BranchIndexes';
-import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
+import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { RelationshipInstanceElement } from '../../element/RelationshipInstanceElement';
-import { RelationshipKeyTerm } from '../../../domain/graph/pattern/term/RelationshipKeyTerm';
+import { BranchIndexes } from '../../meterial/BranchIndexes';
+import { Parameter } from '../../parameter/Parameter';
+import { ParameterBag } from '../../parameter/ParameterBag';
+import { DeleteNodeStatement } from './DeleteNodeStatement';
+import { DeleteQuery } from './DeleteQuery';
+import { DeleteRelationshipStatement } from './DeleteRelationshipStatement';
 
 export class DeleteQueryBuilder {
-  static new(): DeleteQueryBuilder {
-    return new DeleteQueryBuilder(getMetadataStore());
-  }
-
+  private readonly sessionProvider: SessionProviderInterface;
   private readonly metadataStore: MetadataStoreInterface;
+  private readonly instance: InstanceType<ClassConstructor<object>>;
 
-  constructor(metadataStore: MetadataStoreInterface) {
+  constructor(
+    sessionProvider: SessionProviderInterface,
+    metadataStore: MetadataStoreInterface,
+    instance: InstanceType<ClassConstructor<object>>
+  ) {
+    this.sessionProvider = sessionProvider;
     this.metadataStore = metadataStore;
+    this.instance = instance;
   }
 
-  build(
-    instance: InstanceType<ClassConstructor<object>>,
-    detach: boolean
-  ): [DeleteNodeQuery | DeleteRelationshipQuery, ParameterBag] {
+  buildQuery(): DeleteQuery {
     const parameterBag = new ParameterBag();
-    const cstr = instance.constructor as AnyClassConstructor;
+    const cstr = this.instance.constructor as AnyClassConstructor;
     const nodeMetadata = this.metadataStore.findNodeEntityMetadata(cstr);
 
     if (nodeMetadata) {
       const nodeInstanceElement = new NodeInstanceElement(
-        instance,
+        this.instance,
         nodeMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
         new NodeKeyTerm('_')
@@ -48,14 +50,18 @@ export class DeleteQueryBuilder {
           nodeInstanceElement.getProperties().parameterize()
         )
       );
-      return [new DeleteNodeQuery(nodeInstanceElement, detach), parameterBag];
+      return new DeleteQuery(
+        this.sessionProvider,
+        new DeleteNodeStatement(nodeInstanceElement),
+        parameterBag
+      );
     }
 
     const relationshipMetadata =
       this.metadataStore.findRelationshipEntityMetadata(cstr);
     if (relationshipMetadata) {
       const relationshipInstanceElement = new RelationshipInstanceElement(
-        instance,
+        this.instance,
         relationshipMetadata,
         new ElementContext(new BranchIndexes([]), 0, false),
         new RelationshipKeyTerm('r')
@@ -66,10 +72,11 @@ export class DeleteQueryBuilder {
           relationshipInstanceElement.getProperties().parameterize()
         )
       );
-      return [
-        new DeleteRelationshipQuery(relationshipInstanceElement),
-        parameterBag,
-      ];
+      return new DeleteQuery(
+        this.sessionProvider,
+        new DeleteRelationshipStatement(relationshipInstanceElement),
+        parameterBag
+      );
     }
 
     throw new Error(

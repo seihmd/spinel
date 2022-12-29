@@ -1,5 +1,5 @@
-import { PatternTerm } from './PatternTerm';
 import { Direction, LEFT, NONE, RIGHT } from '../../Direction';
+import { PatternTerm } from './PatternTerm';
 
 export class DirectionTerm extends PatternTerm {
   constructor(value: string) {
@@ -10,10 +10,6 @@ export class DirectionTerm extends PatternTerm {
 
   getValue(): Direction {
     return this.value as Direction;
-  }
-
-  getVariableName(): string {
-    return '';
   }
 
   getKey(): null {

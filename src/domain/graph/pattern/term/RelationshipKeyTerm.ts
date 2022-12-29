@@ -1,18 +1,10 @@
-import { PatternTerm } from './PatternTerm';
+import { EntityKeyTerm } from './EntityKeyTerm';
 
-export class RelationshipKeyTerm extends PatternTerm {
+export class RelationshipKeyTerm extends EntityKeyTerm {
   constructor(value: string) {
     super(value);
 
-    this.assert();
-  }
-
-  getKey(): string {
-    return this.value;
-  }
-
-  private assert(): void {
-    if (this.isDirection() || this.isBranchEnd() || this.hasModifier()) {
+    if (!/^\w+$/.test(value)) {
       this.throwInvalidValueError();
     }
   }

@@ -5,16 +5,17 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "npm run test:unit && npm run test:functional",
-    "test:unit": "jest --testMatch '<rootDir>/src/**/*.test.ts'",
-    "test:functional": "jest --testMatch '<rootDir>/test/functional/**/*.test.ts' --runInBand",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest --testMatch '<rootDir>/test/unit/**/*.test.ts'",
+    "test:integration": "jest --testMatch '<rootDir>/test/integration/**/*.test.ts' --runInBand",
+    "coverage": "npm run test:unit -- --collectCoverageFrom='./src/**' --coverage --coverageReporters='html' && open coverage/index.html",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
     "tsc-noemit": "tsc --noEmit",
     "tsc": "tsc",
     "eslint": "eslint",
-    "precommit": "npm run prettier:write && npm run tsc && npm run eslint && npm run test",
+    "precommit": "npm run prettier:write && npm run tsc && npm run eslint",
     "prepare": "husky install"
   },
   "prettier": {
