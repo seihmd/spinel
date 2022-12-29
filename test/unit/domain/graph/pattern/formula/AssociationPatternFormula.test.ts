@@ -1,34 +1,41 @@
 import { AssociationPatternFormula } from 'domain/graph/pattern/formula/AssociationPatternFormula';
 
 describe(`AssociationPatternFormula`, () => {
-  test.each([
-    ['n'],
-    ['n-[:R]->(:N)'],
-    ['n-[:R]-n.key'],
-    ['(:N)-[:R]->n.key.key2'],
-  ])('Constructor takes valid description string', (formula: string) => {
-    expect(() => {
-      new AssociationPatternFormula(formula);
-    }).not.toThrowError();
-  });
-
-  test.each([['n-r->n2'], ['n-[:R]-n2-[:R]->n3']])(
-    'cannot have key term except at the root',
+  test.each([['n'], ['n-[:R]->(:N)'], ['n-[:R]-.key'], ['(:N)-[:R]->.key']])(
+    'Constructor takes valid description string',
     (formula: string) => {
       expect(() => {
         new AssociationPatternFormula(formula);
+      }).not.toThrowError();
+    }
+  );
+
+  test.each([
+    ['n-r->.key', 'r', 2],
+    ['n-[:R]-n2', 'n2', 4],
+    ['n-[:R]-n2-[:R]->.key', 'n2', 4],
+  ])(
+    'cannot have key term except at the root',
+    (formula: string, invalidTerm: string, index: number) => {
+      expect(() => {
+        new AssociationPatternFormula(formula);
       }).toThrowError(
-        'AssociationPatternFormula must have no key except at the root'
+        `AssociationPatternFormula has EntityKeyTerm "${invalidTerm}" at ${index}`
       );
     }
   );
 
-  test.each([['n.key-[:R]->n.key'], ['n-[:R]->n.key-[:R]->n.key']])(
+  test.each([
+    ['.key-[:R]->.key', '.key', 0],
+    ['n-[:R]->.key-[:R]->.key', '.key', 4],
+  ])(
     'cannot have branch end term except at the terminal',
-    (formula: string) => {
+    (formula: string, invalidTerm: string, index: number) => {
       expect(() => {
         new AssociationPatternFormula(formula);
-      }).toThrowError();
+      }).toThrowError(
+        `AssociationPatternFormula has AssociationReferenceTerm "${invalidTerm}" at ${index}`
+      );
     }
   );
 });

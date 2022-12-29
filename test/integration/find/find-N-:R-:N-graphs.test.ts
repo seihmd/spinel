@@ -38,7 +38,8 @@ class Tag {
 @Graph('item')
 class ItemTags {
   @GraphNode() private item: Item;
-  @GraphBranch(Tag, 'item-[:HAS_TAG]->tags') private tags: Tag[];
+
+  @GraphBranch(Tag, 'item-[:HAS_TAG]->.') private tags: Tag[];
 
   constructor(item: Item, tags: Tag[]) {
     this.item = item;
@@ -48,8 +49,10 @@ class ItemTags {
 
 @Graph('shop')
 class ShopItemTags {
-  @GraphNode() private shop: Shop;
-  @GraphBranch(ItemTags, 'shop-[:HAS_STOCK]->itemTags.item')
+  @GraphNode()
+  private shop: Shop;
+
+  @GraphBranch(ItemTags, 'shop-[:HAS_STOCK]->.item')
   private itemTags: ItemTags[];
 
   constructor(shop: Shop, itemTags: ItemTags[]) {
@@ -88,10 +91,10 @@ describe('Find N-:R-:N graphs', () => {
 
     expect(query.getStatement()).toBe(
       'MATCH (n0:Shop) WHERE n0.id = $shopId ' +
-        'RETURN {shop:n0{.*},' +
-        'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
-        'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} ' +
-        'AS _'
+      'RETURN {shop:n0{.*},' +
+      'itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item)|{item:b0_n4{.*},' +
+      'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag)|b0_b0_n4{.*}]}]} ' +
+      'AS _'
     );
 
     expect(await query.run()).toStrictEqual([

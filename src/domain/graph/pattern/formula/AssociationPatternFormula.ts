@@ -1,4 +1,5 @@
 import { AssociationReferenceTerm } from '../term/AssociationReferenceTerm';
+import { EntityKeyTerm } from '../term/EntityKeyTerm';
 import { NodeKeyTerm } from '../term/NodeKeyTerm';
 import { RelationshipKeyTerm } from '../term/RelationshipKeyTerm';
 import { isEntityKeyTerm, Term } from '../term/Term';
@@ -35,19 +36,23 @@ export class AssociationPatternFormula extends PatternFormula {
   protected assert(terms: Term[]): void {
     super.assert(terms);
 
-    terms.slice(1).forEach((term, index) => {
-      if (isEntityKeyTerm(term)) {
+    terms.forEach((term, index) => {
+      if (index !== 0 && isEntityKeyTerm(term)) {
         throw new Error(
-          `${AssociationPatternFormula.name} must have no key except at the root`
+          `${AssociationPatternFormula.name} has ${
+            EntityKeyTerm.name
+          } "${term.getValue()}" at ${index}`
         );
       }
 
       if (
-        index !== terms.length - 2 &&
+        index !== terms.length - 1 &&
         term instanceof AssociationReferenceTerm
       ) {
         throw new Error(
-          `${AssociationPatternFormula.name} must have no reference term except at the terminal`
+          `${AssociationPatternFormula.name} has ${
+            AssociationReferenceTerm.name
+          } "${term.getValue()}" at ${index}`
         );
       }
     });

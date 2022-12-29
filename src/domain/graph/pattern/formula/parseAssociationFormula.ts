@@ -16,7 +16,7 @@ export function parseAssociationFormula(formula: string, start: 0 | 1): Term[] {
       if (NodeLabelTerm.maybe(value)) {
         return new NodeLabelTerm(value);
       }
-      if (index === values.length - 1) {
+      if (AssociationReferenceTerm.maybe(value)) {
         return new AssociationReferenceTerm(value);
       }
 

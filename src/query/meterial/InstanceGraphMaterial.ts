@@ -1,19 +1,20 @@
+import { AssociationReferenceTerm } from '../../domain/graph/pattern/term/AssociationReferenceTerm';
+import { NodeKeyTerm } from '../../domain/graph/pattern/term/NodeKeyTerm';
+import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
+import { RelationshipKeyTerm } from '../../domain/graph/pattern/term/RelationshipKeyTerm';
+import { RelationshipTypeTerm } from '../../domain/graph/pattern/term/RelationshipTypeTerm';
+import { GraphMetadata } from '../../metadata/schema/graph/GraphMetadata';
+import { toInstance } from '../../util/toInstance';
+import { toPlain } from '../../util/toPlain';
+import { DirectionElement } from '../element/DirectionElement';
+import { ElementContext } from '../element/ElementContext';
+import { NodeInstanceElement } from '../element/NodeInstanceElement';
+import { NodeLabelElement } from '../element/NodeLabelElement';
+import { RelationshipInstanceElement } from '../element/RelationshipInstanceElement';
+import { RelationshipTypeElement } from '../element/RelationshipTypeElement';
 import { Path } from '../path/Path';
 import { PathStep } from '../path/PathStep';
-import { NodeLabelElement } from '../element/NodeLabelElement';
-import { RelationshipTypeElement } from '../element/RelationshipTypeElement';
-import { DirectionElement } from '../element/DirectionElement';
-import { GraphMetadata } from '../../metadata/schema/graph/GraphMetadata';
-import { NodeLabelTerm } from '../../domain/graph/pattern/term/NodeLabelTerm';
-import { RelationshipTypeTerm } from '../../domain/graph/pattern/term/RelationshipTypeTerm';
-import { RelationshipKeyTerm } from '../../domain/graph/pattern/term/RelationshipKeyTerm';
-import { NodeKeyTerm } from '../../domain/graph/pattern/term/NodeKeyTerm';
 import { BranchIndexes } from './BranchIndexes';
-import { ElementContext } from '../element/ElementContext';
-import { toPlain } from '../../util/toPlain';
-import { NodeInstanceElement } from '../element/NodeInstanceElement';
-import { RelationshipInstanceElement } from '../element/RelationshipInstanceElement';
-import { toInstance } from '../../util/toInstance';
 
 export class InstanceGraphMaterial {
   static new(
@@ -48,6 +49,9 @@ export class InstanceGraphMaterial {
             term,
             new ElementContext(new BranchIndexes([]), i, false)
           );
+        }
+        if (term instanceof AssociationReferenceTerm) {
+          throw new Error('AssociationReferenceTerm found.');
         }
         if (term instanceof RelationshipKeyTerm) {
           if (!plainEntity) {

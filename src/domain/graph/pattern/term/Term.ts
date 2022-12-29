@@ -7,8 +7,11 @@ import { RelationshipTypeTerm } from './RelationshipTypeTerm';
 
 export type NodeTerm = NodeLabelTerm | NodeKeyTerm;
 export type RelationshipTerm = RelationshipTypeTerm | RelationshipKeyTerm;
-export type ReferenceTerm = AssociationReferenceTerm;
-export type Term = NodeTerm | RelationshipTerm | DirectionTerm | ReferenceTerm;
+export type Term =
+  | NodeTerm
+  | RelationshipTerm
+  | DirectionTerm
+  | AssociationReferenceTerm;
 
 export function isEntityKeyTerm(
   term: Term

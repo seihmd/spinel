@@ -91,7 +91,7 @@ export class GraphBranchMaterialBuilder
             branchEndMetadata
               .getGraphNodeMetadata(term.getValue())
               .getEntityMetadata(),
-            plainGraph?.getEntity(term.getKeys().join('.'))
+            plainGraph?.getEntity(term.getKey())
           );
         }
         if (term instanceof RelationshipTypeTerm) {

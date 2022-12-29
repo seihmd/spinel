@@ -112,7 +112,7 @@ describe('Find N-F[] graphs', () => {
       .builder()
       .find(ShopCustomerFavorites)
       .where('shop.id=$shop.id')
-      .filterBranch('favoriteItems', 'favoriteItems.item.id=$item.id')
+      .filterBranch('favoriteItems', '.item.id=$item.id')
       .buildQuery({
         shop: { id: id.get('shop') },
         item: { id: id.get('item1') },

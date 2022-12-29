@@ -1,23 +1,19 @@
 import { EntityTerm } from './EntityTerm';
 
 export class AssociationReferenceTerm extends EntityTerm {
-  private readonly keys: string[];
+  static maybe(value: string): boolean {
+    return value.startsWith('.');
+  }
 
   constructor(value: string) {
     super(value);
 
-    if (!/^\w+(\.\w+)*$/.test(value)) {
+    if (!/^\.\w*$/.test(value)) {
       this.throwInvalidValueError();
     }
-
-    this.keys = this.value.split('.');
   }
 
-  getKeys(): string[] {
-    return this.keys;
-  }
-
-  getKey(): string | null {
-    return this.keys.join('.');
+  getKey(): string {
+    return this.value.substring(1);
   }
 }

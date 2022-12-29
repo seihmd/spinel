@@ -41,7 +41,7 @@ class Tag {
 class ItemTags {
   @GraphNode() private item: Item;
 
-  @GraphBranch(Tag, 'item-[hasTag:HAS_TAG]->tags')
+  @GraphBranch(Tag, 'item-[hasTag:HAS_TAG]->.')
   private tags: Tag[];
 
   constructor(item: Item, tags: Tag[]) {
@@ -54,7 +54,7 @@ class ItemTags {
 class ShopItemTags {
   @GraphNode() private shop: Shop;
 
-  @GraphBranch(ItemTags, 'shop-[hasStock:HAS_STOCK]->itemTags.item')
+  @GraphBranch(ItemTags, 'shop-[hasStock:HAS_STOCK]->.item')
   private itemTags: ItemTags[];
 
   constructor(shop: Shop, itemTags: ItemTags[]) {
@@ -116,9 +116,9 @@ describe('Find N-:R-G[] graphs', () => {
       .where('shop.id=$shop.id')
       .filterBranch(
         'itemTags',
-        'shop.id=$shop.id AND [hasStock] AND itemTags.item.id=$itemId'
+        'shop.id=$shop.id AND [hasStock] AND .item.id=$itemId'
       )
-      .filterBranch('itemTags.tags', 'tags.id=$tagId AND [hasTag]')
+      .filterBranch('itemTags.tags', '.id=$tagId AND [hasTag]')
       .buildQuery({
         shop: { id: id.get('shop') },
         itemId: id.get('item'),
