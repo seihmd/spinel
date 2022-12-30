@@ -1,4 +1,4 @@
-import { OrderByClause } from 'query/clause/OrderByClause';
+import { OrderByClause } from 'query/clause/orderBy/OrderByClause';
 import { OrderByLiteral } from 'query/literal/OrderByLiteral';
 
 describe(`${OrderByClause.name}`, () => {

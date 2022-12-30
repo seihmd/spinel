@@ -18,8 +18,8 @@ import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
 import { Branch } from '../../path/Branch';
 import { Stem } from '../../path/Stem';
-import { OrderByQueries } from '../orderBy/OrderByQueries';
 import { BranchFilters } from '../where/BranchFilters';
+import { OrderByStatement } from './orderBy/OrderByStatement';
 
 export class StemBuilder {
   static new(): StemBuilder {
@@ -52,7 +52,7 @@ export class StemBuilder {
     graphMetadata: GraphMetadata,
     whereStatement: WhereStatement | null,
     branchFilters: BranchFilters,
-    orderByQueries: OrderByQueries,
+    orderByStatements: OrderByStatement[],
     limit: PositiveInt | null,
     depth: Depth
   ): Stem {
@@ -61,7 +61,7 @@ export class StemBuilder {
     return new Stem(
       stemMaterial.getPath(),
       whereStatement,
-      orderByQueries,
+      orderByStatements,
       limit,
       this.buildBranches(
         graphMetadata,

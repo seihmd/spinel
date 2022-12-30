@@ -1,6 +1,5 @@
 import { Depth } from 'domain/graph/branch/Depth';
 import { StemQueryContext } from 'query/builder/find/StemQueryContext';
-import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
 import { Path } from 'query/path/Path';
 import { Stem } from 'query/path/Stem';
 import { ElementFixture } from './ElementFixture';
@@ -19,7 +18,7 @@ describe(`StemQueryContext`, () => {
           ef.newNodeElement('Item', 'item'),
         ]),
         null,
-        new OrderByQueries([]),
+        [],
         null,
         []
       ),
@@ -49,7 +48,7 @@ describe(`StemQueryContext`, () => {
           ef.newNodeLabelElement('(:Item)'),
         ]),
         null,
-        new OrderByQueries([]),
+        [],
         null,
         []
       ),
@@ -79,7 +78,7 @@ describe(`StemQueryContext`, () => {
           ef.newNodeElement('Store', 'store'),
         ]),
         null,
-        new OrderByQueries([]),
+        [],
         null,
         []
       ),
@@ -109,7 +108,7 @@ describe(`StemQueryContext`, () => {
           ef.newNodeElement('Item', 'item'),
         ]),
         null,
-        new OrderByQueries([]),
+        [],
         null,
         []
       ),

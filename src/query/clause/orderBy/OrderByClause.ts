@@ -1,4 +1,4 @@
-import { OrderByLiteral } from '../literal/OrderByLiteral';
+import { OrderByLiteral } from '../../literal/OrderByLiteral';
 
 export class OrderByClause {
   private readonly literals: OrderByLiteral[];

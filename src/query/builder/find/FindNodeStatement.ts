@@ -1,6 +1,6 @@
 import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
-import { OrderByClause } from '../../clause/OrderByClause';
+import { OrderByClause } from '../../clause/orderBy/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
 import { WhereClause } from '../../clause/WhereClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
