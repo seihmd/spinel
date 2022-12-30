@@ -1,8 +1,8 @@
 import { NodeEntity } from 'decorator/class/NodeEntity';
+import { RelationshipEntity } from 'decorator/class/RelationshipEntity';
 import { Primary } from 'decorator/property/Primary';
+import { QueryDriver } from 'query/driver/QueryDriver';
 import 'reflect-metadata';
-import { RelationshipEntity } from '../../../src/decorator/class/RelationshipEntity';
-import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
@@ -86,9 +86,6 @@ describe('Detach nodes', () => {
     const item = new Item(id.get('item'));
     const query = qd.builder().detach(shop, item, 'HAS');
 
-    expect(query.getStatement()).toBe(
-      'MATCH (n0:Shop)-[r2:HAS]->(n4:Item) DELETE r2'
-    );
     await query.run();
     await assertDetached();
   });
@@ -98,9 +95,6 @@ describe('Detach nodes', () => {
     const item = new Item(id.get('item'));
     const query = qd.builder().detach(item, shop, Has, '<-');
 
-    expect(query.getStatement()).toBe(
-      'MATCH (n0:Item)<-[r2:HAS]-(n4:Shop) DELETE r2'
-    );
     await query.run();
     await assertDetached();
   });
