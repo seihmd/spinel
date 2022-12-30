@@ -80,7 +80,7 @@ export class DeleteQueryBuilder {
     }
 
     throw new Error(
-      `Constructor of instance: "${cstr.name}" is not registered as NodeEntity or RelationshipEntity`
+      `"${cstr.name}" is not registered as NodeEntity or RelationshipEntity`
     );
   }
 }

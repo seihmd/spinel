@@ -31,12 +31,12 @@ export class StemQueryContext {
   getOrderByLiterals(): OrderByLiteral[] {
     return this.stem
       .getOrderByStatements()
-      .map((s) =>
-        OrderByLiteral.new(
-          s.getStatement(),
-          s.getSort(),
-          VariableMap.withPath(this.stem.getPath())
-        )
+      .map(
+        (s) =>
+          new OrderByLiteral(
+            s.getStatement(VariableMap.withPath(this.stem.getPath())),
+            s.getSort()
+          )
       );
   }
 

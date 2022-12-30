@@ -1,4 +1,4 @@
-import { Driver, Result } from 'neo4j-driver';
+import { Driver, QueryResult } from 'neo4j-driver';
 import { SessionProviderInterface } from './SessionProviderInterface';
 
 export class SessionProvider implements SessionProviderInterface {
@@ -8,7 +8,7 @@ export class SessionProvider implements SessionProviderInterface {
     this.driver = driver;
   }
 
-  async run(statement: string, parameters: unknown): Promise<Result> {
+  async run(statement: string, parameters: unknown): Promise<QueryResult> {
     const session = this.driver.session();
     const result = await session.run(statement, parameters);
     await session.close();

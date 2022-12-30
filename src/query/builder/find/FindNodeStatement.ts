@@ -1,3 +1,4 @@
+import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/orderBy/OrderByClause';
@@ -12,7 +13,7 @@ export class FindNodeStatement extends AbstractStatement {
     private readonly nodeLiteral: NodeLiteral,
     private readonly whereStatement: string | null,
     private readonly orderByLiterals: OrderByLiteral[],
-    private readonly limitClause: LimitClause | null
+    private readonly limit: PositiveInt | null
   ) {
     super();
   }
@@ -48,11 +49,11 @@ export class FindNodeStatement extends AbstractStatement {
   }
 
   private getLimitClause(): string {
-    if (this.limitClause === null) {
+    if (this.limit === null) {
       return '';
     }
 
-    return ` ${this.limitClause.get()}`;
+    return ` ${new LimitClause(this.limit).get()}`;
   }
 
   private getReturnClause(): string {

@@ -3,7 +3,6 @@ import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { LimitClause } from '../../clause/LimitClause';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
@@ -75,7 +74,7 @@ export abstract class AbstractFindQueryBuilder<
     return this;
   }
 
-  buildQuery(parameters: Record<string, unknown>): Q {
+  buildQuery(parameters: Record<string, unknown> = {}): Q {
     const graphMetadata = this.metadataStore.findGraphMetadata(this.cstr);
     if (graphMetadata) {
       const stem = StemBuilder.new().build(
@@ -107,15 +106,14 @@ export abstract class AbstractFindQueryBuilder<
         new ElementContext(new BranchIndexes([]), 0, false)
       );
 
+      const variableMap = VariableMap.withNodeElement(nodeElement);
       return this.createQuery(
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.whereStatement?.assign(
-            VariableMap.withNodeElement(nodeElement)
-          ) ?? null,
-          this.getOrderByLiterals(VariableMap.withNodeElement(nodeElement)),
-          this.limitValue ? new LimitClause(this.limitValue) : null
+          this.whereStatement?.assign(variableMap) ?? null,
+          this.getOrderByLiterals(variableMap),
+          this.limitValue
         ),
         ParameterBag.new(parameters),
         this.cstr
@@ -138,8 +136,8 @@ export abstract class AbstractFindQueryBuilder<
   ): Q;
 
   private getOrderByLiterals(variableMap: VariableMap): OrderByLiteral[] {
-    return this.orderByStatements.map((s) =>
-      OrderByLiteral.new(s.getStatement(), s.getSort(), variableMap)
+    return this.orderByStatements.map(
+      (s) => new OrderByLiteral(s.getStatement(variableMap), s.getSort())
     );
   }
 }

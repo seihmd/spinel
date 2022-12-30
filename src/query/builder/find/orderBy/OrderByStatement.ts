@@ -1,4 +1,6 @@
 import { Sort } from '../../../literal/OrderByLiteral';
+import { assignVariables } from '../../../literal/util/assignVariables';
+import { VariableMap } from '../../../literal/util/VariableMap';
 
 export class OrderByStatement {
   constructor(
@@ -6,11 +8,11 @@ export class OrderByStatement {
     private readonly sort: Sort
   ) {}
 
-  getStatement(): string {
-    return this.statement;
-  }
-
   getSort(): Sort {
     return this.sort;
+  }
+
+  getStatement(variableMap: VariableMap): string {
+    return assignVariables(this.statement, variableMap);
   }
 }
