@@ -1,11 +1,7 @@
 import { BranchIndex } from './BranchIndex';
 
 export class BranchIndexes {
-  private readonly branchIndexes: BranchIndex[];
-
-  constructor(indexes: BranchIndex[]) {
-    this.branchIndexes = indexes;
-  }
+  constructor(private readonly branchIndexes: BranchIndex[]) {}
 
   append(
     index: number,

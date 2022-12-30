@@ -1,5 +1,5 @@
 export { instantiate } from './api/api';
-export { getQueryDriver } from './api/driver';
+export { getQueryDriver } from './api/getQueryDriver';
 export * from './api/errors';
 
 export { Graph } from './decorator/class/Graph';

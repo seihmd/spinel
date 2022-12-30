@@ -1,4 +1,4 @@
-import { BranchFilter } from '../builder/where/BranchFilter';
+import { BranchFilter } from '../builder/find/where/BranchFilter';
 import { WhereClause } from '../clause/WhereClause';
 import { EntityElement } from '../element/Element';
 import { NodeLiteral } from '../literal/NodeLiteral';

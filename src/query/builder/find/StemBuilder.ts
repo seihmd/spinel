@@ -5,7 +5,6 @@ import { GraphFragmentMetadata } from '../../../metadata/schema/graph/GraphFragm
 import { GraphMetadata } from '../../../metadata/schema/graph/GraphMetadata';
 import { getMetadataStore } from '../../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { WhereStatement } from '../../clause/where/WhereStatement';
 import { BranchMaterialBuilder } from '../../meterial/branch/BranchMaterialBuilder';
 import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
 import { FragmentBranchMaterialBuilder } from '../../meterial/branch/FragmentBranchMaterialBuilder';
@@ -18,8 +17,9 @@ import { StemMaterialBuilder } from '../../meterial/stem/StemMaterialBuilder';
 import { TermElementBuilder } from '../../meterial/stem/TermElementBuilder';
 import { Branch } from '../../path/Branch';
 import { Stem } from '../../path/Stem';
-import { OrderByQueries } from '../orderBy/OrderByQueries';
-import { BranchFilters } from '../where/BranchFilters';
+import { OrderByStatement } from './orderBy/OrderByStatement';
+import { BranchFilters } from './where/BranchFilters';
+import { WhereStatement } from './where/WhereStatement';
 
 export class StemBuilder {
   static new(): StemBuilder {
@@ -52,7 +52,7 @@ export class StemBuilder {
     graphMetadata: GraphMetadata,
     whereStatement: WhereStatement | null,
     branchFilters: BranchFilters,
-    orderByQueries: OrderByQueries,
+    orderByStatements: OrderByStatement[],
     limit: PositiveInt | null,
     depth: Depth
   ): Stem {
@@ -61,7 +61,7 @@ export class StemBuilder {
     return new Stem(
       stemMaterial.getPath(),
       whereStatement,
-      orderByQueries,
+      orderByStatements,
       limit,
       this.buildBranches(
         graphMetadata,

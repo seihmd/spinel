@@ -31,16 +31,29 @@ export class DetachStatement extends AbstractStatement {
 
   protected build(): string {
     const matchPathClause = new MatchPathClause(
-      new PathLiteral(NodeLiteral.new(this.nodeElement1), [
-        new PathStepLiteral(
-          this.direction === LEFT ? LEFT : NONE,
-          this.relationshipElement
-            ? RelationshipLiteral.new(this.relationshipElement)
-            : new RelationshipLiteral('r', null),
-          this.direction === RIGHT ? RIGHT : NONE,
-          NodeLiteral.new(this.nodeElement2)
+      new PathLiteral(
+        NodeLiteral.new(
+          this.nodeElement1,
+          this.nodeElement1 instanceof NodeInstanceElement
+            ? this.nodeElement1.getPrimaries()
+            : null
         ),
-      ])
+        [
+          new PathStepLiteral(
+            this.direction === LEFT ? LEFT : NONE,
+            this.relationshipElement
+              ? RelationshipLiteral.new(this.relationshipElement)
+              : new RelationshipLiteral('r', null),
+            this.direction === RIGHT ? RIGHT : NONE,
+            NodeLiteral.new(
+              this.nodeElement2,
+              this.nodeElement2 instanceof NodeInstanceElement
+                ? this.nodeElement2.getPrimaries()
+                : null
+            )
+          ),
+        ]
+      )
     );
 
     const deleteClause = new DeleteClause(

@@ -30,8 +30,14 @@ export class StemQueryContext {
 
   getOrderByLiterals(): OrderByLiteral[] {
     return this.stem
-      .getOrderByQueries()
-      .getLiterals(VariableMap.withPath(this.stem.getPath()));
+      .getOrderByStatements()
+      .map(
+        (s) =>
+          new OrderByLiteral(
+            s.getStatement(VariableMap.withPath(this.stem.getPath())),
+            s.getSort()
+          )
+      );
   }
 
   getLimitClause(): LimitClause | null {

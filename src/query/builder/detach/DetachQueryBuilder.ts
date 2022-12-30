@@ -9,6 +9,7 @@ import {
   ClassConstructor,
 } from '../../../domain/type/ClassConstructor';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
+import { isConstructor } from '../../../util/isConstructor';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
@@ -21,28 +22,21 @@ import { DetachQuery } from './DetachQuery';
 import { DetachStatement } from './DetachStatement';
 
 export class DetachQueryBuilder {
-  private readonly sessionProvider: SessionProviderInterface;
-  private readonly metadataStore: MetadataStoreInterface;
-  private readonly node1: InstanceType<ClassConstructor<object>>;
-  private readonly node2: InstanceType<ClassConstructor<object>>;
-  private readonly relationship?: string | ClassConstructor<object>;
-  private readonly direction?: Direction;
-
   constructor(
-    sessionProvider: SessionProviderInterface,
-    metadataStore: MetadataStoreInterface,
-    node1: InstanceType<ClassConstructor<object>>,
-    node2: InstanceType<ClassConstructor<object>>,
-    relationship?: string | ClassConstructor<object>,
-    direction?: Direction
-  ) {
-    this.sessionProvider = sessionProvider;
-    this.metadataStore = metadataStore;
-    this.node1 = node1;
-    this.node2 = node2;
-    this.relationship = relationship;
-    this.direction = direction ?? '->';
-  }
+    private readonly sessionProvider: SessionProviderInterface,
+    private readonly metadataStore: MetadataStoreInterface,
+    private readonly node1:
+      | InstanceType<ClassConstructor<object>>
+      | ClassConstructor<object>,
+    private readonly node2:
+      | InstanceType<ClassConstructor<object>>
+      | ClassConstructor<object>,
+    private readonly relationship:
+      | string
+      | ClassConstructor<object>
+      | null = null,
+    private readonly direction: Direction = '->'
+  ) {}
 
   buildQuery(): DetachQuery {
     const parameterBag = new ParameterBag();
@@ -68,7 +62,7 @@ export class DetachQueryBuilder {
       new DetachStatement(
         nodeElement1,
         nodeElement2,
-        this.getRelationshipElement(this.relationship ?? null),
+        this.getRelationshipElement(this.relationship),
         this.direction ?? '->'
       ),
       parameterBag
@@ -76,12 +70,12 @@ export class DetachQueryBuilder {
   }
 
   private getNodeElement(
-    node: InstanceType<ClassConstructor<object>> | NodeLabel,
+    node: InstanceType<ClassConstructor<object>> | ClassConstructor<object>,
     index: number
   ): NodeInstanceElement | NodeLabelElement {
-    if (node instanceof NodeLabel) {
+    if (isConstructor(node)) {
       return new NodeLabelElement(
-        NodeLabelTerm.withNodeLabel(node),
+        NodeLabelTerm.withNodeLabel(new NodeLabel(node)),
         new ElementContext(new BranchIndexes([]), index, false)
       );
     }

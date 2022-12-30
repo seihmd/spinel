@@ -3,27 +3,25 @@ import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
-import { LimitClause } from '../../clause/LimitClause';
-import { WhereStatement } from '../../clause/where/WhereStatement';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
 import { NodeLiteral } from '../../literal/NodeLiteral';
-import { Sort } from '../../literal/OrderByLiteral';
+import { OrderByLiteral, Sort } from '../../literal/OrderByLiteral';
 import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
-import { BranchQueryContext } from '../match/BranchQueryContext';
-import { StemBuilder } from '../match/StemBuilder';
-import { StemQueryContext } from '../match/StemQueryContext';
-import { OrderByQueries } from '../orderBy/OrderByQueries';
-import { OrderByQuery } from '../orderBy/OrderByQuery';
-import { BranchFilter } from '../where/BranchFilter';
-import { BranchFilters } from '../where/BranchFilters';
+import { BranchQueryContext } from './BranchQueryContext';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 import { FindQuery } from './FindQuery';
+import { OrderByStatement } from './orderBy/OrderByStatement';
+import { StemBuilder } from './StemBuilder';
+import { StemQueryContext } from './StemQueryContext';
+import { BranchFilter } from './where/BranchFilter';
+import { BranchFilters } from './where/BranchFilters';
+import { WhereStatement } from './where/WhereStatement';
 
 export abstract class AbstractFindQueryBuilder<
   T,
@@ -31,7 +29,7 @@ export abstract class AbstractFindQueryBuilder<
 > {
   private whereStatement: WhereStatement | null = null;
   private branchFilters: BranchFilter[] = [];
-  private orderByClauses: [string, Sort][] = [];
+  private orderByStatements: OrderByStatement[] = [];
   private limitValue: PositiveInt | null = null;
   private depthValue: Depth = Depth.withDefault();
 
@@ -58,7 +56,7 @@ export abstract class AbstractFindQueryBuilder<
   }
 
   orderBy(clause: string, sort: Sort): AbstractFindQueryBuilder<T, Q> {
-    this.orderByClauses.push([clause, sort]);
+    this.orderByStatements.push(new OrderByStatement(clause, sort));
     return this;
   }
 
@@ -76,14 +74,14 @@ export abstract class AbstractFindQueryBuilder<
     return this;
   }
 
-  buildQuery(parameters: Record<string, unknown>): Q {
+  buildQuery(parameters: Record<string, unknown> = {}): Q {
     const graphMetadata = this.metadataStore.findGraphMetadata(this.cstr);
     if (graphMetadata) {
       const stem = StemBuilder.new().build(
         graphMetadata,
         this.whereStatement,
         new BranchFilters(this.branchFilters),
-        this.getOrderByQueries(),
+        this.orderByStatements,
         this.limitValue,
         this.depthValue
       );
@@ -108,17 +106,14 @@ export abstract class AbstractFindQueryBuilder<
         new ElementContext(new BranchIndexes([]), 0, false)
       );
 
+      const variableMap = VariableMap.withNodeElement(nodeElement);
       return this.createQuery(
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.whereStatement?.assign(
-            VariableMap.withNodeElement(nodeElement)
-          ) ?? null,
-          this.getOrderByQueries().getLiterals(
-            VariableMap.withNodeElement(nodeElement)
-          ),
-          this.limitValue ? new LimitClause(this.limitValue) : null
+          this.whereStatement?.assign(variableMap) ?? null,
+          this.getOrderByLiterals(variableMap),
+          this.limitValue
         ),
         ParameterBag.new(parameters),
         this.cstr
@@ -140,11 +135,9 @@ export abstract class AbstractFindQueryBuilder<
     cstr: ClassConstructor<T>
   ): Q;
 
-  private getOrderByQueries(): OrderByQueries {
-    return new OrderByQueries(
-      this.orderByClauses.map(
-        ([statement, sort]) => new OrderByQuery(statement, sort)
-      )
+  private getOrderByLiterals(variableMap: VariableMap): OrderByLiteral[] {
+    return this.orderByStatements.map(
+      (s) => new OrderByLiteral(s.getStatement(variableMap), s.getSort())
     );
   }
 }

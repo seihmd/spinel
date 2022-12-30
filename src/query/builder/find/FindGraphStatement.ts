@@ -1,12 +1,12 @@
 import { MatchPathClause } from '../../clause/MatchPathClause';
-import { OrderByClause } from '../../clause/OrderByClause';
+import { OrderByClause } from '../../clause/orderBy/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
 import { WhereClause } from '../../clause/WhereClause';
 import { MapEntryLiteral } from '../../literal/MapEntryLiteral';
 import { MapLiteral } from '../../literal/MapLiteral';
 import { AbstractStatement } from '../AbstractStatement';
-import { BranchQueryContext } from '../match/BranchQueryContext';
-import { StemQueryContext } from '../match/StemQueryContext';
+import { BranchQueryContext } from './BranchQueryContext';
+import { StemQueryContext } from './StemQueryContext';
 
 export class FindGraphStatement extends AbstractStatement {
   private stemQueryContext: StemQueryContext;

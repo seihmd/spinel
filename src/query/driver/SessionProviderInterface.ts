@@ -1,5 +1,5 @@
-import { Result } from 'neo4j-driver';
+import { QueryResult } from 'neo4j-driver';
 
 export interface SessionProviderInterface {
-  run(statement: string, parameters: unknown): Promise<Result>;
+  run(statement: string, parameters: unknown): Promise<QueryResult>;
 }

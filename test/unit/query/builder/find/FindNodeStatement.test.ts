@@ -2,7 +2,6 @@ import { NodeLabel } from 'domain/node/NodeLabel';
 import { NodeLiteral } from 'query/literal/NodeLiteral';
 import { PositiveInt } from '../../../../../src/domain/type/PositiveInt';
 import { FindNodeStatement } from '../../../../../src/query/builder/find/FindNodeStatement';
-import { LimitClause } from '../../../../../src/query/clause/LimitClause';
 
 describe(`FindNodeStatement`, () => {
   test('get', () => {
@@ -34,7 +33,7 @@ describe(`FindNodeStatement`, () => {
       new NodeLiteral('u', new NodeLabel('User'), null),
       'u.id = $id',
       [],
-      new LimitClause(new PositiveInt(3))
+      new PositiveInt(3)
     );
 
     expect(findNodeStatement.get()).toBe(

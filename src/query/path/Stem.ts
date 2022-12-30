@@ -1,6 +1,6 @@
 import { PositiveInt } from '../../domain/type/PositiveInt';
-import { OrderByQueries } from '../builder/orderBy/OrderByQueries';
-import { WhereStatement } from '../clause/where/WhereStatement';
+import { OrderByStatement } from '../builder/find/orderBy/OrderByStatement';
+import { WhereStatement } from '../builder/find/where/WhereStatement';
 import { AnyNodeElement, EntityElement } from '../element/Element';
 import { Branch } from './Branch';
 import { Path } from './Path';
@@ -10,7 +10,7 @@ export class Stem {
   constructor(
     private readonly path: Path,
     private readonly whereStatement: WhereStatement | null,
-    private readonly orderByQueries: OrderByQueries,
+    private readonly orderByStatements: OrderByStatement[],
     private readonly limit: PositiveInt | null,
     private readonly branches: Branch[]
   ) {}
@@ -39,8 +39,8 @@ export class Stem {
     return this.whereStatement;
   }
 
-  getOrderByQueries(): OrderByQueries {
-    return this.orderByQueries;
+  getOrderByStatements(): OrderByStatement[] {
+    return this.orderByStatements;
   }
 
   getLimit(): PositiveInt | null {

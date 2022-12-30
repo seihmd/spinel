@@ -1,4 +1,4 @@
-import { BranchQueryContext } from 'query/builder/match/BranchQueryContext';
+import { BranchQueryContext } from 'query/builder/find/BranchQueryContext';
 import { GraphBranchMaterial } from 'query/meterial/branch/GraphBranchMaterial';
 import { Branch } from 'query/path/Branch';
 import { Path } from 'query/path/Path';
