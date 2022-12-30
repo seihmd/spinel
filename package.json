@@ -31,7 +31,7 @@
   ],
   "keywords": [],
   "author": "seihmd",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.244",
