@@ -1,6 +1,6 @@
 import { PositiveInt } from '../../domain/type/PositiveInt';
 import { OrderByStatement } from '../builder/find/orderBy/OrderByStatement';
-import { WhereStatement } from '../clause/where/WhereStatement';
+import { WhereStatement } from '../builder/find/where/WhereStatement';
 import { AnyNodeElement, EntityElement } from '../element/Element';
 import { Branch } from './Branch';
 import { Path } from './Path';

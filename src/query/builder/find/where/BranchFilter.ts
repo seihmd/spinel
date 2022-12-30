@@ -1,4 +1,5 @@
-import { WhereStatement } from '../../clause/where/WhereStatement';
+import { BranchIndexes } from '../../../meterial/BranchIndexes';
+import { WhereStatement } from './WhereStatement';
 
 export class BranchFilter {
   private readonly whereStatement: WhereStatement;
@@ -7,8 +8,8 @@ export class BranchFilter {
     this.whereStatement = new WhereStatement(statement);
   }
 
-  matches(key: string): boolean {
-    return this.branch === key;
+  matches(branchIndexes: BranchIndexes): boolean {
+    return this.branch === branchIndexes.getGraphKeys().join('.');
   }
 
   getWhereStatement(): WhereStatement {

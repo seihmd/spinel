@@ -4,7 +4,6 @@ import { ClassConstructor } from '../../../domain/type/ClassConstructor';
 import { PositiveInt } from '../../../domain/type/PositiveInt';
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { LimitClause } from '../../clause/LimitClause';
-import { WhereStatement } from '../../clause/where/WhereStatement';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
@@ -14,8 +13,6 @@ import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
-import { BranchFilter } from '../where/BranchFilter';
-import { BranchFilters } from '../where/BranchFilters';
 import { BranchQueryContext } from './BranchQueryContext';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
@@ -23,6 +20,9 @@ import { FindQuery } from './FindQuery';
 import { OrderByStatement } from './orderBy/OrderByStatement';
 import { StemBuilder } from './StemBuilder';
 import { StemQueryContext } from './StemQueryContext';
+import { BranchFilter } from './where/BranchFilter';
+import { BranchFilters } from './where/BranchFilters';
+import { WhereStatement } from './where/WhereStatement';
 
 export abstract class AbstractFindQueryBuilder<
   T,
