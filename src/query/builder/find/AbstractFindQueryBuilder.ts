@@ -14,16 +14,16 @@ import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
-import { BranchQueryContext } from '../match/BranchQueryContext';
-import { StemBuilder } from '../match/StemBuilder';
-import { StemQueryContext } from '../match/StemQueryContext';
 import { OrderByQueries } from '../orderBy/OrderByQueries';
 import { OrderByQuery } from '../orderBy/OrderByQuery';
 import { BranchFilter } from '../where/BranchFilter';
 import { BranchFilters } from '../where/BranchFilters';
+import { BranchQueryContext } from './BranchQueryContext';
 import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 import { FindQuery } from './FindQuery';
+import { StemBuilder } from './StemBuilder';
+import { StemQueryContext } from './StemQueryContext';
 
 export abstract class AbstractFindQueryBuilder<
   T,

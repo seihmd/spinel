@@ -5,8 +5,8 @@ import { WhereClause } from '../../clause/WhereClause';
 import { MapEntryLiteral } from '../../literal/MapEntryLiteral';
 import { MapLiteral } from '../../literal/MapLiteral';
 import { AbstractStatement } from '../AbstractStatement';
-import { BranchQueryContext } from '../match/BranchQueryContext';
-import { StemQueryContext } from '../match/StemQueryContext';
+import { BranchQueryContext } from '../find/BranchQueryContext';
+import { StemQueryContext } from '../find/StemQueryContext';
 
 export class FindGraphStatement extends AbstractStatement {
   private stemQueryContext: StemQueryContext;

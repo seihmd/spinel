@@ -1,5 +1,5 @@
 import { Depth } from 'domain/graph/branch/Depth';
-import { StemQueryContext } from 'query/builder/match/StemQueryContext';
+import { StemQueryContext } from 'query/builder/find/StemQueryContext';
 import { OrderByQueries } from 'query/builder/orderBy/OrderByQueries';
 import { Path } from 'query/path/Path';
 import { Stem } from 'query/path/Stem';
