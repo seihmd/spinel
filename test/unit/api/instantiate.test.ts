@@ -1,3 +1,4 @@
+import { instantiate } from 'api/api';
 import {
   Graph,
   GraphBranch,
@@ -6,7 +7,6 @@ import {
   Primary,
   Property,
 } from '../../../src';
-import { instantiate } from '../../../src/api/api';
 
 describe('instantiate', () => {
   @NodeEntity()
@@ -34,7 +34,7 @@ describe('instantiate', () => {
     @GraphNode()
     private shop: Shop;
 
-    @GraphBranch(User, 'shop<-:IS_CUSTOMER-*')
+    @GraphBranch(User, 'shop<-[:IS_CUSTOMER]-.')
     private users: User[];
 
     constructor(shop: Shop, users: User[]) {
