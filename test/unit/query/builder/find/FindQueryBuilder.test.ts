@@ -1,7 +1,13 @@
 import { ClassConstructor } from 'class-transformer';
 import { QueryResult, Result } from 'neo4j-driver';
 import { instance, mock } from 'ts-mockito';
-import { Graph, GraphBranch, GraphNode, NodeEntity } from '../../../../../src';
+import {
+  Graph,
+  GraphBranch,
+  GraphNode,
+  NodeEntity,
+  Primary,
+} from '../../../../../src';
 import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStore';
 import { FindQueryBuilder } from '../../../../../src/query/builder/find/FindQueryBuilder';
 import { SessionProviderInterface } from '../../../../../src/query/driver/SessionProviderInterface';
@@ -15,6 +21,7 @@ class DummySessionProvider implements SessionProviderInterface {
 
 @NodeEntity()
 class User {
+  @Primary()
   private id: string;
 }
 

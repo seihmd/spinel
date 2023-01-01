@@ -5,6 +5,7 @@ import { BranchEndMetadata } from '../graph/BranchEndMetadata';
 import { GraphNodeMetadata } from '../graph/GraphNodeMetadata';
 import { GraphRelationshipMetadata } from '../graph/GraphRelationshipMetadata';
 import { Indexes } from '../index/Indexes';
+import { EntityEmbedMetadata } from './EntityEmbedMetadata';
 import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from './EntityPropertyMetadata';
 import { Properties } from './Properties';
@@ -50,15 +51,23 @@ export class NodeEntityMetadata implements BranchEndMetadata {
     return this.properties.getProperties();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  getGraphNodeMetadata(key: string): GraphNodeMetadata {
+  getEmbeds(): EntityEmbedMetadata[] {
+    return this.properties.getEmbeds();
+  }
+
+  getEmbedMetadata(key: string): EntityEmbedMetadata | null {
+    return (
+      this.getEmbeds().find((embedMetadata) => {
+        return embedMetadata.getKey() === key;
+      }) ?? null
+    );
+  }
+
+  getGraphNodeMetadata(): GraphNodeMetadata {
     throw new Error();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
+  getGraphRelationshipMetadata(): GraphRelationshipMetadata {
     throw new Error();
   }
 

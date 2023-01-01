@@ -10,24 +10,21 @@ import { PropertyType } from 'metadata/schema/entity/PropertyType';
 import { RelationshipEntityMetadata } from 'metadata/schema/entity/RelationshipEntityMetadata';
 import { Indexes } from 'metadata/schema/index/Indexes';
 import { MetadataStore } from 'metadata/store/MetadataStore';
+import { PropertiesNotDefinedError } from '../../../../src/metadata/schema/errors/PropertiesNotDefinedError';
 
 class RelationshipClass {}
 
 describe(`${MetadataStore.name} for ${RelationshipEntityMetadata.name}`, () => {
-  test('with no properties', () => {
+  test('when no properties, throw Error', () => {
     const m = new MetadataStore();
-    m.registerRelationship(RelationshipClass, new RelationshipType('HAS'), []);
 
-    const n = m.getRelationshipEntityMetadata(RelationshipClass);
-    expect(n).toStrictEqual(
-      new RelationshipEntityMetadata(
+    expect(() => {
+      m.registerRelationship(
         RelationshipClass,
         new RelationshipType('HAS'),
-        new Properties(),
-        new RelationshipConstraints([]),
-        new Indexes([])
-      )
-    );
+        []
+      );
+    }).toThrowError(PropertiesNotDefinedError.relationship(RelationshipClass));
   });
 
   test('with properties', () => {
