@@ -6,7 +6,7 @@ export function digUp(
   metadata: NodeEntityMetadata
 ): Record<string, unknown> {
   let preserved: Record<string, unknown> = {};
-  
+
   Object.entries(plain).forEach(([key, value]) => {
     if (!isRecord(value)) {
       preserved[key] = value;
