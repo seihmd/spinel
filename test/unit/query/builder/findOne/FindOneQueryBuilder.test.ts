@@ -1,12 +1,19 @@
 import { ClassConstructor } from 'class-transformer';
 import { instance, mock } from 'ts-mockito';
-import { Graph, GraphBranch, GraphNode, NodeEntity } from '../../../../../src';
+import {
+  Graph,
+  GraphBranch,
+  GraphNode,
+  NodeEntity,
+  Primary,
+} from '../../../../../src';
 import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStore';
 import { FindOneQueryBuilder } from '../../../../../src/query/builder/findOne/FindOneQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
 @NodeEntity()
 class User {
+  @Primary()
   private id: string;
 }
 
@@ -43,8 +50,8 @@ describe('FindOneQueryBuilder', () => {
     [
       newQb(Followers).filterBranch('followers', '.id IN $followerIds'),
       'MATCH (n0:User) ' +
-        'RETURN {user:n0{.*},followers:[(n0)<-[b0_r2:FOLLOWS]-(b0_n4:User) ' +
-        'WHERE b0_n4.id IN $followerIds|b0_n4{.*}]} AS _',
+      'RETURN {user:n0{.*},followers:[(n0)<-[b0_r2:FOLLOWS]-(b0_n4:User) ' +
+      'WHERE b0_n4.id IN $followerIds|b0_n4{.*}]} AS _',
     ],
   ] as [FindOneQueryBuilder<any>, string][];
 

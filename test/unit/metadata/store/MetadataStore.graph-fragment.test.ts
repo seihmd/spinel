@@ -18,29 +18,25 @@ import { GraphRelationshipMetadata } from 'metadata/schema/graph/GraphRelationsh
 import { GraphRelationshipPropertyType } from 'metadata/schema/graph/GraphRelationshipPropertyType';
 import { Indexes } from 'metadata/schema/index/Indexes';
 import { MetadataStore } from 'metadata/store/MetadataStore';
+import { NodePropertyExistenceConstraint } from '../../../../src/domain/constraint/NodePropertyExistenceConstraint';
+import { RelationshipPropertyExistenceConstraint } from '../../../../src/domain/constraint/RelationshipPropertyExistenceConstraint';
+import { UniquenessConstraint } from '../../../../src/domain/constraint/UniquenessConstraint';
+import { EntityPrimaryMetadata } from '../../../../src/metadata/schema/entity/EntityPrimaryMetadata';
+import { PrimaryType } from '../../../../src/metadata/schema/entity/PrimaryType';
+
+class NodeClass {}
+
+class RelationshipClass {}
 
 class GraphFragmentClass {}
 
 describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
-  test('with no properties', () => {
-    const m = new MetadataStore();
-    m.registerGraphFragment(GraphFragmentClass, '-formula');
-
-    expect(m.getGraphFragmentMetadata(GraphFragmentClass)).toStrictEqual(
-      new GraphFragmentMetadata(
-        GraphFragmentClass,
-        new FragmentPatternFormula('-formula'),
-        new GraphProperties()
-      )
-    );
-  });
-
   test('with properties', () => {
-    class NodeClass {}
-
-    class RelationshipClass {}
-
     const m = new MetadataStore();
+
+    m.setPrimary(NodeClass, new PrimaryType('p1', String), null, null);
+    m.setPrimary(RelationshipClass, new PrimaryType('p1', String), null, null);
+
     m.registerNode(NodeClass, new NodeLabel(NodeClass), [], [], []);
     m.registerRelationship(
       RelationshipClass,
@@ -65,17 +61,36 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
     m.registerGraphFragment(GraphFragmentClass, '-formula');
 
     const graphProperties = new GraphProperties();
+
+    const nodeProperties = new Properties();
+    nodeProperties.set(
+      new EntityPrimaryMetadata(new PrimaryType('p1', String), null, null)
+    );
     graphProperties.set(
       new GraphNodeMetadata(
         new GraphNodePropertyType('p1', NodeClass),
         new NodeEntityMetadata(
           NodeClass,
           new NodeLabel(NodeClass),
-          new Properties(),
-          new NodeConstraints([], [], []),
+          nodeProperties,
+          new NodeConstraints(
+            [],
+            [
+              new NodePropertyExistenceConstraint(
+                new NodeLabel('NodeClass'),
+                'p1'
+              ),
+            ],
+            [new UniquenessConstraint(new NodeLabel('NodeClass'), 'p1')]
+          ),
           new Indexes([])
         )
       )
+    );
+
+    const relationshipProperties = new Properties();
+    relationshipProperties.set(
+      new EntityPrimaryMetadata(new PrimaryType('p1', String), null, null)
     );
     graphProperties.set(
       new GraphRelationshipMetadata(
@@ -83,8 +98,13 @@ describe(`${MetadataStore.name} for ${GraphFragmentMetadata.name}`, () => {
         new RelationshipEntityMetadata(
           RelationshipClass,
           new RelationshipType(RelationshipClass),
-          new Properties(),
-          new RelationshipConstraints([]),
+          relationshipProperties,
+          new RelationshipConstraints([
+            new RelationshipPropertyExistenceConstraint(
+              new RelationshipType('RELATIONSHIP_CLASS'),
+              'p1'
+            ),
+          ]),
           new Indexes([])
         )
       )
