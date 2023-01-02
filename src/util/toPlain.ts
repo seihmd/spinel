@@ -30,5 +30,5 @@ export function toPlain(instance: object): Record<string, unknown> {
     return digUp(plain as Record<string, unknown>, graphMetadata);
   }
 
-  return plain;
+  throw new Error();
 }

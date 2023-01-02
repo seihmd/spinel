@@ -34,9 +34,19 @@ export class Properties {
   }
 
   getProperties(): EntityPropertyMetadata[] {
-    return [...this.map.values()].filter(
-      (propertyMetadata): propertyMetadata is EntityPropertyMetadata =>
-        propertyMetadata instanceof EntityPropertyMetadata
+    return [...this.map.values()].reduce(
+      (list: EntityPropertyMetadata[], propertyMetadata) => {
+        if (propertyMetadata instanceof EntityPropertyMetadata) {
+          return [...list, propertyMetadata];
+        }
+
+        if (propertyMetadata instanceof EntityEmbedMetadata) {
+          return [...list, ...propertyMetadata.getProperties()];
+        }
+
+        return list;
+      },
+      []
     );
   }
 
