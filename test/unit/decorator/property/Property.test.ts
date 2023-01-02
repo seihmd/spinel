@@ -1,22 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { Property } from 'decorator/property/Property';
-import {
-  injectMetadataStore,
-  MetadataStore,
-} from 'metadata/store/MetadataStore';
 import 'reflect-metadata';
-import { instance, mock } from 'ts-mockito';
 import { toPlain } from 'util/toPlain';
+import { NodeEntity } from '../../../../src';
 
 describe('Property', () => {
-  beforeEach(() => {
-    const metadataStore = mock(MetadataStore);
-    injectMetadataStore(instance(metadataStore));
-  });
-
   test.each([
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Property()
           name?: string;
@@ -25,6 +17,7 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Property({})
           name?: string;
@@ -33,6 +26,7 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Property({ alias: 'title' })
           name?: string;
@@ -41,6 +35,7 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Property({
             alias: 'hoge',
@@ -52,6 +47,7 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Property({
             alias: 'hoge',
@@ -66,6 +62,7 @@ describe('Property', () => {
   });
 
   test('class-transform', () => {
+    @NodeEntity()
     class NodeClass {
       @Property()
       name?: string;
@@ -83,6 +80,7 @@ describe('Property', () => {
   });
 
   test('aliased class-transform', () => {
+    @NodeEntity()
     class NodeClass {
       @Property({ alias: 'title' })
       name?: string;
