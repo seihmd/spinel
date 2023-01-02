@@ -6,7 +6,11 @@ import { PropertyType } from '../../metadata/schema/entity/PropertyType';
 
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 
-export function Embed(): PropertyDecorator {
+type EmbedOption = {
+  prefix: string;
+};
+
+export function Embed(option?: EmbedOption): PropertyDecorator {
   return function (target: Object, propertyKey: string | symbol) {
     const propertyType = PropertyType.new(
       new ReflectedType(target, propertyKey)
@@ -14,7 +18,8 @@ export function Embed(): PropertyDecorator {
 
     getMetadataStore().addEmbed(
       target.constructor as AnyClassConstructor,
-      propertyType
+      propertyType,
+      option?.prefix ?? ''
     );
 
     Type()(target, propertyKey);

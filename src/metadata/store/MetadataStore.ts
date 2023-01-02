@@ -99,15 +99,24 @@ export class MetadataStore implements MetadataStoreInterface {
     });
   }
 
-  addEmbed(cstr: AnyClassConstructor, propertyType: PropertyType): void {
+  addEmbed(
+    cstr: AnyClassConstructor,
+    propertyType: PropertyType,
+    prefix: string
+  ): void {
     this.propertiesMap.update(cstr, (properties) => {
       properties ??= new Properties();
+
+      const embeddableMetadata = this.getEmbeddableMetadata(
+        propertyType.getType() as AnyClassConstructor
+      );
+
       properties.set(
         new EntityEmbedMetadata(
           propertyType,
-          this.getEmbeddableMetadata(
-            propertyType.getType() as AnyClassConstructor
-          )
+          prefix === ''
+            ? embeddableMetadata
+            : embeddableMetadata.withPrefix(prefix)
         )
       );
 

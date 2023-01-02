@@ -20,4 +20,11 @@ export class EmbeddableMetadata {
   getProperties(): EntityPropertyMetadata[] {
     return this.properties.getProperties();
   }
+
+  withPrefix(prefix: string) {
+    return new EmbeddableMetadata(
+      this.cstr,
+      this.properties.withPrefix(prefix)
+    );
+  }
 }

@@ -32,7 +32,7 @@ function embedEntity(
     restored[embedMetadata.getKey()] ??= {};
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    restored[embedMetadata.getKey()][key] = value;
+    restored[embedMetadata.getKey()][embedMetadata.toKey(key)] = value;
   });
 
   return restored;

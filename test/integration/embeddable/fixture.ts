@@ -21,17 +21,31 @@ export class ID {
   private readonly id: string;
 }
 
+@Embeddable()
+export class ShopInfo {
+  @Property()
+  private readonly address: string;
+
+  @Property()
+  private readonly name: string;
+
+  constructor(name: string, address: string) {
+    this.name = name;
+    this.address = address;
+  }
+}
+
 @NodeEntity()
 export class Shop {
   @Embed()
   id: ID;
 
-  @Property()
-  name: string;
+  @Embed({ prefix: 'shop_' })
+  info: ShopInfo;
 
-  constructor(id: ID, name: string) {
+  constructor(id: ID, info: ShopInfo) {
     this.id = id;
-    this.name = name;
+    this.info = info;
   }
 }
 
