@@ -1,5 +1,13 @@
 import 'reflect-metadata';
-import { NodeEntity, Primary, Property } from '../../../../../src';
+import {
+  Graph,
+  GraphNode,
+  GraphRelationship,
+  NodeEntity,
+  Primary,
+  Property,
+  RelationshipEntity,
+} from '../../../../../src';
 import { Embeddable } from '../../../../../src/decorator/class/Embeddable';
 import { Embed } from '../../../../../src/decorator/property/Embed';
 import { embed } from '../../../../../src/metadata/schema/entity/embed';
@@ -20,7 +28,7 @@ class Embedded {
 }
 
 @NodeEntity()
-class Entity {
+class N {
   @Primary()
   private id: string;
 
@@ -33,15 +41,41 @@ class Entity {
   }
 }
 
+@RelationshipEntity()
+class R {
+  @Primary()
+  private id: string;
+
+  @Embed()
+  private embedded: Embedded;
+
+  constructor(id: string, embedded: Embedded) {
+    this.id = id;
+    this.embedded = embedded;
+  }
+}
+
+@Graph('n1-r->n2')
+class G {
+  @GraphNode()
+  private n1: N;
+
+  @GraphRelationship()
+  private r: R;
+
+  @GraphNode()
+  private n2: N;
+}
+
 describe('embed', () => {
-  test('embed properties', () => {
+  test('embed node properties', () => {
     const embedded = embed(
       {
         id: 'id',
         a: 'A',
         b: 1,
       },
-      getMetadataStore().getNodeEntityMetadata(Entity)
+      getMetadataStore().getNodeEntityMetadata(N)
     );
 
     expect(embedded).toStrictEqual({
@@ -49,6 +83,72 @@ describe('embed', () => {
       embedded: {
         a: 'A',
         b: 1,
+      },
+    });
+  });
+
+  test('embed relationship properties', () => {
+    const embedded = embed(
+      {
+        id: 'id',
+        a: 'A',
+        b: 1,
+      },
+      getMetadataStore().getRelationshipEntityMetadata(R)
+    );
+
+    expect(embedded).toStrictEqual({
+      id: 'id',
+      embedded: {
+        a: 'A',
+        b: 1,
+      },
+    });
+  });
+
+  test('embed graph properties', () => {
+    const embedded = embed(
+      {
+        n1: {
+          id: 'id',
+          a: 'A',
+          b: 1,
+        },
+        r: {
+          id: 'id',
+          a: 'A',
+          b: 1,
+        },
+        n2: {
+          id: 'id',
+          a: 'A',
+          b: 1,
+        },
+      },
+      getMetadataStore().getGraphMetadata(G)
+    );
+
+    expect(embedded).toStrictEqual({
+      n1: {
+        embedded: {
+          a: 'A',
+          b: 1,
+        },
+        id: 'id',
+      },
+      r: {
+        embedded: {
+          a: 'A',
+          b: 1,
+        },
+        id: 'id',
+      },
+      n2: {
+        embedded: {
+          a: 'A',
+          b: 1,
+        },
+        id: 'id',
       },
     });
   });
