@@ -37,6 +37,7 @@ import { GraphRelationshipMetadata } from '../schema/graph/GraphRelationshipMeta
 import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationshipPropertyType';
 import { Indexes } from '../schema/index/Indexes';
 import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
+import { Validator } from '../schema/validation/Validator';
 import { ClassMetadataMap } from './ClassMetadataMap';
 import { MetadataStoreInterface } from './MetadataStoreInterface';
 import { PropertyMetadataMap } from './PropertyMetadataMap';
@@ -127,16 +128,17 @@ export class MetadataStore implements MetadataStoreInterface {
       throw PropertiesNotDefinedError.node(cstr);
     }
 
-    this.nodeEntityMap.register(
+    const nodeEntityMetadata = new NodeEntityMetadata(
       cstr,
-      new NodeEntityMetadata(
-        cstr,
-        label,
-        properties,
-        NodeConstraints.new(key, unique, label, properties),
-        Indexes.new(label, indexes, properties)
-      )
+      label,
+      properties,
+      NodeConstraints.new(key, unique, label, properties),
+      Indexes.new(label, indexes, properties)
     );
+
+    Validator.entity().validate(nodeEntityMetadata);
+
+    this.nodeEntityMap.register(cstr, nodeEntityMetadata);
   }
 
   registerRelationship(
@@ -150,16 +152,17 @@ export class MetadataStore implements MetadataStoreInterface {
       throw PropertiesNotDefinedError.relationship(cstr);
     }
 
-    this.relationshipEntityMap.register(
+    const relationshipEntityMetadata = new RelationshipEntityMetadata(
       cstr,
-      new RelationshipEntityMetadata(
-        cstr,
-        type,
-        properties,
-        RelationshipConstraints.new(type, properties),
-        Indexes.new(type, indexes, properties)
-      )
+      type,
+      properties,
+      RelationshipConstraints.new(type, properties),
+      Indexes.new(type, indexes, properties)
     );
+
+    Validator.entity().validate(relationshipEntityMetadata);
+
+    this.relationshipEntityMap.register(cstr, relationshipEntityMetadata);
   }
 
   registerEmbeddable(cstr: AnyClassConstructor): void {
