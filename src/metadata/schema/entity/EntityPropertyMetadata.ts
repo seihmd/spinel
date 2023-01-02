@@ -1,24 +1,28 @@
+import { NothingTransformer } from '../transformation/transformer/NothingTransformer';
+import { TransformerInterface } from '../transformation/transformer/TransformerInterface';
 import { Alias } from './Alias';
 import { PropertyType } from './PropertyType';
-import { TransformerInterface } from '../transformation/transformer/TransformerInterface';
-import { NothingTransformer } from '../transformation/transformer/NothingTransformer';
 
 export class EntityPropertyMetadata {
-  private readonly propertyType: PropertyType;
-  private readonly transformer: TransformerInterface | null;
-  private readonly notNull: boolean;
-  private readonly alias: Alias | null;
+  private prefix = '';
 
   constructor(
-    propertyType: PropertyType,
-    alias: Alias | null,
-    transformer: TransformerInterface | null,
-    notNull: boolean
-  ) {
-    this.notNull = notNull;
-    this.propertyType = propertyType;
-    this.alias = alias;
-    this.transformer = transformer;
+    private readonly propertyType: PropertyType,
+    private readonly alias: Alias | null,
+    private readonly transformer: TransformerInterface | null,
+    private readonly notNull: boolean
+  ) {}
+
+  withPrefix(prefix: string): EntityPropertyMetadata {
+    const prefixed = new EntityPropertyMetadata(
+      this.propertyType,
+      this.alias,
+      this.transformer,
+      this.notNull
+    );
+    prefixed.prefix = prefix;
+
+    return prefixed;
   }
 
   getKey(): string {
@@ -27,10 +31,10 @@ export class EntityPropertyMetadata {
 
   getNeo4jKey(): string {
     if (this.alias) {
-      return this.alias.get();
+      return this.prefix + this.alias.get();
     }
 
-    return this.getKey();
+    return this.prefix + this.getKey();
   }
 
   getType(): unknown {

@@ -72,4 +72,16 @@ export class Properties {
     }
     return metadata.getNeo4jKey();
   }
+
+  withPrefix(prefix: string): Properties {
+    const prefixed = new Properties();
+    Array.from(this.map.values()).map((metadata) => {
+      if (metadata instanceof EntityEmbedMetadata) {
+        throw new Error();
+      }
+      prefixed.set(metadata.withPrefix(prefix));
+    });
+
+    return prefixed;
+  }
 }

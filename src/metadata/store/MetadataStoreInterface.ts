@@ -26,7 +26,11 @@ export interface MetadataStoreInterface {
     transformer: TransformerInterface | null
   ): void;
 
-  addEmbed(cstr: AnyClassConstructor, propertyType: PropertyType): void;
+  addEmbed(
+    cstr: AnyClassConstructor,
+    propertyType: PropertyType,
+    prefix: string
+  ): void;
 
   addProperty(
     cstr: AnyClassConstructor,

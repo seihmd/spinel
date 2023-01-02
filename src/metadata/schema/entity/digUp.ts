@@ -29,7 +29,16 @@ function digUpEntity(
     }
     const e = metadata.getEmbedMetadata(key);
     if (e) {
-      preserved = { ...preserved, ...value };
+      preserved = {
+        ...preserved,
+        ...Object.entries(value).reduce(
+          (prefixed: Record<string, unknown>, [k, v]) => {
+            prefixed[e.toNeo4jKey(k)] = v;
+            return prefixed;
+          },
+          {}
+        ),
+      };
     } else {
       preserved[key] = value;
     }

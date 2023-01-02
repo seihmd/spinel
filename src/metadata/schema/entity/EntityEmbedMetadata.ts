@@ -36,7 +36,37 @@ export class EntityEmbedMetadata {
       this.embeddableMetadata.getPrimary(),
       ...this.embeddableMetadata.getProperties(),
     ].some((m) => {
-      return m?.getKey() === key;
+      return m?.getNeo4jKey() === key;
     });
+  }
+
+  toKey(neo4jKey: string) {
+    const m = [
+      this.embeddableMetadata.getPrimary(),
+      ...this.embeddableMetadata.getProperties(),
+    ].find((m) => {
+      return m?.getNeo4jKey() === neo4jKey;
+    });
+
+    if (!m) {
+      throw new Error();
+    }
+
+    return m.getKey();
+  }
+
+  toNeo4jKey(appKey: string) {
+    const m = [
+      this.embeddableMetadata.getPrimary(),
+      ...this.embeddableMetadata.getProperties(),
+    ].find((m) => {
+      return m?.getKey() === appKey;
+    });
+
+    if (!m) {
+      throw new Error();
+    }
+
+    return m.getNeo4jKey();
   }
 }

@@ -20,11 +20,6 @@ class Embedded {
 
   @Property()
   private b: number;
-
-  constructor(a: string, b: number) {
-    this.a = a;
-    this.b = b;
-  }
 }
 
 @NodeEntity()
@@ -35,10 +30,8 @@ class N {
   @Embed()
   private embedded: Embedded;
 
-  constructor(id: string, embedded: Embedded) {
-    this.id = id;
-    this.embedded = embedded;
-  }
+  @Embed({ prefix: '_' })
+  private prefixed: Embedded;
 }
 
 @RelationshipEntity()
@@ -49,10 +42,8 @@ class R {
   @Embed()
   private embedded: Embedded;
 
-  constructor(id: string, embedded: Embedded) {
-    this.id = id;
-    this.embedded = embedded;
-  }
+  @Embed({ prefix: '_' })
+  private prefixed: Embedded;
 }
 
 @Graph('n1-r->n2')
@@ -76,6 +67,10 @@ describe('digUp', () => {
           a: 'A',
           b: 1,
         },
+        prefixed: {
+          a: 'AA',
+          b: 2,
+        },
       },
       getMetadataStore().getNodeEntityMetadata(N)
     );
@@ -84,6 +79,8 @@ describe('digUp', () => {
       id: 'id',
       a: 'A',
       b: 1,
+      _a: 'AA',
+      _b: 2,
     });
   });
 
@@ -95,6 +92,10 @@ describe('digUp', () => {
           a: 'A',
           b: 1,
         },
+        prefixed: {
+          a: 'AA',
+          b: 2,
+        },
       },
       getMetadataStore().getRelationshipEntityMetadata(R)
     );
@@ -103,6 +104,8 @@ describe('digUp', () => {
       id: 'id',
       a: 'A',
       b: 1,
+      _a: 'AA',
+      _b: 2,
     });
   });
 
@@ -114,6 +117,10 @@ describe('digUp', () => {
             a: 'A',
             b: 1,
           },
+          prefixed: {
+            a: 'AA',
+            b: 2,
+          },
           id: 'id',
         },
         r: {
@@ -121,12 +128,20 @@ describe('digUp', () => {
             a: 'A',
             b: 1,
           },
+          prefixed: {
+            a: 'AA',
+            b: 2,
+          },
           id: 'id',
         },
         n2: {
           embedded: {
             a: 'A',
             b: 1,
+          },
+          prefixed: {
+            a: 'AA',
+            b: 2,
           },
           id: 'id',
         },
@@ -136,19 +151,25 @@ describe('digUp', () => {
 
     expect(digged).toStrictEqual({
       n1: {
+        id: 'id',
         a: 'A',
         b: 1,
-        id: 'id',
+        _a: 'AA',
+        _b: 2,
       },
       r: {
+        id: 'id',
         a: 'A',
         b: 1,
-        id: 'id',
+        _a: 'AA',
+        _b: 2,
       },
       n2: {
+        id: 'id',
         a: 'A',
         b: 1,
-        id: 'id',
+        _a: 'AA',
+        _b: 2,
       },
     });
   });

@@ -1,21 +1,26 @@
+import { NothingTransformer } from '../transformation/transformer/NothingTransformer';
+import { TransformerInterface } from '../transformation/transformer/TransformerInterface';
 import { Alias } from './Alias';
 import { PrimaryType } from './PrimaryType';
-import { TransformerInterface } from '../transformation/transformer/TransformerInterface';
-import { NothingTransformer } from '../transformation/transformer/NothingTransformer';
 
 export class EntityPrimaryMetadata {
-  private readonly propertyType: PrimaryType;
-  private readonly transformer: TransformerInterface | null;
-  private readonly alias: Alias | null;
+  private prefix = '';
 
   constructor(
-    propertyType: PrimaryType,
-    alias: Alias | null,
-    transformer: TransformerInterface | null
-  ) {
-    this.propertyType = propertyType;
-    this.alias = alias;
-    this.transformer = transformer;
+    private readonly propertyType: PrimaryType,
+    private readonly alias: Alias | null,
+    private readonly transformer: TransformerInterface | null
+  ) {}
+
+  withPrefix(prefix: string): EntityPrimaryMetadata {
+    const prefixed = new EntityPrimaryMetadata(
+      this.propertyType,
+      this.alias,
+      this.transformer
+    );
+    prefixed.prefix = prefix;
+
+    return prefixed;
   }
 
   getKey(): string {
@@ -24,10 +29,10 @@ export class EntityPrimaryMetadata {
 
   getNeo4jKey(): string {
     if (this.alias) {
-      return this.alias.get();
+      return this.prefix + this.alias.get();
     }
 
-    return this.propertyType.getKey();
+    return this.prefix + this.propertyType.getKey();
   }
 
   getType(): typeof String | typeof Number {

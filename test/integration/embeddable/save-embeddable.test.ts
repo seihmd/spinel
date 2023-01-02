@@ -2,7 +2,15 @@ import 'reflect-metadata';
 import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { HasStock, ID, Item, ItemInfo, Shop, ShopItem } from './fixture';
+import {
+  HasStock,
+  ID,
+  Item,
+  ItemInfo,
+  Shop,
+  ShopInfo,
+  ShopItem,
+} from './fixture';
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
@@ -17,7 +25,10 @@ describe('Save having Embeddable', () => {
   });
 
   test('save node', async () => {
-    const shop = new Shop(new ID(id.get('shop')), 'shopName');
+    const shop = new Shop(
+      new ID(id.get('shop')),
+      new ShopInfo('shopName', 'address')
+    );
     const query = qd.builder().save(shop);
 
     expect(query.getStatement()).toBe('MERGE (n0:Shop{id:$n0.id}) SET n0=$n0');
@@ -27,13 +38,14 @@ describe('Save having Embeddable', () => {
     const savedValue = await neo4jFixture.findNode('Shop', id.get('shop'));
     expect(savedValue).toStrictEqual({
       id: id.get('shop'),
-      name: 'shopName',
+      shop_address: 'address',
+      shop_name: 'shopName',
     });
   });
 
   test('save graph', async () => {
     const shopItem = new ShopItem(
-      new Shop(new ID(id.get('shop')), 'ShopName'),
+      new Shop(new ID(id.get('shop')), new ShopInfo('shopName', 'address')),
       new HasStock(new ID(id.get('hasStock'))),
       new Item(new ID(id.get('item')), new ItemInfo(1, arrival))
     );

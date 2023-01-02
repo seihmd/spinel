@@ -2,7 +2,15 @@ import 'reflect-metadata';
 import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
-import { HasStock, ID, Item, ItemInfo, Shop, ShopItem } from './fixture';
+import {
+  HasStock,
+  ID,
+  Item,
+  ItemInfo,
+  Shop,
+  ShopInfo,
+  ShopItem,
+} from './fixture';
 
 const neo4jFixture = Neo4jFixture.new();
 const id = new IdFixture();
@@ -14,7 +22,8 @@ describe('Find having Embeddable', () => {
   beforeAll(async () => {
     const shop = await neo4jFixture.addNode('Shop', {
       id: id.get('shop'),
-      name: 'ShopName',
+      shop_name: 'ShopName',
+      shop_address: 'address',
     });
 
     const item = await neo4jFixture.addNode('Item', {
@@ -47,7 +56,9 @@ describe('Find having Embeddable', () => {
       })
       .run();
 
-    expect(shops).toStrictEqual([new Shop(new ID(id.get('shop')), 'ShopName')]);
+    expect(shops).toStrictEqual([
+      new Shop(new ID(id.get('shop')), new ShopInfo('ShopName', 'address')),
+    ]);
   });
 
   test('find graphs', async () => {
@@ -62,7 +73,7 @@ describe('Find having Embeddable', () => {
 
     expect(shops).toStrictEqual([
       new ShopItem(
-        new Shop(new ID(id.get('shop')), 'ShopName'),
+        new Shop(new ID(id.get('shop')), new ShopInfo('ShopName', 'address')),
         new HasStock(new ID(id.get('hasStock'))),
         new Item(new ID(id.get('item')), new ItemInfo(1, arrival))
       ),
