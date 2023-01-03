@@ -38,6 +38,11 @@
     "/.eslintrc.js",
     "/jest.config.js"
   ],
+  "release-it": {
+    "github": {
+      "release": true
+    }
+  },
   "author": "seihmd",
   "license": "MIT",
   "devDependencies": {
