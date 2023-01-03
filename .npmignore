@@ -4,7 +4,9 @@ jest.config.js
 tsconfig.json
 tsconfig.test.json
 
+src/**/*
+test/**/*
+.idea/**/*
 .github/**/*
 .husky/**/*
-test/**/*
-src/**/*
+coverage/**/*
