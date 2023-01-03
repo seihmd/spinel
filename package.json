@@ -2,6 +2,10 @@
   "name": "@seihmd/spinel",
   "version": "0.1.0",
   "description": "Decorator based OGM for Neo4j",
+  "homepage": "https://github.com/seihmd/spinel",
+  "licenses": [
+    "MIT"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "engines": {
