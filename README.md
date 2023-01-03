@@ -1,90 +1,364 @@
-# Project Title
+# Spinel
 
-One Paragraph of project description goes here
+Decorator based OGM for Neo4j.
 
-## Getting Started
+> Currently in beta version with several steps left before v1 release
+> - some additional features
+> - detailed documentation
+> - bug fixes
+> - quality implovement
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing
-purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+# Installing
 
 ```
-Give the example
+npm install @seihmd/spinel
 ```
 
-And repeat
+# Usage
 
-```
-until finished
-```
+## Define entities
 
-End with an example of getting some data out of the system or using it for a little demo
+```typescript
+// Define Node entity
+@NodeEntity()
+class User {
+  @Primary()
+  private id: string; // Entity must have one primary property
 
-## Running the tests
+  @Property()
+  private name: string;
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+  constructor(id: string, name: string) {
+    this.id = id;
+    this.name = name;
+  }
+}
 ```
 
-## Deployment
+```typescript
+// Define Relationship entity
+@RelationshipEntity()
+class Follows {
+  @Primary()
+  private id: string;
 
-Add additional notes about how to deploy this on a live system
+  constructor(id: string) {
+    this.id = id;
+  }
+}
+```
 
-## Built With
+## Define graphs
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+// TODO image
 
-## Contributing
+```typescript
+// Define Node-Relationship-Node graph
+@Graph('user<-follows-follower')
+class UserAndFollower {
+  @GraphNode()
+  private user: User;
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of
-conduct, and the process for submitting pull requests to us.
+  @GraphRelationship()
+  private follows: Follows;
 
-## Versioning
+  @GraphNode()
+  private follower: User;
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see
-the [tags on this repository](https://github.com/your/project/tags).
+  constructor(user: User, follows: Follows, follower: User) {
+    this.user = user;
+    this.follows = follows;
+    this.follower = follower;
+  }
+}
+```
 
-## Authors
+// TODO image
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+```typescript
+@Graph('user')
+class UserAndFollowers {
+  @GraphNode()
+  private user: User;
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+  @GraphBranch(User, 'user<-[:FOLLOWS]-.')
+  private followers: User[];
 
-## License
+  constructor(user: User, followers: User[]) {
+    this.user = user;
+    this.followers = followers;
+  }
+}
+```
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+// TODO image
 
-## Acknowledgments
+```typescript
+@GraphFragment('-[follows:FOLLOWS]->user')
+class Follower {
+  @GraphNode()
+  private user: User;
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+  constructor(user: User) {
+    this.user = user;
+  }
+}
+
+@Graph('user')
+class UserAndFollowers {
+  @GraphNode()
+  private user: User;
+
+  @GraphBranch(User, 'user')
+  private followers: Follower[];
+
+  constructor(user: User, followers: Follower[]) {
+    this.user = user;
+    this.followers = followers;
+  }
+}
+```
+
+## Querying
+
+### Get `QueryDriver`
+
+`QueryDriver` is the entry point for query execution.
+<br>
+There are three ways to create it.
+
+#### ⅰ. Setting by Environment Variables
+
+```typescript
+process.env.SPINEL_HOST = 'neo4j://localhost';
+process.env.SPINEL_USER = 'neo4j';
+process.env.SPINEL_PASSWORD = 'password';
+
+const qd = getQueryDriver();
+```
+
+#### ⅱ. Setting by option
+
+```typescript
+const qd = getQueryDriver({
+  host: 'neo4j://localhost',
+  user: 'neo4j',
+  password: 'password',
+});
+```
+
+#### ⅲ. Pass `neo4j.driver`
+
+```typescript
+const qd = getQueryDriver(
+  neo4j.driver('neo4j://localhost', neo4j.auth.basic('neo4j', 'pass'))
+);
+```
+
+### Find
+
+```typescript
+// Find entities
+const users = await qd
+  .find(User)
+  .where("user.id IN :userIds") // In WHERE statement, Use capitalCased Entity name
+  .orderBy("u.id", 'ASC')
+  .limit(2)
+  .buildQuery({
+    userIds: ['1', '2']
+  })
+  .run()   // User[]
+;
+
+// Find graphs
+const userAndFollowersList = await qd
+  .find(UserAndFollowers)
+  .where("user.id IN :userIds")
+  .orderBy("u.id", 'ASC')
+  .limit(2)
+  .buildQuery({
+    userIds: ['1', '2']
+  })
+  .run()   // UserAndFollowers[]
+;
+```
+
+### FindOne
+
+```typescript
+const query = await qd
+  .find(User)
+  .where("user.id = $userId")
+  .buildQuery({
+    userId: '1'
+  })
+  .run()  // User|null
+;
+```
+
+### Save
+
+```typescript
+const user = new User();
+// Save node entity
+await qd.save(user);
+
+// Save graph
+const userAndFollowers = new UserAndFollowers(user, [new User()]);
+await qd.save(userAndFollowers);
+```
+
+### Detach
+
+#### Detach between nodes
+
+```typescript
+// Detach any relationships having direction `user -> user2`.
+await qd.detach(user, user2);
+
+// Detach specified relationship having direction `user -> user2`.
+await qd.detach(user, user2, 'FOLLOWS');
+
+// Detach specified relationship having direction `user <- user2`.
+await qd.detach(user, user2, 'FOLLOWS', '<-');
+
+// Detach specified relationship regardless direction.
+await qd.detach(user, user2, 'FOLLOWS', '-');
+
+// Relationship constructor can also be passed.
+await qd.detach(user, user2, Follows);
+```
+
+### Delete
+
+#### Delete node
+
+```typescript
+await qd.delete(user);
+```
+
+#### Delete relationship and graph
+
+`.delete()` does not support Relationship and Graph.
+<br>
+Use `.detach()` or `.detachDelete()` instead.
+
+### Detach Delete
+
+```typescript
+// DETACH DELETE the node
+await qd.detachDelete(user);
+
+// DETACH DELETE entities included in the graph
+await qd.detachDelete(userAndFollowers);
+```
+
+## Transaction
+
+Use `.transactional()`.
+<br>
+Rollback is executed When callback throws an error.
+
+```typescript
+await qd.transactional(async (qd: QueryDriver) => {
+  const userAndFollowers = await qd
+    .findOne(UserAndFollowers)
+    .where('uhop.id=$userId')
+    .buildQuery({
+      userId: '1',
+    })
+    .run();
+
+  userAndFollowers.addFollower(new User());
+
+  await qd.save(userAndFollowers);
+});
+```
+
+## Manage Constraints and Indexes
+
+### Add constraints
+
+#### Unique node property constraints
+
+```typescript
+@NodeEntity({
+  unique: ['name']
+})
+class User {
+  @Primary()
+  private id: string;
+
+  @Property()
+  private name: string;
+}
+```
+
+#### Node/Relationship property existence constraints
+
+```typescript
+@NodeEntity()
+class User {
+  @Primary()
+  private id: string;
+
+  @Property({ notNull: true })
+  private name: string;
+}
+```
+
+#### Node key constraints
+
+```typescript
+@NodeEntity({
+  keys: [['name', 'address']]
+})
+class User {
+  @Primary()
+  private id: string;
+
+  @Property()
+  private name: string;
+
+  @Property()
+  private address: string;
+}
+```
+
+### Add Indexes
+
+Currentry supports btree, text and full-text index types.
+
+```typescript
+@NodeEntity({
+  indexes: [
+    {
+      type: 'btree',
+      on: ['name'],
+    },
+    {
+      name: 'index_IndexTestNode_arbitrary_name',
+      type: 'fulltext',
+      on: ['name', 'description'],
+    },
+  ],
+})
+class User {
+  @Primary()
+  private id: string;
+
+  @Property()
+  private name: string;
+
+  @Property()
+  private description: string;
+}
+```
+
+### Synchronize with database
+
+```typescript
+await qd.syncConstraints();
+```
+
+
