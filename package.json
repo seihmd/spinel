@@ -6,6 +6,11 @@
   "licenses": [
     "MIT"
   ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "ogm"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "engines": {
