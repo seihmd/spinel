@@ -50,7 +50,10 @@ class Follows {
 
 ## Define graphs
 
-// TODO image
+```mermaid
+graph TD
+    A(follower) -->|follows| B(user)
+```
 
 ```typescript
 // Define Node-Relationship-Node graph
@@ -73,7 +76,11 @@ class UserAndFollower {
 }
 ```
 
-// TODO image
+```mermaid
+graph TD
+    A(follower) -->|:FOLLOWS| B(user)
+    C(follower) -->|:FOLLOWS| B(user)
+```
 
 ```typescript
 @Graph('user')
@@ -91,11 +98,17 @@ class UserAndFollowers {
 }
 ```
 
-// TODO image
+```mermaid
+graph TD
+    A(:User) -->|:FOLLOWS| B(UserAndFollowers.user)
+    C(:User) -->|:FOLLOWS| B(UserAndFollowers.user)
+    A(:User) -->|:FOLLOWS| D(FollowedUser.user)
+    C(:User) -->|:FOLLOWS| D(FollowedUser.user)
+```
 
 ```typescript
-@GraphFragment('-[follows:FOLLOWS]->user')
-class Follower {
+@GraphFragment('-[:FOLLOWS]->user')
+class FollowedUser {
   @GraphNode()
   private user: User;
 
@@ -109,12 +122,12 @@ class UserAndFollowers {
   @GraphNode()
   private user: User;
 
-  @GraphBranch(User, 'user')
-  private followers: Follower[];
+  @GraphBranch(User, 'user<-[:FOLLOWS]-(:User)')
+  private usersFollowedBySame: FollowedUser[];
 
-  constructor(user: User, followers: Follower[]) {
+  constructor(user: User, usersFollowedBySame: FollowedUser[]) {
     this.user = user;
-    this.followers = followers;
+    this.usersFollowedBySame = usersFollowedBySame;
   }
 }
 ```
