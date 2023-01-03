@@ -1,9 +1,17 @@
 {
-  "name": "spinel",
-  "version": "0.0.1",
-  "description": "",
+  "name": "@seihmd/spinel",
+  "version": "0.1.4",
+  "description": "Decorator based OGM for Neo4j",
+  "homepage": "https://github.com/seihmd/spinel",
+  "licenses": [
+    "MIT"
+  ],
+  "keywords": [],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest --testMatch '<rootDir>/test/unit/**/*.test.ts'",
@@ -29,9 +37,8 @@
     "/.eslintrc.js",
     "/jest.config.js"
   ],
-  "keywords": [],
   "author": "seihmd",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.244",
