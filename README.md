@@ -140,7 +140,7 @@ class UserAndFollowers {
 <br>
 There are three ways to create it.
 
-#### ⅰ. Setting by Environment Variables
+#### a. Setting by Environment Variables
 
 ```typescript
 process.env.SPINEL_HOST = 'neo4j://localhost';
@@ -150,7 +150,7 @@ process.env.SPINEL_PASSWORD = 'password';
 const qd = getQueryDriver();
 ```
 
-#### ⅱ. Setting by option
+#### b. Setting by option
 
 ```typescript
 const qd = getQueryDriver({
@@ -160,7 +160,7 @@ const qd = getQueryDriver({
 });
 ```
 
-#### ⅲ. Pass `neo4j.driver`
+#### c. Pass `neo4j.driver`
 
 ```typescript
 const qd = getQueryDriver(
