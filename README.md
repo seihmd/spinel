@@ -132,40 +132,43 @@ class UserAndFollowers {
 }
 ```
 
-## Querying
+## Configure
 
-### Get `QueryDriver`
-
-`QueryDriver` is the entry point for query execution.
-<br>
-There are three ways to create it.
-
-#### a. Setting by Environment Variables
+Run configure() at the application entry point.
 
 ```typescript
-process.env.SPINEL_HOST = 'neo4j://localhost';
-process.env.SPINEL_USER = 'neo4j';
-process.env.SPINEL_PASSWORD = 'password';
+import { configure } from '@seihmd/spinel';
 
-const qd = getQueryDriver();
-```
-
-#### b. Setting by option
-
-```typescript
-const qd = getQueryDriver({
-  host: 'neo4j://localhost',
-  user: 'neo4j',
-  password: 'password',
+configure({
+  entities: [User, Follows]
 });
 ```
 
-#### c. Pass `neo4j.driver`
+By default, Neo4j host, user, and password are read from environment variables:
+
+- `SPINEL_HOST`
+- `SPINEL_USER`
+- `SPINEL_PASSWORD`
+
+Alternatively, the values can be set explicitly.
 
 ```typescript
-const qd = getQueryDriver(
-  neo4j.driver('neo4j://localhost', neo4j.auth.basic('neo4j', 'pass'))
-);
+configure({
+  host: 'neo4j://localhost',
+  user: 'neo4j',
+  password: 'pass',
+  entities: [User, Follows]
+});
+```
+
+## Querying
+
+### QueryDriver
+
+`QueryDriver` is the entry point for query execution.
+
+```typescript
+const qd = getQueryDriver();
 ```
 
 ### Find
