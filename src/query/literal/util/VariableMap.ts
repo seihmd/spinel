@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import camelCase from 'lodash.camelcase';
 import { NodeElement } from '../../element/NodeElement';
 import { BranchMaterialInterface } from '../../meterial/branch/BranchMaterialInterface';
 import { NodeBranchMaterial } from '../../meterial/branch/NodeBranchMaterial';

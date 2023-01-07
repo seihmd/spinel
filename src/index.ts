@@ -1,4 +1,5 @@
 export { instantiate } from './api/api';
+export { configure } from './api/configure';
 export { getQueryDriver } from './api/getQueryDriver';
 export * from './api/errors';
 
