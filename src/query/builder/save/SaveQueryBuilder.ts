@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import camelCase from 'lodash.camelcase';
 import { NodeKeyTerm } from '../../../domain/graph/pattern/term/NodeKeyTerm';
 import {
   AnyClassConstructor,
