@@ -10,7 +10,7 @@ export const getQueryDriver = (): QueryDriver => {
 function newDriver(): Driver {
   const config = readConfig();
   if (!config) {
-    throw new Error('Spinel configuration is not yet initialized.');
+    throw new Error('Spinel is not yet configured.');
   }
 
   return neo4j.driver(

@@ -1,22 +1,26 @@
-import * as process from 'process';
-import { getQueryDriver } from '../../../src';
+import { configure, getQueryDriver } from '../../../src';
+import { deleteConfig } from '../../../src/api/configure';
 
 describe('getQueryDriver', () => {
   afterEach(() => {
-    delete process.env.SPINEL_HOST;
-    delete process.env.SPINEL_USER;
-    delete process.env.SPINEL_PASSWORD;
+    deleteConfig();
   });
 
   test('create with setting', () => {
+    configure({
+      entities: [],
+      host: 'neo4j://localhost',
+      password: 'pass',
+      user: 'neo4j',
+    });
     expect(() => {
       getQueryDriver();
     }).not.toThrowError();
   });
 
-  test('if not yet initialized, throw Error', () => {
+  test('if not yet configured, throw Error', () => {
     expect(() => {
       getQueryDriver();
-    }).toThrowError('Not initialized.');
+    }).toThrowError('Spinel is not yet configured.');
   });
 });
