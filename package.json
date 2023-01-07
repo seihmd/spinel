@@ -1,6 +1,6 @@
 {
   "name": "@seihmd/spinel",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Decorator based OGM for Neo4j",
   "homepage": "https://github.com/seihmd/spinel",
   "licenses": [
