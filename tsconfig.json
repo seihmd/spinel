@@ -6,8 +6,8 @@
     "./src/**/*.test.ts"
   ],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es2021",
+    "module": "commonjs",
     "lib": [
       "esnext"
     ],
@@ -26,6 +26,6 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "./dist",
+    "outDir": "./dist"
   }
 }
