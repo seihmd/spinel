@@ -28,7 +28,7 @@ export class FindQuery<T> {
     );
 
     return result.records.map((record) => {
-      return toInstance(this.cstr, record.toObject()[this.statement.as()]);
+      return toInstance(this.cstr, record.toObject()[this.statement.as()]) as T;
     });
   }
 }

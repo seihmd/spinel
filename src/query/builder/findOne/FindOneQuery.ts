@@ -50,6 +50,6 @@ export class FindOneQuery<T> {
     return toInstance(
       this.cstr,
       result.records[0].toObject()[this.statement.as()]
-    );
+    ) as T;
   }
 }
