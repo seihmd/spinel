@@ -27,6 +27,7 @@ export class FindGraphStatement extends AbstractStatement {
       this.getWhereClause() +
       this.getReturnClause() +
       this.getOrderByClause() +
+      this.getSkipClause() +
       this.getLimitClause()
     );
   }
@@ -61,6 +62,15 @@ export class FindGraphStatement extends AbstractStatement {
     }
 
     return ` ${limitClause.get()}`;
+  }
+
+  private getSkipClause(): string {
+    const skipClause = this.stemQueryContext.getSkipClause();
+    if (skipClause === null) {
+      return '';
+    }
+
+    return ` ${skipClause.get()}`;
   }
 
   private getReturnClause(): string {

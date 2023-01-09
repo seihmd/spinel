@@ -54,6 +54,7 @@ export class StemBuilder {
     branchFilters: BranchFilters,
     orderByStatements: OrderByStatement[],
     limit: PositiveInt | null,
+    skip: PositiveInt | null,
     depth: Depth
   ): Stem {
     const stemMaterial = this.stemMaterialBuilder.build(graphMetadata);
@@ -63,6 +64,7 @@ export class StemBuilder {
       whereStatement,
       orderByStatements,
       limit,
+      skip,
       this.buildBranches(
         graphMetadata,
         stemMaterial,

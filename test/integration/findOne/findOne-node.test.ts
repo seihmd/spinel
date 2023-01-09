@@ -80,4 +80,20 @@ describe('FindOne node', () => {
 
     expect(shops).toStrictEqual(new Shop(id.get('shop1'), 'Shop1'));
   });
+
+  test('findOne with skip', async () => {
+    const shops = await qd
+      .builder()
+      .findOne(Shop)
+      .where('shop.id IN $shopIds')
+      .limit(1)
+      .skip(1)
+      .orderBy('shop.name', 'ASC')
+      .buildQuery({
+        shopIds: [id.get('shop1'), id.get('shop2')],
+      })
+      .run();
+
+    expect(shops).toStrictEqual(new Shop(id.get('shop2'), 'Shop2'));
+  });
 });
