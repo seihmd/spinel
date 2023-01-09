@@ -1,5 +1,6 @@
 import { Depth } from '../../../domain/graph/branch/Depth';
 import { LimitClause } from '../../clause/LimitClause';
+import { SkipClause } from '../../clause/SkipClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { PathLiteral } from '../../literal/PathLiteral';
@@ -47,6 +48,15 @@ export class StemQueryContext {
     }
 
     return new LimitClause(limit);
+  }
+
+  getSkipClause(): SkipClause | null {
+    const skip = this.stem.getSkip();
+    if (skip === null) {
+      return null;
+    }
+
+    return new SkipClause(skip);
   }
 
   getMapEntries(): [string, string][] {

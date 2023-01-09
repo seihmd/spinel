@@ -12,6 +12,7 @@ export class Stem {
     private readonly whereStatement: WhereStatement | null,
     private readonly orderByStatements: OrderByStatement[],
     private readonly limit: PositiveInt | null,
+    private readonly skip: PositiveInt | null,
     private readonly branches: Branch[]
   ) {}
 
@@ -45,5 +46,9 @@ export class Stem {
 
   getLimit(): PositiveInt | null {
     return this.limit;
+  }
+
+  getSkip(): PositiveInt | null {
+    return this.skip;
   }
 }

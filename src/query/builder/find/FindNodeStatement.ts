@@ -3,6 +3,7 @@ import { LimitClause } from '../../clause/LimitClause';
 import { MatchNodeClause } from '../../clause/MatchNodeClause';
 import { OrderByClause } from '../../clause/orderBy/OrderByClause';
 import { ReturnClause } from '../../clause/ReturnClause';
+import { SkipClause } from '../../clause/SkipClause';
 import { WhereClause } from '../../clause/WhereClause';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral } from '../../literal/OrderByLiteral';
@@ -13,7 +14,8 @@ export class FindNodeStatement extends AbstractStatement {
     private readonly nodeLiteral: NodeLiteral,
     private readonly whereStatement: string | null,
     private readonly orderByLiterals: OrderByLiteral[],
-    private readonly limit: PositiveInt | null
+    private readonly limit: PositiveInt | null,
+    private readonly skip: PositiveInt | null
   ) {
     super();
   }
@@ -24,6 +26,7 @@ export class FindNodeStatement extends AbstractStatement {
         this.getMatchClause() + this.getWhereClause() + this.getReturnClause()
       } AS ${this.as()}` +
       this.getOrderByClause() +
+      this.getSkipClause() +
       this.getLimitClause()
     );
   }
@@ -60,5 +63,13 @@ export class FindNodeStatement extends AbstractStatement {
     return new ReturnClause([
       `${this.nodeLiteral.getVariableName()}{.*}`,
     ]).get();
+  }
+
+  private getSkipClause(): string {
+    if (this.skip === null) {
+      return '';
+    }
+
+    return ` ${new SkipClause(this.skip).get()}`;
   }
 }
