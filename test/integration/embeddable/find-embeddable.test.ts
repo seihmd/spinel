@@ -10,6 +10,7 @@ import {
   Shop,
   ShopInfo,
   ShopItem,
+  ShopItems,
 } from './fixture';
 
 const neo4jFixture = Neo4jFixture.new();
@@ -61,21 +62,69 @@ describe('Find having Embeddable', () => {
     ]);
   });
 
-  test('find graphs', async () => {
+  test('find where', async () => {
     const shops = await qd
       .builder()
-      .find(ShopItem)
-      .where('shop.id = $shopId')
+      .find(Shop)
+      .where('shop.id = $shopId AND shop.info.address IS NOT NULL')
       .buildQuery({
         shopId: id.get('shop'),
       })
       .run();
 
     expect(shops).toStrictEqual([
+      new Shop(new ID(id.get('shop')), new ShopInfo('ShopName', 'address')),
+    ]);
+  });
+
+  test('find graphs', async () => {
+    const q = qd
+      .builder()
+      .find(ShopItem)
+      .where('shop.id = $shopId')
+      .buildQuery({
+        shopId: id.get('shop'),
+      });
+
+    expect(q.getStatement()).toBe(
+      'MATCH (n0:Shop)-[r2:HAS_STOCK]->(n4:Item) ' +
+        'WHERE n0.id = $shopId ' +
+        'RETURN {shop:n0{.*},hasStock:r2{.*},item:n4{.*}} AS _'
+    );
+
+    expect(await q.run()).toStrictEqual([
       new ShopItem(
         new Shop(new ID(id.get('shop')), new ShopInfo('ShopName', 'address')),
         new HasStock(new ID(id.get('hasStock'))),
         new Item(new ID(id.get('item')), new ItemInfo(1, arrival))
+      ),
+    ]);
+  });
+
+  test('find branched graphs', async () => {
+    const q = qd
+      .builder()
+      .find(ShopItems)
+      .where('shop.id = $shopId')
+      .filterBranch('items', '.info.arrival IS NOT NULL')
+      .buildQuery({
+        shopId: id.get('shop'),
+      });
+
+    expect(q.getStatement()).toBe(
+      '' +
+        'MATCH (n0:Shop) ' +
+        'WHERE n0.id = $shopId ' +
+        'RETURN {shop:n0{.*},' +
+        'items:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item) ' +
+        'WHERE b0_n4.arrival IS NOT NULL|b0_n4{.*}]} AS _'
+    );
+
+    // await q.run();
+    expect(await q.run()).toStrictEqual([
+      new ShopItems(
+        new Shop(new ID(id.get('shop')), new ShopInfo('ShopName', 'address')),
+        [new Item(new ID(id.get('item')), new ItemInfo(1, arrival))]
       ),
     ]);
   });

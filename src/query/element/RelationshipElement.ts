@@ -40,6 +40,13 @@ export class RelationshipElement implements EntityElementInterface {
     return `${this.getVariablePrefix()}r${this.context.getIndex()}`;
   }
 
+  getEntityMetadata(): RelationshipEntityMetadata {
+    if (this.graphRelationshipMetadata instanceof RelationshipEntityMetadata) {
+      return this.graphRelationshipMetadata;
+    }
+    return this.graphRelationshipMetadata.getEntityMetadata();
+  }
+
   private getVariablePrefix(): string {
     return new BranchIndexesLiteral(this.context.getBranchIndexes()).get();
   }

@@ -78,4 +78,12 @@ export class NodeEntityMetadata implements BranchEndMetadata {
   getIndexes(): Indexes {
     return this.indexes;
   }
+
+  toNeo4jKey(key: string): string {
+    return this.properties.toNeo4jKey(key);
+  }
+
+  toEmbeddedNeo4jKey(embedKey: string, propertyKey: string): string | null {
+    return this.getEmbedMetadata(embedKey)?.toNeo4jKey(propertyKey) ?? null;
+  }
 }

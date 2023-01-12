@@ -33,6 +33,13 @@ export class NodeElement implements EntityElementInterface {
     return this.graphNodeMetadata.getCstr();
   }
 
+  getEntityMetadata(): NodeEntityMetadata {
+    if (this.graphNodeMetadata instanceof NodeEntityMetadata) {
+      return this.graphNodeMetadata;
+    }
+    return this.graphNodeMetadata.getEntityMetadata();
+  }
+
   getVariableName(): string {
     return `${this.getVariablePrefix()}n${this.context.getIndex()}`;
   }

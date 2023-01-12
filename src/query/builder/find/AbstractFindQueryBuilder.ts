@@ -17,6 +17,7 @@ import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 import { FindQuery } from './FindQuery';
 import { OrderByStatement } from './orderBy/OrderByStatement';
+import { VariableSyntaxTranslator } from './statement/VariableSyntaxTranslator';
 import { StemBuilder } from './StemBuilder';
 import { StemQueryContext } from './StemQueryContext';
 import { BranchFilter } from './where/BranchFilter';
@@ -107,11 +108,13 @@ export abstract class AbstractFindQueryBuilder<
       );
 
       const variableMap = VariableMap.withNodeElement(nodeElement);
+      const variableSyntaxTranslator =
+        VariableSyntaxTranslator.withNodeElement(nodeElement);
       return this.createQuery(
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.whereStatement?.assign(variableMap) ?? null,
+          this.whereStatement?.translate(variableSyntaxTranslator) ?? null,
           this.getOrderByLiterals(variableMap),
           this.limitValue
         ),

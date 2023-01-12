@@ -7,7 +7,10 @@ import {
   GraphNode,
   NodeEntity,
   Primary,
+  Property,
 } from '../../../../../src';
+import { Embeddable } from '../../../../../src/decorator/class/Embeddable';
+import { Embed } from '../../../../../src/decorator/property/Embed';
 import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStore';
 import { FindQueryBuilder } from '../../../../../src/query/builder/find/FindQueryBuilder';
 import { SessionProviderInterface } from '../../../../../src/query/driver/SessionProviderInterface';
@@ -19,10 +22,28 @@ class DummySessionProvider implements SessionProviderInterface {
   }
 }
 
+@Embeddable()
+class Profile {
+  @Property()
+  address: string;
+
+  @Property({ alias: 'phone_number' })
+  tel: string;
+}
+
 @NodeEntity()
 class User {
   @Primary()
   private id: string;
+
+  @Property({ alias: 'user_name' })
+  private name: string;
+
+  @Embed()
+  private profile: Profile;
+
+  @Embed({ prefix: 'second_' })
+  private profile2: Profile;
 }
 
 @Graph('user')
@@ -48,6 +69,18 @@ describe('FindQueryBuilder', () => {
     [
       newQb(User).where('user.id = $id'),
       'MATCH (n0:User) WHERE n0.id = $id RETURN n0{.*} AS _',
+    ],
+    [
+      newQb(User).where('user.name = $name'),
+      'MATCH (n0:User) WHERE n0.user_name = $name RETURN n0{.*} AS _',
+    ],
+    [
+      newQb(User).where('user.profile.address = $address'),
+      'MATCH (n0:User) WHERE n0.address = $address RETURN n0{.*} AS _',
+    ],
+    [
+      newQb(User).where('user.profile2.tel = $tel'),
+      'MATCH (n0:User) WHERE n0.second_phone_number = $tel RETURN n0{.*} AS _',
     ],
     [
       newQb(User).orderBy('user.id', 'ASC'),

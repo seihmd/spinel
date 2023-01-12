@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import {
   Graph,
+  GraphBranch,
   GraphNode,
   GraphRelationship,
   NodeEntity,
@@ -102,5 +103,19 @@ export class ShopItem {
     this.shop = shop;
     this.hasStock = hasStock;
     this.item = item;
+  }
+}
+
+@Graph('shop')
+export class ShopItems {
+  @GraphNode()
+  private shop: Shop;
+
+  @GraphBranch(Item, 'shop-[:HAS_STOCK]->.')
+  private items: Item[];
+
+  constructor(shop: Shop, items: Item[]) {
+    this.shop = shop;
+    this.items = items;
   }
 }

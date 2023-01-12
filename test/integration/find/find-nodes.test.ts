@@ -9,8 +9,11 @@ import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 @NodeEntity()
 class Shop {
-  @Primary() id: string;
-  @Property() name: string;
+  @Primary()
+  id: string;
+
+  @Property({ alias: 'shop_name' })
+  name: string;
 
   constructor(id: string, name: string) {
     this.id = id;
