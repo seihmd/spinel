@@ -31,6 +31,7 @@ export abstract class AbstractFindQueryBuilder<
   private branchFilters: BranchFilter[] = [];
   private orderByStatements: OrderByStatement[] = [];
   private limitValue: PositiveInt | null = null;
+  private skipValue: PositiveInt | null = null;
   private depthValue: Depth = Depth.withDefault();
 
   constructor(
@@ -69,6 +70,15 @@ export abstract class AbstractFindQueryBuilder<
     return this;
   }
 
+  skip(value: number): AbstractFindQueryBuilder<T, Q> {
+    if (this.skipValue !== null) {
+      throw new Error('skip() can only be called once.');
+    }
+
+    this.skipValue = new PositiveInt(value);
+    return this;
+  }
+
   depth(value: number): AbstractFindQueryBuilder<T, Q> {
     this.depthValue = new Depth(value);
     return this;
@@ -83,6 +93,7 @@ export abstract class AbstractFindQueryBuilder<
         new BranchFilters(this.branchFilters),
         this.orderByStatements,
         this.limitValue,
+        this.skipValue,
         this.depthValue
       );
       const stemQueryContext = new StemQueryContext(stem, this.depthValue);
@@ -114,7 +125,8 @@ export abstract class AbstractFindQueryBuilder<
           NodeLiteral.new(nodeElement, null),
           this.whereStatement?.translate(variableSyntaxTranslator) ?? null,
           this.getOrderByLiterals(variableSyntaxTranslator),
-          this.limitValue
+          this.limitValue,
+          this.skipValue
         ),
         ParameterBag.new(parameters),
         this.cstr

@@ -89,4 +89,26 @@ describe('Find nodes', () => {
       expect(shops).toStrictEqual(expected);
     }
   );
+
+  test.each([
+    [0, [new Shop(id.get('shop1'), 'Shop1')]],
+    [1, [new Shop(id.get('shop2'), 'Shop2')]],
+  ] as [number, Shop[]][])(
+    'find with skip',
+    async (skip: number, expected: Shop[]) => {
+      const shops = await qd
+        .builder()
+        .find(Shop)
+        .where('shop.id IN $shopIds')
+        .orderBy('shop.name', 'ASC')
+        .limit(1)
+        .skip(skip)
+        .buildQuery({
+          shopIds: [id.get('shop1'), id.get('shop2')],
+        })
+        .run();
+
+      expect(shops).toStrictEqual(expected);
+    }
+  );
 });
