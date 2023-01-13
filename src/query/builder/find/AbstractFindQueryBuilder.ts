@@ -8,7 +8,6 @@ import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral, Sort } from '../../literal/OrderByLiteral';
-import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
@@ -107,7 +106,6 @@ export abstract class AbstractFindQueryBuilder<
         new ElementContext(new BranchIndexes([]), 0, false)
       );
 
-      const variableMap = VariableMap.withNodeElement(nodeElement);
       const variableSyntaxTranslator =
         VariableSyntaxTranslator.withNodeElement(nodeElement);
       return this.createQuery(
@@ -115,7 +113,7 @@ export abstract class AbstractFindQueryBuilder<
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
           this.whereStatement?.translate(variableSyntaxTranslator) ?? null,
-          this.getOrderByLiterals(variableMap),
+          this.getOrderByLiterals(variableSyntaxTranslator),
           this.limitValue
         ),
         ParameterBag.new(parameters),
@@ -138,9 +136,12 @@ export abstract class AbstractFindQueryBuilder<
     cstr: ClassConstructor<T>
   ): Q;
 
-  private getOrderByLiterals(variableMap: VariableMap): OrderByLiteral[] {
+  private getOrderByLiterals(
+    variableSyntaxTranslator: VariableSyntaxTranslator
+  ): OrderByLiteral[] {
     return this.orderByStatements.map(
-      (s) => new OrderByLiteral(s.getStatement(variableMap), s.getSort())
+      (s) =>
+        new OrderByLiteral(s.translate(variableSyntaxTranslator), s.getSort())
     );
   }
 }

@@ -4,7 +4,7 @@ import { VariableMap } from '../../../../../../src/query/literal/util/VariableMa
 describe('OrderByStatement', () => {
   test('getStatement', () => {
     expect(
-      new OrderByStatement('user.id', 'ASC').getStatement(
+      new OrderByStatement('user.id', 'ASC').translate(
         new VariableMap(new Map([['user', 'n']]))
       )
     ).toBe('n.id');

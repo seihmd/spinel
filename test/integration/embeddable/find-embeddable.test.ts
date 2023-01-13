@@ -107,6 +107,7 @@ describe('Find having Embeddable', () => {
       .find(ShopItems)
       .where('shop.id = $shopId')
       .filterBranch('items', '.info.arrival IS NOT NULL')
+      .orderBy('shop.info.address', 'ASC')
       .buildQuery({
         shopId: id.get('shop'),
       });
@@ -117,7 +118,8 @@ describe('Find having Embeddable', () => {
         'WHERE n0.id = $shopId ' +
         'RETURN {shop:n0{.*},' +
         'items:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item) ' +
-        'WHERE b0_n4.arrival IS NOT NULL|b0_n4{.*}]} AS _'
+        'WHERE b0_n4.arrival IS NOT NULL|b0_n4{.*}]} AS _ ' +
+        'ORDER BY n0.shop_address ASC'
     );
 
     // await q.run();

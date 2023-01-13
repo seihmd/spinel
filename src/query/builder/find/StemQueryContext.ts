@@ -4,7 +4,6 @@ import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral } from '../../literal/OrderByLiteral';
 import { PathLiteral } from '../../literal/PathLiteral';
 import { PathStepLiteral } from '../../literal/PathStepLiteral';
-import { VariableMap } from '../../literal/util/VariableMap';
 import { Stem } from '../../path/Stem';
 import { VariableSyntaxTranslator } from './statement/VariableSyntaxTranslator';
 
@@ -37,7 +36,7 @@ export class StemQueryContext {
       .map(
         (s) =>
           new OrderByLiteral(
-            s.getStatement(VariableMap.withPath(this.stem.getPath())),
+            s.translate(VariableSyntaxTranslator.withPath(this.stem.getPath())),
             s.getSort()
           )
       );
