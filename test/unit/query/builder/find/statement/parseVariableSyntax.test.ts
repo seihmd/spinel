@@ -24,7 +24,13 @@ describe('parseVariableSyntax', () => {
         ['@.shopItems.item', 'embed.property'],
       ],
     ],
-    ['.shop', [['@.shop', null]]],
+    [
+      '.shop',
+      [
+        ['@.shop', null],
+        ['@', 'shop'],
+      ],
+    ],
     ['shop.property', [['shop', 'property']]],
     ['shop.embed.property', [['shop', 'embed.property']]],
     ['shop', [['shop', null]]],

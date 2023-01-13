@@ -15,7 +15,10 @@ export function parseVariableSyntax(
 
   if (splitted.length === 2) {
     if (value.startsWith(GraphAlias)) {
-      return [[value, null]];
+      return [
+        [value, null],
+        [splitted[0], splitted[1]],
+      ];
     } else {
       return [[splitted[0], splitted[1]]];
     }
