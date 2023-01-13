@@ -1,3 +1,4 @@
+import { VariableSyntaxTranslator } from '../builder/find/statement/VariableSyntaxTranslator';
 import { BranchFilter } from '../builder/find/where/BranchFilter';
 import { WhereClause } from '../clause/WhereClause';
 import { EntityElement } from '../element/Element';
@@ -5,7 +6,6 @@ import { NodeLiteral } from '../literal/NodeLiteral';
 import { PathLiteral } from '../literal/PathLiteral';
 import { PathStepLiteral } from '../literal/PathStepLiteral';
 import { PatternComprehensionLiteral } from '../literal/PatternComprehensionLiteral';
-import { VariableMap } from '../literal/util/VariableMap';
 import { BranchMaterialInterface } from '../meterial/branch/BranchMaterialInterface';
 import { Path } from './Path';
 
@@ -59,15 +59,13 @@ export class Branch {
       return null;
     }
 
+    const variableSyntaxTranslator = VariableSyntaxTranslator.withPath(
+      this.branchMaterial.getPath(),
+      this.branchMaterial
+    );
+
     return new WhereClause(
-      this.branchFilter
-        .getWhereStatement()
-        .assign(
-          VariableMap.withPath(
-            this.branchMaterial.getPath(),
-            this.branchMaterial
-          )
-        )
+      this.branchFilter.getWhereStatement().translate(variableSyntaxTranslator)
     );
   }
 }

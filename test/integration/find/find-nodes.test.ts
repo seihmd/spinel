@@ -9,8 +9,11 @@ import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 @NodeEntity()
 class Shop {
-  @Primary() id: string;
-  @Property() name: string;
+  @Primary()
+  id: string;
+
+  @Property({ alias: 'shop_name' })
+  name: string;
 
   constructor(id: string, name: string) {
     this.id = id;
@@ -26,12 +29,12 @@ describe('Find nodes', () => {
   beforeAll(async () => {
     await neo4jFixture.addNode('Shop', {
       id: id.get('shop1'),
-      name: 'Shop1',
+      shop_name: 'Shop1',
     });
 
     await neo4jFixture.addNode('Shop', {
       id: id.get('shop2'),
-      name: 'Shop2',
+      shop_name: 'Shop2',
     });
   });
 

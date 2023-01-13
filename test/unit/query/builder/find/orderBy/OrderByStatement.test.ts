@@ -1,11 +1,11 @@
 import { OrderByStatement } from '../../../../../../src/query/builder/find/orderBy/OrderByStatement';
-import { VariableMap } from '../../../../../../src/query/literal/util/VariableMap';
+import { VariableSyntaxTranslator } from '../../../../../../src/query/builder/find/statement/VariableSyntaxTranslator';
 
 describe('OrderByStatement', () => {
   test('getStatement', () => {
     expect(
-      new OrderByStatement('user.id', 'ASC').getStatement(
-        new VariableMap(new Map([['user', 'n']]))
+      new OrderByStatement('user.id', 'ASC').translate(
+        new VariableSyntaxTranslator(new Map([['user', ['n', null]]]))
       )
     ).toBe('n.id');
   });

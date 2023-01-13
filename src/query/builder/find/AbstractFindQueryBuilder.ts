@@ -8,7 +8,6 @@ import { ElementContext } from '../../element/ElementContext';
 import { NodeElement } from '../../element/NodeElement';
 import { NodeLiteral } from '../../literal/NodeLiteral';
 import { OrderByLiteral, Sort } from '../../literal/OrderByLiteral';
-import { VariableMap } from '../../literal/util/VariableMap';
 import { BranchIndexes } from '../../meterial/BranchIndexes';
 import { ParameterBag } from '../../parameter/ParameterBag';
 import { FindOneQuery } from '../findOne/FindOneQuery';
@@ -17,6 +16,7 @@ import { FindGraphStatement } from './FindGraphStatement';
 import { FindNodeStatement } from './FindNodeStatement';
 import { FindQuery } from './FindQuery';
 import { OrderByStatement } from './orderBy/OrderByStatement';
+import { VariableSyntaxTranslator } from './statement/VariableSyntaxTranslator';
 import { StemBuilder } from './StemBuilder';
 import { StemQueryContext } from './StemQueryContext';
 import { BranchFilter } from './where/BranchFilter';
@@ -117,13 +117,14 @@ export abstract class AbstractFindQueryBuilder<
         new ElementContext(new BranchIndexes([]), 0, false)
       );
 
-      const variableMap = VariableMap.withNodeElement(nodeElement);
+      const variableSyntaxTranslator =
+        VariableSyntaxTranslator.withNodeElement(nodeElement);
       return this.createQuery(
         this.sessionProvider,
         new FindNodeStatement(
           NodeLiteral.new(nodeElement, null),
-          this.whereStatement?.assign(variableMap) ?? null,
-          this.getOrderByLiterals(variableMap),
+          this.whereStatement?.translate(variableSyntaxTranslator) ?? null,
+          this.getOrderByLiterals(variableSyntaxTranslator),
           this.limitValue,
           this.skipValue
         ),
@@ -147,9 +148,12 @@ export abstract class AbstractFindQueryBuilder<
     cstr: ClassConstructor<T>
   ): Q;
 
-  private getOrderByLiterals(variableMap: VariableMap): OrderByLiteral[] {
+  private getOrderByLiterals(
+    variableSyntaxTranslator: VariableSyntaxTranslator
+  ): OrderByLiteral[] {
     return this.orderByStatements.map(
-      (s) => new OrderByLiteral(s.getStatement(variableMap), s.getSort())
+      (s) =>
+        new OrderByLiteral(s.translate(variableSyntaxTranslator), s.getSort())
     );
   }
 }

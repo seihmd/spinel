@@ -1,6 +1,6 @@
 import { Sort } from '../../../literal/OrderByLiteral';
-import { assignVariables } from '../../../literal/util/assignVariables';
-import { VariableMap } from '../../../literal/util/VariableMap';
+import { translateStatement } from '../statement/translateStatement';
+import { VariableSyntaxTranslator } from '../statement/VariableSyntaxTranslator';
 
 export class OrderByStatement {
   constructor(
@@ -12,7 +12,7 @@ export class OrderByStatement {
     return this.sort;
   }
 
-  getStatement(variableMap: VariableMap): string {
-    return assignVariables(this.statement, variableMap);
+  translate(variableSyntaxTranslator: VariableSyntaxTranslator): string {
+    return translateStatement(this.statement, variableSyntaxTranslator);
   }
 }

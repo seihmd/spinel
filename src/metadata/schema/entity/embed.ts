@@ -64,6 +64,24 @@ function embedGraph(
       return;
     }
 
+    const branchEndMetadata = metadata
+      .findBranchMetadata(key)
+      ?.getBranchEndMetadata();
+
+    if (branchEndMetadata && branchEndMetadata instanceof NodeEntityMetadata) {
+      if (Array.isArray(value)) {
+        restored[key] = value.map((v) => {
+          return embedEntity(v as Record<string, unknown>, branchEndMetadata);
+        });
+      } else {
+        restored[key] = embedEntity(
+          value as Record<string, unknown>,
+          branchEndMetadata
+        );
+      }
+      return;
+    }
+
     restored[key] = value;
   });
 
