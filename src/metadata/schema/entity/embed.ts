@@ -1,3 +1,4 @@
+import { GraphFragmentMetadata } from '../graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../graph/GraphMetadata';
 import { NodeEntityMetadata } from './NodeEntityMetadata';
 import { RelationshipEntityMetadata } from './RelationshipEntityMetadata';
@@ -40,7 +41,7 @@ function embedEntity(
 
 function embedGraph(
   plain: Record<string, unknown>,
-  metadata: GraphMetadata
+  metadata: GraphMetadata | GraphFragmentMetadata
 ): Record<string, unknown> {
   const restored: Record<string, unknown> = {};
 
@@ -75,6 +76,20 @@ function embedGraph(
         });
       } else {
         restored[key] = embedEntity(
+          value as Record<string, unknown>,
+          branchEndMetadata
+        );
+      }
+      return;
+    }
+
+    if (branchEndMetadata) {
+      if (Array.isArray(value)) {
+        restored[key] = value.map((v) => {
+          return embedGraph(v as Record<string, unknown>, branchEndMetadata);
+        });
+      } else {
+        restored[key] = embedGraph(
           value as Record<string, unknown>,
           branchEndMetadata
         );

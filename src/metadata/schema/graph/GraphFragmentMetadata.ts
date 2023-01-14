@@ -1,10 +1,10 @@
-import { GraphProperties } from './GraphProperties';
-import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
-import { GraphNodeMetadata } from './GraphNodeMetadata';
-import { GraphRelationshipMetadata } from './GraphRelationshipMetadata';
 import { FragmentPatternFormula } from '../../../domain/graph/pattern/formula/FragmentPatternFormula';
-import { GraphBranchMetadata } from './GraphBranchMetadata';
+import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { BranchEndMetadata } from './BranchEndMetadata';
+import { GraphBranchMetadata } from './GraphBranchMetadata';
+import { GraphNodeMetadata } from './GraphNodeMetadata';
+import { GraphProperties } from './GraphProperties';
+import { GraphRelationshipMetadata } from './GraphRelationshipMetadata';
 
 export class GraphFragmentMetadata implements BranchEndMetadata {
   private readonly cstr: AnyClassConstructor;
@@ -35,6 +35,18 @@ export class GraphFragmentMetadata implements BranchEndMetadata {
 
   getGraphRelationshipMetadata(key: string): GraphRelationshipMetadata {
     return this.properties.getRelationshipMetadata(key);
+  }
+
+  findGraphNodeMetadata(key: string): GraphNodeMetadata | null {
+    return this.properties.findNodeMetadata(key);
+  }
+
+  findGraphRelationshipMetadata(key: string): GraphRelationshipMetadata | null {
+    return this.properties.findRelationshipMetadata(key);
+  }
+
+  findBranchMetadata(key: string): GraphBranchMetadata | null {
+    return this.properties.findBranchMetadata(key);
   }
 
   getFormula(): FragmentPatternFormula {

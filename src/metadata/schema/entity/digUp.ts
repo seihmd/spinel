@@ -1,4 +1,5 @@
 import { isRecord } from '../../../util/isRecord';
+import { GraphFragmentMetadata } from '../graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../graph/GraphMetadata';
 import { NodeEntityMetadata } from './NodeEntityMetadata';
 import { RelationshipEntityMetadata } from './RelationshipEntityMetadata';
@@ -49,7 +50,7 @@ function digUpEntity(
 
 function digUpGraph(
   plain: Record<string, unknown>,
-  metadata: GraphMetadata
+  metadata: GraphMetadata | GraphFragmentMetadata
 ): Record<string, unknown> {
   const restored: Record<string, unknown> = {};
 
@@ -70,6 +71,37 @@ function digUpGraph(
         value as Record<string, unknown>,
         graphRelationshipMetadata.getEntityMetadata()
       );
+      return;
+    }
+
+    const branchEndMetadata = metadata
+      .findBranchMetadata(key)
+      ?.getBranchEndMetadata();
+    if (branchEndMetadata && branchEndMetadata instanceof NodeEntityMetadata) {
+      if (Array.isArray(value)) {
+        restored[key] = value.map((v) =>
+          digUpEntity(v as Record<string, unknown>, branchEndMetadata)
+        );
+      } else {
+        restored[key] = digUpEntity(
+          value as Record<string, unknown>,
+          branchEndMetadata
+        );
+      }
+      return;
+    }
+
+    if (branchEndMetadata) {
+      if (Array.isArray(value)) {
+        restored[key] = value.map((v) =>
+          digUpGraph(v as Record<string, unknown>, branchEndMetadata)
+        );
+      } else {
+        restored[key] = digUpGraph(
+          value as Record<string, unknown>,
+          branchEndMetadata
+        );
+      }
       return;
     }
 
