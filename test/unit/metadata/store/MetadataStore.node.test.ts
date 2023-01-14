@@ -11,24 +11,17 @@ import { Properties } from 'metadata/schema/entity/Properties';
 import { PropertyType } from 'metadata/schema/entity/PropertyType';
 import { Indexes } from 'metadata/schema/index/Indexes';
 import { MetadataStore } from 'metadata/store/MetadataStore';
+import { PropertiesNotDefinedError } from '../../../../src/metadata/schema/errors/PropertiesNotDefinedError';
 
 class NodeClass {}
 
 describe(`${MetadataStore.name} for ${NodeEntityMetadata.name}`, () => {
-  test('with no properties', () => {
+  test('when no properties, throw Error', () => {
     const m = new MetadataStore();
-    m.registerNode(NodeClass, new NodeLabel('User'), [], [], []);
 
-    const n = m.getNodeEntityMetadata(NodeClass);
-    expect(n).toStrictEqual(
-      new NodeEntityMetadata(
-        NodeClass,
-        new NodeLabel('User'),
-        new Properties(),
-        new NodeConstraints([], [], []),
-        new Indexes([])
-      )
-    );
+    expect(() => {
+      m.registerNode(NodeClass, new NodeLabel('User'), [], [], []);
+    }).toThrowError(PropertiesNotDefinedError.node(NodeClass));
   });
 
   test('with properties', () => {

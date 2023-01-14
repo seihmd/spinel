@@ -1,11 +1,16 @@
+import { EntityEmbedMetadata } from './EntityEmbedMetadata';
 import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
 import { EntityPropertyMetadata } from './EntityPropertyMetadata';
 
-export class Properties {
-  private map: Map<string, EntityPrimaryMetadata | EntityPropertyMetadata> =
-    new Map();
+type PropertyMetadata =
+  | EntityPrimaryMetadata
+  | EntityPropertyMetadata
+  | EntityEmbedMetadata;
 
-  set(property: EntityPrimaryMetadata | EntityPropertyMetadata): void {
+export class Properties {
+  private map: Map<string, PropertyMetadata> = new Map();
+
+  set(property: PropertyMetadata): void {
     if (this.map.has(property.getKey())) {
       throw new Error(`Property key "${property.getKey()}" already set`);
     }
@@ -18,23 +23,65 @@ export class Properties {
       if (propertyMetadata instanceof EntityPrimaryMetadata) {
         return propertyMetadata;
       }
+      if (
+        propertyMetadata instanceof EntityEmbedMetadata &&
+        propertyMetadata.getPrimary()
+      ) {
+        return propertyMetadata.getPrimary();
+      }
     }
     return null;
   }
 
   getProperties(): EntityPropertyMetadata[] {
+    return [...this.map.values()].reduce(
+      (list: EntityPropertyMetadata[], propertyMetadata) => {
+        if (propertyMetadata instanceof EntityPropertyMetadata) {
+          return [...list, propertyMetadata];
+        }
+
+        if (propertyMetadata instanceof EntityEmbedMetadata) {
+          return [...list, ...propertyMetadata.getProperties()];
+        }
+
+        return list;
+      },
+      []
+    );
+  }
+
+  getEmbeds(): EntityEmbedMetadata[] {
     return [...this.map.values()].filter(
-      (propertyMetadata): propertyMetadata is EntityPropertyMetadata =>
-        propertyMetadata instanceof EntityPropertyMetadata
+      (propertyMetadata): propertyMetadata is EntityEmbedMetadata =>
+        propertyMetadata instanceof EntityEmbedMetadata
     );
   }
 
   toNeo4jKey(propertyKey: string): string {
-    for (const metadata of this.map.values()) {
-      if (metadata.getKey() === propertyKey) {
-        return metadata.getNeo4jKey();
+    const metadata = [this.getPrimary(), ...this.getProperties()].find(
+      (metadata) => {
+        if (metadata === null) {
+          return false;
+        }
+        return metadata.getKey() === propertyKey;
       }
+    );
+
+    if (!metadata) {
+      throw new Error(`Property key "${propertyKey}" not found`);
     }
-    throw new Error(`Property key "${propertyKey}" not found`);
+    return metadata.getNeo4jKey();
+  }
+
+  withPrefix(prefix: string): Properties {
+    const prefixed = new Properties();
+    Array.from(this.map.values()).map((metadata) => {
+      if (metadata instanceof EntityEmbedMetadata) {
+        throw new Error();
+      }
+      prefixed.set(metadata.withPrefix(prefix));
+    });
+
+    return prefixed;
   }
 }

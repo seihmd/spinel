@@ -1,10 +1,11 @@
-import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
-import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { RelationshipType } from '../../../domain/relationship/RelationshipType';
-import { EntityPropertyMetadata } from './EntityPropertyMetadata';
-import { Properties } from './Properties';
+import { AnyClassConstructor } from '../../../domain/type/ClassConstructor';
 import { RelationshipConstraints } from '../constraint/RelationshipConstraints';
 import { Indexes } from '../index/Indexes';
+import { EntityEmbedMetadata } from './EntityEmbedMetadata';
+import { EntityPrimaryMetadata } from './EntityPrimaryMetadata';
+import { EntityPropertyMetadata } from './EntityPropertyMetadata';
+import { Properties } from './Properties';
 
 export class RelationshipEntityMetadata {
   private readonly cstr: AnyClassConstructor;
@@ -47,11 +48,31 @@ export class RelationshipEntityMetadata {
     return this.properties.getProperties();
   }
 
+  getEmbeds(): EntityEmbedMetadata[] {
+    return this.properties.getEmbeds();
+  }
+
+  getEmbedMetadata(key: string): EntityEmbedMetadata | null {
+    return (
+      this.getEmbeds().find((embedMetadata) => {
+        return embedMetadata.getKey() === key;
+      }) ?? null
+    );
+  }
+
   getConstraints(): RelationshipConstraints {
     return this.constraints;
   }
 
   getIndexes(): Indexes {
     return this.indexes;
+  }
+
+  toNeo4jKey(key: string): string {
+    return this.properties.toNeo4jKey(key);
+  }
+
+  toEmbeddedNeo4jKey(embedKey: string, propertyKey: string): string | null {
+    return this.getEmbedMetadata(embedKey)?.toNeo4jKey(propertyKey) ?? null;
   }
 }

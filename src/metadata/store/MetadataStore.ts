@@ -1,45 +1,51 @@
-import { PropertyMetadataMap } from './PropertyMetadataMap';
-import { RelationshipEntity } from '../../decorator/class/RelationshipEntity';
+import { Embeddable } from '../../decorator/class/Embeddable';
+import { Graph } from '../../decorator/class/Graph';
+import { GraphFragment } from '../../decorator/class/GraphFragment';
+import { IndexOption } from '../../decorator/class/IndexOption';
 import { NodeEntity } from '../../decorator/class/NodeEntity';
-import { GraphProperties } from '../schema/graph/GraphProperties';
+import { RelationshipEntity } from '../../decorator/class/RelationshipEntity';
+import { ConstraintInterface } from '../../domain/constraint/ConstraintInterface';
+import { Depth } from '../../domain/graph/branch/Depth';
+import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
+import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
+import { GraphPatternFormula } from '../../domain/graph/pattern/formula/GraphPatternFormula';
+import { IndexInterface } from '../../domain/index/IndexInterface';
+import { NodeLabel } from '../../domain/node/NodeLabel';
+import { RelationshipType } from '../../domain/relationship/RelationshipType';
+import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
+import { NodeConstraints } from '../schema/constraint/NodeConstraints';
+import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
+import { Alias } from '../schema/entity/Alias';
+import { EmbeddableMetadata } from '../schema/entity/EmbeddableMetadata';
+import { EntityEmbedMetadata } from '../schema/entity/EntityEmbedMetadata';
+import { EntityPrimaryMetadata } from '../schema/entity/EntityPrimaryMetadata';
+import { EntityPropertyMetadata } from '../schema/entity/EntityPropertyMetadata';
+import { NodeEntityMetadata } from '../schema/entity/NodeEntityMetadata';
+import { PrimaryType } from '../schema/entity/PrimaryType';
+import { Properties } from '../schema/entity/Properties';
+import { PropertyType } from '../schema/entity/PropertyType';
+import { RelationshipEntityMetadata } from '../schema/entity/RelationshipEntityMetadata';
+import { PropertiesNotDefinedError } from '../schema/errors/PropertiesNotDefinedError';
+import { GraphBranchMetadata } from '../schema/graph/GraphBranchMetadata';
+import { GraphBranchPropertyType } from '../schema/graph/GraphBranchPropertyType';
+import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
 import { GraphMetadata } from '../schema/graph/GraphMetadata';
 import { GraphNodeMetadata } from '../schema/graph/GraphNodeMetadata';
 import { GraphNodePropertyType } from '../schema/graph/GraphNodePropertyType';
-import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationshipPropertyType';
+import { GraphProperties } from '../schema/graph/GraphProperties';
 import { GraphRelationshipMetadata } from '../schema/graph/GraphRelationshipMetadata';
-import { GraphBranchMetadata } from '../schema/graph/GraphBranchMetadata';
-import { GraphBranchPropertyType } from '../schema/graph/GraphBranchPropertyType';
-import { Depth } from '../../domain/graph/branch/Depth';
-import { ClassMetadataMap } from './ClassMetadataMap';
-import { GraphPatternFormula } from '../../domain/graph/pattern/formula/GraphPatternFormula';
-import { NodeLabel } from '../../domain/node/NodeLabel';
-import { MetadataStoreInterface } from './MetadataStoreInterface';
-import { EntityPrimaryMetadata } from '../schema/entity/EntityPrimaryMetadata';
-import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
-import { Alias } from '../schema/entity/Alias';
-import { RelationshipType } from '../../domain/relationship/RelationshipType';
-import { Properties } from '../schema/entity/Properties';
-import { PrimaryType } from '../schema/entity/PrimaryType';
-import { NodeEntityMetadata } from '../schema/entity/NodeEntityMetadata';
-import { RelationshipEntityMetadata } from '../schema/entity/RelationshipEntityMetadata';
-import { Graph } from '../../decorator/class/Graph';
-import { PropertyType } from '../schema/entity/PropertyType';
-import { EntityPropertyMetadata } from '../schema/entity/EntityPropertyMetadata';
-import { GraphFragmentMetadata } from '../schema/graph/GraphFragmentMetadata';
-import { GraphFragment } from '../../decorator/class/GraphFragment';
-import { FragmentPatternFormula } from '../../domain/graph/pattern/formula/FragmentPatternFormula';
-import { AssociationPatternFormula } from '../../domain/graph/pattern/formula/AssociationPatternFormula';
-import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
-import { NodeConstraints } from '../schema/constraint/NodeConstraints';
-import { RelationshipConstraints } from '../schema/constraint/RelationshipConstraints';
-import { IndexOption } from '../../decorator/class/IndexOption';
+import { GraphRelationshipPropertyType } from '../schema/graph/GraphRelationshipPropertyType';
 import { Indexes } from '../schema/index/Indexes';
-import { IndexInterface } from '../../domain/index/IndexInterface';
-import { ConstraintInterface } from '../../domain/constraint/ConstraintInterface';
+import { TransformerInterface } from '../schema/transformation/transformer/TransformerInterface';
+import { Validator } from '../schema/validation/Validator';
+import { ClassMetadataMap } from './ClassMetadataMap';
+import { MetadataStoreInterface } from './MetadataStoreInterface';
+import { PropertyMetadataMap } from './PropertyMetadataMap';
 
 export class MetadataStore implements MetadataStoreInterface {
   private propertiesMap: PropertyMetadataMap<Properties> =
     new PropertyMetadataMap();
+
   private nodeEntityMap: ClassMetadataMap<NodeEntityMetadata> =
     new ClassMetadataMap();
   private relationshipEntityMap: ClassMetadataMap<RelationshipEntityMetadata> =
@@ -49,6 +55,8 @@ export class MetadataStore implements MetadataStoreInterface {
     new PropertyMetadataMap();
   private graphMap: ClassMetadataMap<GraphMetadata> = new ClassMetadataMap();
   private graphFragmentMap: ClassMetadataMap<GraphFragmentMetadata> =
+    new ClassMetadataMap();
+  private embeddableMap: ClassMetadataMap<EmbeddableMetadata> =
     new ClassMetadataMap();
 
   setPrimary(
@@ -91,6 +99,31 @@ export class MetadataStore implements MetadataStoreInterface {
     });
   }
 
+  addEmbed(
+    cstr: AnyClassConstructor,
+    propertyType: PropertyType,
+    prefix: string
+  ): void {
+    this.propertiesMap.update(cstr, (properties) => {
+      properties ??= new Properties();
+
+      const embeddableMetadata = this.getEmbeddableMetadata(
+        propertyType.getType() as AnyClassConstructor
+      );
+
+      properties.set(
+        new EntityEmbedMetadata(
+          propertyType,
+          prefix === ''
+            ? embeddableMetadata
+            : embeddableMetadata.withPrefix(prefix)
+        )
+      );
+
+      return properties;
+    });
+  }
+
   registerNode(
     cstr: AnyClassConstructor,
     label: NodeLabel,
@@ -98,17 +131,23 @@ export class MetadataStore implements MetadataStoreInterface {
     key: string[][],
     indexes: IndexOption[]
   ): void {
-    const properties = this.propertiesMap.get(cstr) ?? new Properties();
-    this.nodeEntityMap.register(
+    const properties = this.propertiesMap.get(cstr);
+
+    if (!properties) {
+      throw PropertiesNotDefinedError.node(cstr);
+    }
+
+    const nodeEntityMetadata = new NodeEntityMetadata(
       cstr,
-      new NodeEntityMetadata(
-        cstr,
-        label,
-        properties,
-        NodeConstraints.new(key, unique, label, properties),
-        Indexes.new(label, indexes, properties)
-      )
+      label,
+      properties,
+      NodeConstraints.new(key, unique, label, properties),
+      Indexes.new(label, indexes, properties)
     );
+
+    Validator.entity().validate(nodeEntityMetadata);
+
+    this.nodeEntityMap.register(cstr, nodeEntityMetadata);
   }
 
   registerRelationship(
@@ -116,17 +155,33 @@ export class MetadataStore implements MetadataStoreInterface {
     type: RelationshipType,
     indexes: IndexOption[]
   ): void {
-    const properties = this.propertiesMap.get(cstr) ?? new Properties();
-    this.relationshipEntityMap.register(
+    const properties = this.propertiesMap.get(cstr);
+
+    if (!properties) {
+      throw PropertiesNotDefinedError.relationship(cstr);
+    }
+
+    const relationshipEntityMetadata = new RelationshipEntityMetadata(
       cstr,
-      new RelationshipEntityMetadata(
-        cstr,
-        type,
-        properties,
-        RelationshipConstraints.new(type, properties),
-        Indexes.new(type, indexes, properties)
-      )
+      type,
+      properties,
+      RelationshipConstraints.new(type, properties),
+      Indexes.new(type, indexes, properties)
     );
+
+    Validator.entity().validate(relationshipEntityMetadata);
+
+    this.relationshipEntityMap.register(cstr, relationshipEntityMetadata);
+  }
+
+  registerEmbeddable(cstr: AnyClassConstructor): void {
+    const properties = this.propertiesMap.get(cstr);
+
+    if (!properties) {
+      throw PropertiesNotDefinedError.embeddable(cstr);
+    }
+
+    this.embeddableMap.register(cstr, new EmbeddableMetadata(cstr, properties));
   }
 
   addGraphNode(
@@ -217,8 +272,21 @@ export class MetadataStore implements MetadataStoreInterface {
     return metadata;
   }
 
+  getEmbeddableMetadata(cstr: AnyClassConstructor): EmbeddableMetadata {
+    const metadata = this.findEmbeddableMetadata(cstr);
+    if (!metadata) {
+      throw new Error(`${cstr.name} is not registered as ${Embeddable.name}`);
+    }
+
+    return metadata;
+  }
+
   findNodeEntityMetadata(cstr: AnyClassConstructor): NodeEntityMetadata | null {
     return this.nodeEntityMap.get(cstr);
+  }
+
+  findEmbeddableMetadata(cstr: AnyClassConstructor): EmbeddableMetadata | null {
+    return this.embeddableMap.get(cstr);
   }
 
   getRelationshipEntityMetadata(

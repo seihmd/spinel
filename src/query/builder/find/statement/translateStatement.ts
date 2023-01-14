@@ -1,12 +1,11 @@
 import { isReservedKeyword } from './isReservedKeyword';
-import { VariableMap } from './VariableMap';
+import { VariableSyntaxTranslator } from './VariableSyntaxTranslator';
 
-export function assignVariables(
+export function translateStatement(
   statement: string,
-  variableMap: VariableMap
+  variableSyntaxTranslator: VariableSyntaxTranslator
 ): string {
   const splits = statement.split(/("[^"]*")|('[^']*')/);
-
   return splits
     .filter((value) => value !== undefined && value !== '')
     .map((value) => {
@@ -53,19 +52,10 @@ export function assignVariables(
             next === '=' ||
             /[\w:.]+/.test(next ?? '')
           ) {
-            const sp = value.split(':')[0];
-            const to = variableMap.get(sp);
-            if (to !== null) {
-              return value.replace(new RegExp(`^${sp}`), to);
-            }
-            const l = sp.lastIndexOf('.');
-            if (l === -1) {
-              return value;
-            }
-            const sp2 = sp.slice(0, l);
-            const to2 = variableMap.get(sp2);
-            if (to2 !== null) {
-              return value.replace(new RegExp(`^${sp2}`), to2);
+            const variableSyntax = value.split(':')[0];
+            const neo4jKey = variableSyntaxTranslator.translate(variableSyntax);
+            if (neo4jKey !== null) {
+              return neo4jKey;
             }
 
             return value;

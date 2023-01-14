@@ -1,22 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { Primary } from 'decorator/property/Primary';
-import {
-  injectMetadataStore,
-  MetadataStore,
-} from 'metadata/store/MetadataStore';
 import 'reflect-metadata';
-import { instance, mock } from 'ts-mockito';
 import { toPlain } from 'util/toPlain';
+import { NodeEntity } from '../../../../src';
 
 describe('Primary', () => {
-  beforeEach(() => {
-    const metadataStore = mock(MetadataStore);
-    injectMetadataStore(instance(metadataStore));
-  });
-
   test.each([
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Primary()
           id?: string;
@@ -25,6 +17,7 @@ describe('Primary', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Primary({})
           id?: string;
@@ -33,6 +26,7 @@ describe('Primary', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
           @Primary({ alias: 'aliasedId' })
           id?: string;
@@ -44,6 +38,7 @@ describe('Primary', () => {
   });
 
   test('class-transform', () => {
+    @NodeEntity()
     class NodeClass {
       @Primary()
       id?: string;
@@ -61,6 +56,7 @@ describe('Primary', () => {
   });
 
   test('aliased class-transform', () => {
+    @NodeEntity()
     class NodeClass {
       @Primary({ alias: 'aliasedId' })
       id?: string;

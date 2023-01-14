@@ -78,7 +78,7 @@ export class StemBuilder {
   private buildBranches(
     graphMetadata: GraphMetadata | GraphFragmentMetadata,
     stemMaterial: StemMaterial | BranchMaterialInterface,
-    whereQueries: BranchFilters,
+    branchFilters: BranchFilters,
     depth: Depth,
     branchIndexes: BranchIndexes
   ): Branch[] {
@@ -89,7 +89,7 @@ export class StemBuilder {
       return this.buildBranch(
         branchMetadata,
         stemMaterial,
-        whereQueries,
+        branchFilters,
         depth,
         branchIndexes.append(i, branchMetadata.getKey())
       );

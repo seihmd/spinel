@@ -1,23 +1,18 @@
 import { plainToClass } from 'class-transformer';
 import { Property } from 'decorator/property/Property';
-import {
-  injectMetadataStore,
-  MetadataStore,
-} from 'metadata/store/MetadataStore';
 import 'reflect-metadata';
-import { instance, mock } from 'ts-mockito';
 import { toPlain } from 'util/toPlain';
+import { NodeEntity, Primary } from '../../../../src';
 
 describe('Property', () => {
-  beforeEach(() => {
-    const metadataStore = mock(MetadataStore);
-    injectMetadataStore(instance(metadataStore));
-  });
-
   test.each([
     [
       () => {
+        @NodeEntity()
         class NodeClass {
+          @Primary()
+          id?: string = '1';
+
           @Property()
           name?: string;
         }
@@ -25,7 +20,11 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
+          @Primary()
+          id?: string = '1';
+
           @Property({})
           name?: string;
         }
@@ -33,7 +32,11 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
+          @Primary()
+          id?: string = '1';
+
           @Property({ alias: 'title' })
           name?: string;
         }
@@ -41,7 +44,11 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
+          @Primary()
+          id?: string = '1';
+
           @Property({
             alias: 'hoge',
             notNull: true,
@@ -52,7 +59,11 @@ describe('Property', () => {
     ],
     [
       () => {
+        @NodeEntity()
         class NodeClass {
+          @Primary()
+          id?: string = '1';
+
           @Property({
             alias: 'hoge',
             notNull: false,
@@ -66,7 +77,11 @@ describe('Property', () => {
   });
 
   test('class-transform', () => {
+    @NodeEntity()
     class NodeClass {
+      @Primary()
+      id?: string = '1';
+
       @Property()
       name?: string;
 
@@ -75,15 +90,19 @@ describe('Property', () => {
       }
     }
 
-    expect(plainToClass(NodeClass, { name: 'a' })).toStrictEqual(
+    expect(plainToClass(NodeClass, { id: '1', name: 'a' })).toStrictEqual(
       new NodeClass('a')
     );
 
-    expect(toPlain(new NodeClass('a'))).toStrictEqual({ name: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ id: '1', name: 'a' });
   });
 
   test('aliased class-transform', () => {
+    @NodeEntity()
     class NodeClass {
+      @Primary()
+      id?: string = '1';
+
       @Property({ alias: 'title' })
       name?: string;
 
@@ -92,10 +111,10 @@ describe('Property', () => {
       }
     }
 
-    expect(plainToClass(NodeClass, { title: 'a' })).toStrictEqual(
+    expect(plainToClass(NodeClass, { id: '1', title: 'a' })).toStrictEqual(
       new NodeClass('a')
     );
 
-    expect(toPlain(new NodeClass('a'))).toStrictEqual({ title: 'a' });
+    expect(toPlain(new NodeClass('a'))).toStrictEqual({ id: '1', title: 'a' });
   });
 });
