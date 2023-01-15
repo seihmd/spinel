@@ -13,6 +13,8 @@ export { GraphNode } from './decorator/property/GraphNode';
 export { GraphRelationship } from './decorator/property/GraphRelationship';
 export { Primary } from './decorator/property/Primary';
 export { Property } from './decorator/property/Property';
+export { Embeddable } from './decorator/class/Embeddable';
+export { Embed } from './decorator/property/Embed';
 
 export { DateTimeTransformer } from './metadata/schema/transformation/transformer/default/DateTimeTransformer';
 export { DateTransformer } from './metadata/schema/transformation/transformer/default/DateTransformer';

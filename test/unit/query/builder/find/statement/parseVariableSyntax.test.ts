@@ -31,7 +31,13 @@ describe('parseVariableSyntax', () => {
         ['@', 'shop'],
       ],
     ],
-    ['shop.property', [['shop', 'property']]],
+    [
+      'shop.property',
+      [
+        ['shop.property', null],
+        ['shop', 'property'],
+      ],
+    ],
     ['shop.embed.property', [['shop', 'embed.property']]],
     ['shop', [['shop', null]]],
     ['a.b.c.d.e', null],

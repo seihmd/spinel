@@ -55,7 +55,7 @@ export function translateStatement(
             const variableSyntax = value.split(':')[0];
             const neo4jKey = variableSyntaxTranslator.translate(variableSyntax);
             if (neo4jKey !== null) {
-              return neo4jKey;
+              return value.replace(variableSyntax, neo4jKey);
             }
 
             return value;

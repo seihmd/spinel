@@ -23,7 +23,7 @@ describe('Find having Embeddable', () => {
   beforeAll(async () => {
     const shop = await neo4jFixture.addNode('Shop', {
       id: id.get('shop'),
-      shop_name: 'ShopName',
+      shop_brand: 'ShopName',
       shop_address: 'address',
     });
 
@@ -51,7 +51,7 @@ describe('Find having Embeddable', () => {
     const shops = await qd
       .builder()
       .find(Shop)
-      .where('shop.id = $shopId')
+      .where('shop.id.value = $shopId')
       .buildQuery({
         shopId: id.get('shop'),
       })
@@ -66,7 +66,7 @@ describe('Find having Embeddable', () => {
     const shops = await qd
       .builder()
       .find(Shop)
-      .where('shop.id = $shopId AND shop.info.address IS NOT NULL')
+      .where('shop.id.value = $shopId AND shop.info.address IS NOT NULL')
       .buildQuery({
         shopId: id.get('shop'),
       })
@@ -81,7 +81,7 @@ describe('Find having Embeddable', () => {
     const q = qd
       .builder()
       .find(ShopItem)
-      .where('shop.id = $shopId')
+      .where('shop.id.value = $shopId')
       .buildQuery({
         shopId: id.get('shop'),
       });
@@ -105,7 +105,7 @@ describe('Find having Embeddable', () => {
     const q = qd
       .builder()
       .find(ShopItems)
-      .where('shop.id = $shopId')
+      .where('shop.id.value = $shopId')
       .filterBranch('items', '.info.arrival IS NOT NULL')
       .orderBy('shop.info.address', 'ASC')
       .buildQuery({

@@ -29,6 +29,10 @@ export class EntityPropertyMetadata {
     return this.propertyType.getKey();
   }
 
+  getAlias(): string | null {
+    return this.alias?.get() ?? null;
+  }
+
   getNeo4jKey(): string {
     if (this.alias) {
       return this.prefix + this.alias.get();
