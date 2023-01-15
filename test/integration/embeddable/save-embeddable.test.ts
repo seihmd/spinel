@@ -39,7 +39,7 @@ describe('Save having Embeddable', () => {
     expect(savedValue).toStrictEqual({
       id: id.get('shop'),
       shop_address: 'address',
-      shop_name: 'shopName',
+      shop_brand: 'shopName',
     });
   });
 
@@ -64,7 +64,7 @@ describe('Save having Embeddable', () => {
 
     const saved = await qd
       .find(ShopItem)
-      .where('shop.id = $shopId')
+      .where('shop.id.value = $shopId')
       .buildQuery({ shopId: id.get('shop') })
       .run();
 

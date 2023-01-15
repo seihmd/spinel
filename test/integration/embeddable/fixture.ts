@@ -15,11 +15,11 @@ import { Embed } from '../../../src/decorator/property/Embed';
 @Embeddable()
 export class ID {
   constructor(value: string) {
-    this.id = value;
+    this.value = value;
   }
 
-  @Primary()
-  private readonly id: string;
+  @Primary({ alias: 'id' })
+  private readonly value: string;
 }
 
 @Embeddable()
@@ -27,7 +27,7 @@ export class ShopInfo {
   @Property()
   private readonly address: string;
 
-  @Property()
+  @Property({ alias: 'brand' })
   private readonly name: string;
 
   constructor(name: string, address: string) {

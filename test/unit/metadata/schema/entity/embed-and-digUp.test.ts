@@ -26,6 +26,12 @@ class Embedded {
 
   @Property()
   private b: number;
+
+  @Property({ alias: 'c_' })
+  private c: string;
+
+  @Property({ alias: 'd_' })
+  private d: number;
 }
 
 @NodeEntity()
@@ -87,10 +93,14 @@ const embeddedN = {
   embedded: {
     a: 'A',
     b: 1,
+    c_: 'C',
+    d_: 'D',
   },
   prefixed: {
     a: 'AA',
     b: 2,
+    c_: 'CC',
+    d_: 'DD',
   },
 };
 
@@ -98,8 +108,12 @@ const dugN = {
   id: 'id',
   a: 'A',
   b: 1,
+  c_: 'C',
+  d_: 'D',
   _a: 'AA',
   _b: 2,
+  _c_: 'CC',
+  _d_: 'DD',
 };
 
 const embeddedR = {
@@ -107,10 +121,14 @@ const embeddedR = {
   embedded: {
     a: 'A',
     b: 1,
+    c_: 'C',
+    d_: 'D',
   },
   prefixed: {
     a: 'AA',
     b: 2,
+    c_: 'CC',
+    d_: 'DD',
   },
 };
 
@@ -118,11 +136,15 @@ const dugR = {
   id: 'id',
   a: 'A',
   b: 1,
+  c_: 'C',
+  d_: 'D',
   _a: 'AA',
   _b: 2,
+  _c_: 'CC',
+  _d_: 'DD',
 };
 
-describe('embed', () => {
+describe('embed and digUp', () => {
   const testCases = [
     ['node', dugN, embeddedN, getMetadataStore().getNodeEntityMetadata(N)],
     [

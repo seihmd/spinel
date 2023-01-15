@@ -41,32 +41,40 @@ export class EntityEmbedMetadata {
   }
 
   toKey(neo4jKey: string) {
-    const m = [
+    const propertyMetadata = [
       this.embeddableMetadata.getPrimary(),
       ...this.embeddableMetadata.getProperties(),
     ].find((m) => {
       return m?.getNeo4jKey() === neo4jKey;
     });
 
-    if (!m) {
+    if (!propertyMetadata) {
       throw new Error();
     }
 
-    return m.getKey();
+    const alias = propertyMetadata.getAlias();
+    if (alias !== null) {
+      return alias;
+    }
+
+    return propertyMetadata.getKey();
   }
 
   toNeo4jKey(appKey: string) {
-    const m = [
+    const propertyMetadata = [
       this.embeddableMetadata.getPrimary(),
       ...this.embeddableMetadata.getProperties(),
     ].find((m) => {
-      return m?.getKey() === appKey;
+      if (m?.getKey() === appKey) {
+        return true;
+      }
+      return m?.getAlias() === appKey;
     });
 
-    if (!m) {
-      throw new Error();
+    if (!propertyMetadata) {
+      throw new Error(appKey);
     }
 
-    return m.getNeo4jKey();
+    return propertyMetadata.getNeo4jKey();
   }
 }

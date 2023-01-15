@@ -27,12 +27,16 @@ export class EntityPrimaryMetadata {
     return this.propertyType.getKey();
   }
 
+  getAlias(): string | null {
+    return this.alias?.get() ?? null;
+  }
+
   getNeo4jKey(): string {
     if (this.alias) {
       return this.prefix + this.alias.get();
     }
 
-    return this.prefix + this.propertyType.getKey();
+    return this.prefix + this.getKey();
   }
 
   getType(): typeof String | typeof Number {

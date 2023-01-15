@@ -54,6 +54,10 @@ export class Branch {
     return this.branchFilter;
   }
 
+  getMaterial(): BranchMaterialInterface {
+    return this.branchMaterial;
+  }
+
   private getWhereClause(): WhereClause | null {
     if (this.branchFilter === null) {
       return null;

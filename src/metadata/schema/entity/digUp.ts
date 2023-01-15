@@ -28,13 +28,13 @@ function digUpEntity(
       preserved[key] = value;
       return;
     }
-    const e = metadata.getEmbedMetadata(key);
-    if (e) {
+    const embedMetadata = metadata.getEmbedMetadata(key);
+    if (embedMetadata) {
       preserved = {
         ...preserved,
         ...Object.entries(value).reduce(
           (prefixed: Record<string, unknown>, [k, v]) => {
-            prefixed[e.toNeo4jKey(k)] = v;
+            prefixed[embedMetadata.toNeo4jKey(k)] = v;
             return prefixed;
           },
           {}
