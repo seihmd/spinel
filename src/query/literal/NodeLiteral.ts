@@ -1,10 +1,10 @@
 import { NodeLabel } from '../../domain/node/NodeLabel';
-import { ParameterLiteral } from './ParameterLiteral';
 import { AnyNodeElement } from '../element/Element';
-import { EntityLiteralOption } from './EntityLiteralOption';
-import { EntityLiteral } from './EntityLiteral';
-import { EntityParameter } from '../parameter/EntityParameter';
 import { NodeInstanceElement } from '../element/NodeInstanceElement';
+import { EntityParameter } from '../parameter/EntityParameter';
+import { EntityLiteral } from './EntityLiteral';
+import { EntityLiteralOption } from './EntityLiteralOption';
+import { ParameterLiteral } from './ParameterLiteral';
 
 export class NodeLiteral extends EntityLiteral {
   static new(
@@ -18,19 +18,16 @@ export class NodeLiteral extends EntityLiteral {
     );
   }
 
-  private readonly nodeLabel: NodeLabel | null;
-  private readonly variableName: string;
-  private readonly parameterLiteral: ParameterLiteral | null;
+  static blank(): NodeLiteral {
+    return new NodeLiteral('', null, null);
+  }
 
   constructor(
-    variableName: string,
-    nodeLabel: NodeLabel | null,
-    parameterLiteral: ParameterLiteral | null
+    private readonly variableName: string,
+    private readonly nodeLabel: NodeLabel | null,
+    private readonly parameterLiteral: ParameterLiteral | null
   ) {
     super();
-    this.variableName = variableName;
-    this.nodeLabel = nodeLabel;
-    this.parameterLiteral = parameterLiteral;
   }
 
   get(partial: Partial<EntityLiteralOption> = {}): string {

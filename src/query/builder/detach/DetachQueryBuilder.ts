@@ -11,6 +11,7 @@ import {
 import { MetadataStoreInterface } from '../../../metadata/store/MetadataStoreInterface';
 import { isConstructor } from '../../../util/isConstructor';
 import { SessionProviderInterface } from '../../driver/SessionProviderInterface';
+import { AnyNodeElement } from '../../element/Element';
 import { ElementContext } from '../../element/ElementContext';
 import { NodeInstanceElement } from '../../element/NodeInstanceElement';
 import { NodeLabelElement } from '../../element/NodeLabelElement';
@@ -30,7 +31,8 @@ export class DetachQueryBuilder {
       | ClassConstructor<object>,
     private readonly node2:
       | InstanceType<ClassConstructor<object>>
-      | ClassConstructor<object>,
+      | ClassConstructor<object>
+      | null,
     private readonly relationship:
       | string
       | ClassConstructor<object>
@@ -41,9 +43,15 @@ export class DetachQueryBuilder {
   buildQuery(): DetachQuery {
     const parameterBag = new ParameterBag();
     const nodeElement1 = this.getNodeElement(this.node1, 0);
-    const nodeElement2 = this.getNodeElement(this.node2, 4);
+    const nodeElements: AnyNodeElement[] = [nodeElement1];
 
-    [nodeElement1, nodeElement2]
+    let nodeElement2 = null;
+    if (this.node2) {
+      nodeElement2 = this.getNodeElement(this.node2, 4);
+      nodeElements.push(nodeElement2);
+    }
+
+    nodeElements
       .filter(
         (nodeElement): nodeElement is NodeInstanceElement =>
           nodeElement instanceof NodeInstanceElement

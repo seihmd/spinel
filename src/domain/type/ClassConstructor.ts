@@ -3,3 +3,4 @@ export declare type ClassConstructor<T> = {
 };
 
 export declare type AnyClassConstructor = ClassConstructor<any>;
+export declare type ObjectClassConstructor = ClassConstructor<object>;

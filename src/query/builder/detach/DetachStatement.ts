@@ -11,22 +11,16 @@ import { RelationshipLiteral } from '../../literal/RelationshipLiteral';
 import { AbstractStatement } from '../AbstractStatement';
 
 export class DetachStatement extends AbstractStatement {
-  private readonly nodeElement1: NodeInstanceElement | NodeLabelElement;
-  private readonly nodeElement2: NodeInstanceElement | NodeLabelElement;
-  private readonly relationshipElement: RelationshipTypeElement | null;
-  private readonly direction: Direction | null;
-
   constructor(
-    nodeElement1: NodeInstanceElement | NodeLabelElement,
-    nodeElement2: NodeInstanceElement | NodeLabelElement,
-    relationshipElement: RelationshipTypeElement | null,
-    direction: Direction
+    private readonly nodeElement1: NodeInstanceElement | NodeLabelElement,
+    private readonly nodeElement2:
+      | NodeInstanceElement
+      | NodeLabelElement
+      | null,
+    private readonly relationshipElement: RelationshipTypeElement | null,
+    private readonly direction: Direction
   ) {
     super();
-    this.nodeElement1 = nodeElement1;
-    this.nodeElement2 = nodeElement2;
-    this.relationshipElement = relationshipElement;
-    this.direction = direction;
   }
 
   protected build(): string {
@@ -45,12 +39,14 @@ export class DetachStatement extends AbstractStatement {
               ? RelationshipLiteral.new(this.relationshipElement)
               : new RelationshipLiteral('r', null),
             this.direction === RIGHT ? RIGHT : NONE,
-            NodeLiteral.new(
-              this.nodeElement2,
-              this.nodeElement2 instanceof NodeInstanceElement
-                ? this.nodeElement2.getPrimaries()
-                : null
-            )
+            this.nodeElement2
+              ? NodeLiteral.new(
+                  this.nodeElement2,
+                  this.nodeElement2 instanceof NodeInstanceElement
+                    ? this.nodeElement2.getPrimaries()
+                    : null
+                )
+              : NodeLiteral.blank()
           ),
         ]
       )

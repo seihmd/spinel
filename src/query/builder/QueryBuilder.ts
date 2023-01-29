@@ -1,5 +1,8 @@
 import { Direction } from '../../domain/graph/Direction';
-import { ClassConstructor } from '../../domain/type/ClassConstructor';
+import {
+  ClassConstructor,
+  ObjectClassConstructor,
+} from '../../domain/type/ClassConstructor';
 import { getMetadataStore } from '../../metadata/store/MetadataStore';
 import { MetadataStoreInterface } from '../../metadata/store/MetadataStoreInterface';
 import { SessionProviderInterface } from '../driver/SessionProviderInterface';
@@ -64,9 +67,9 @@ export class QueryBuilder {
   }
 
   detach(
-    node1: Instance,
-    node2: Instance,
-    relationship?: string | ClassConstructor<object>,
+    node1: Instance | ObjectClassConstructor,
+    node2: Instance | ObjectClassConstructor | null,
+    relationship?: string | ClassConstructor<object> | null,
     direction?: Direction
   ): DetachQuery {
     return new DetachQueryBuilder(
