@@ -38,7 +38,7 @@ describe('Date Transformer', () => {
     }
   }
 
-  @NodeEntity()
+  @NodeEntity('Node')
   class Node {
     @Primary()
     private id: string;

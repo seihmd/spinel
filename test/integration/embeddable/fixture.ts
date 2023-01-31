@@ -36,7 +36,7 @@ export class ShopInfo {
   }
 }
 
-@NodeEntity()
+@NodeEntity('Shop')
 export class Shop {
   @Embed()
   id: ID;
@@ -64,7 +64,7 @@ export class ItemInfo {
   }
 }
 
-@NodeEntity()
+@NodeEntity('Item')
 export class Item {
   @Embed()
   id: ID;
@@ -78,7 +78,7 @@ export class Item {
   }
 }
 
-@RelationshipEntity()
+@RelationshipEntity('HAS_STOCK')
 export class HasStock {
   @Embed()
   id: ID;

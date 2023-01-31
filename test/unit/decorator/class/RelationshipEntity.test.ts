@@ -14,13 +14,13 @@ describe('RelationshipEntity', () => {
   test.each([
     [
       () => {
-        @RelationshipEntity()
+        @RelationshipEntity('RELATIONSHIP')
         class RelationshipClass {}
       },
     ],
     [
       () => {
-        @RelationshipEntity({ type: 'Alias' })
+        @RelationshipEntity('RELATIONSHIP', { type: 'Alias' })
         class RelationshipClass {}
       },
     ],

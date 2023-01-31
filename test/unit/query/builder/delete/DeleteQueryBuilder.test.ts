@@ -10,7 +10,7 @@ import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStor
 import { DeleteQueryBuilder } from '../../../../../src/query/builder/delete/DeleteQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string;
@@ -20,7 +20,7 @@ class User {
   }
 }
 
-@RelationshipEntity()
+@RelationshipEntity('FOLLOWS')
 class Follows {
   @Primary()
   private id: string;

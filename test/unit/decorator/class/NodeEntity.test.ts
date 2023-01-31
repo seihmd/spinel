@@ -14,31 +14,31 @@ describe('NodeEntity', () => {
   test.each([
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {}
       },
     ],
     [
       () => {
-        @NodeEntity({ label: 'Alias' })
+        @NodeEntity('Node', { label: 'Alias' })
         class NodeClass {}
       },
     ],
     [
       () => {
-        @NodeEntity({ unique: ['p'] })
+        @NodeEntity('Node', { unique: ['p'] })
         class NodeClass {}
       },
     ],
     [
       () => {
-        @NodeEntity({ keys: [['p', 'p2']] })
+        @NodeEntity('Node', { keys: [['p', 'p2']] })
         class NodeClass {}
       },
     ],
     [
       () => {
-        @NodeEntity({
+        @NodeEntity('Node', {
           indexes: [
             {
               type: 'text',
@@ -51,7 +51,7 @@ describe('NodeEntity', () => {
     ],
     [
       () => {
-        @NodeEntity({
+        @NodeEntity('Node', {
           indexes: [
             {
               name: 'index_NodeClass_p1',

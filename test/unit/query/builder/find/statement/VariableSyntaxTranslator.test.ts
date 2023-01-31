@@ -31,7 +31,7 @@ class Embedded {
   private readonly ep3: string;
 }
 
-@NodeEntity()
+@NodeEntity('Node')
 class N {
   @Primary()
   private readonly id: string;

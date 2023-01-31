@@ -34,7 +34,7 @@ class Embedded {
   private d: number;
 }
 
-@NodeEntity()
+@NodeEntity('Node')
 class N {
   @Primary()
   private id: string;
@@ -46,7 +46,7 @@ class N {
   private prefixed: Embedded;
 }
 
-@RelationshipEntity()
+@RelationshipEntity('R')
 class R {
   @Primary()
   private id: string;

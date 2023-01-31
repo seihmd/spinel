@@ -5,7 +5,7 @@ import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
-@RelationshipEntity()
+@RelationshipEntity('HAS')
 class Has {
   @Primary() private id: string;
 

@@ -78,12 +78,23 @@ export class DetachQueryBuilder {
   }
 
   private getNodeElement(
-    node: InstanceType<ClassConstructor<object>> | ClassConstructor<object>,
+    node: InstanceType<ObjectConstructor> | ObjectConstructor,
     index: number
   ): NodeInstanceElement | NodeLabelElement {
     if (isConstructor(node)) {
       return new NodeLabelElement(
-        NodeLabelTerm.withNodeLabel(new NodeLabel(node)),
+        NodeLabelTerm.withNodeLabel(
+          new NodeLabel(
+            this.metadataStore
+              .getNodeEntityMetadata(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore-next-line
+                isConstructor(node) ? node : node.constructor // eslint-disable-line @typescript-eslint/no-unsafe-argument
+              )
+              .getLabel()
+              .toString()
+          )
+        ),
         new ElementContext(new BranchIndexes([]), index, false)
       );
     }
@@ -110,7 +121,14 @@ export class DetachQueryBuilder {
     if (typeof relationship === 'string') {
       return new RelationshipTypeElement(
         RelationshipTypeTerm.withRelationshipType(
-          new RelationshipType(relationship)
+          new RelationshipType(
+            typeof relationship === 'string'
+              ? relationship
+              : this.metadataStore
+                  .getRelationshipEntityMetadata(relationship)
+                  .getType()
+                  .toString()
+          )
         ),
         elementContext
       );

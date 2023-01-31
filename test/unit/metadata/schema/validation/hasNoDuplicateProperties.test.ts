@@ -11,7 +11,7 @@ describe('hasNoDuplicateProperties', () => {
   const validCases = [
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class Node {
           @Primary()
           private a: string;
@@ -23,7 +23,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @RelationshipEntity()
+        @RelationshipEntity('RELATIONSHIP')
         class Relationship {
           @Primary()
           private a: string;
@@ -35,7 +35,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class Node {
           @Primary({ alias: 'b' })
           private a: string;
@@ -47,7 +47,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @RelationshipEntity()
+        @RelationshipEntity('RELATIONSHIP')
         class Relationship {
           @Primary({ alias: 'b' })
           private a: string;
@@ -66,7 +66,7 @@ describe('hasNoDuplicateProperties', () => {
   const invalidCases = [
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class Node {
           @Primary({ alias: 'dup' })
           private a: string;
@@ -79,7 +79,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @RelationshipEntity()
+        @RelationshipEntity('RELATIONSHIP')
         class Relationship {
           @Primary({ alias: 'dup' })
           private a: string;
@@ -92,7 +92,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class Node {
           @Primary({ alias: 'dup' })
           private a: string;
@@ -105,7 +105,7 @@ describe('hasNoDuplicateProperties', () => {
     ],
     [
       () => {
-        @RelationshipEntity()
+        @RelationshipEntity('RELATIONSHIP')
         class Relationship {
           @Primary({ alias: 'dup' })
           private a: string;

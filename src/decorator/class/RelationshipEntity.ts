@@ -3,11 +3,11 @@ import { getMetadataStore } from '../../metadata/store/MetadataStore';
 import { IndexOption } from './IndexOption';
 
 interface RelationshipEntityOption {
-  type?: string;
   indexes?: IndexOption[];
 }
 
 export function RelationshipEntity(
+  type: string,
   option: RelationshipEntityOption | null = null
 ) {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -16,7 +16,7 @@ export function RelationshipEntity(
   ) {
     getMetadataStore().registerRelationship(
       cstr,
-      new RelationshipType(option?.type ?? cstr),
+      new RelationshipType(type),
       option?.indexes ?? []
     );
   };
