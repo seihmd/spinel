@@ -7,7 +7,7 @@ import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
-@NodeEntity()
+@NodeEntity('Shop')
 class Shop {
   @Primary()
   id: string;
@@ -27,12 +27,12 @@ const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find nodes', () => {
   beforeAll(async () => {
-    await neo4jFixture.addNode('Shop', {
+    await neo4jFixture.addNode('Shop2', {
       id: id.get('shop1'),
       shop_name: 'Shop1',
     });
 
-    await neo4jFixture.addNode('Shop', {
+    await neo4jFixture.addNode('Shop2', {
       id: id.get('shop2'),
       shop_name: 'Shop2',
     });

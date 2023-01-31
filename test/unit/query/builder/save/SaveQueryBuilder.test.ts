@@ -11,7 +11,7 @@ import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStor
 import { SaveQueryBuilder } from '../../../../../src/query/builder/save/SaveQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string;
@@ -21,7 +21,7 @@ class User {
   }
 }
 
-@RelationshipEntity()
+@RelationshipEntity('FOLLOWS')
 class Follows {
   @Primary()
   private id: string;

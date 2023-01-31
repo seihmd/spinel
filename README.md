@@ -20,7 +20,7 @@ npm install @seihmd/spinel
 
 ```typescript
 // Define Node entity
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string; // Entity must have one primary property
@@ -37,7 +37,7 @@ class User {
 
 ```typescript
 // Define Relationship entity
-@RelationshipEntity()
+@RelationshipEntity('FOLLOWS')
 class Follows {
   @Primary()
   private id: string;
@@ -298,7 +298,7 @@ await qd.transactional(async (qd: QueryDriver) => {
 #### Unique node property constraints
 
 ```typescript
-@NodeEntity({
+@NodeEntity('User', {
   unique: ['name']
 })
 class User {
@@ -313,7 +313,7 @@ class User {
 #### Node/Relationship property existence constraints
 
 ```typescript
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string;
@@ -326,7 +326,7 @@ class User {
 #### Node key constraints
 
 ```typescript
-@NodeEntity({
+@NodeEntity('User', {
   keys: [['name', 'address']]
 })
 class User {
@@ -346,7 +346,7 @@ class User {
 Currentry supports btree, text and full-text index types.
 
 ```typescript
-@NodeEntity({
+@NodeEntity('User', {
   indexes: [
     {
       type: 'btree',

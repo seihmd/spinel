@@ -11,7 +11,7 @@ import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary() private id: string;
 
@@ -20,7 +20,7 @@ class User {
   }
 }
 
-@NodeEntity()
+@NodeEntity('Item')
 class Item {
   @Primary() private id: string;
 
@@ -29,7 +29,7 @@ class Item {
   }
 }
 
-@RelationshipEntity()
+@RelationshipEntity('HAS_FAVORITE')
 class HasFavorite {
   @Primary() private id: string;
 

@@ -6,7 +6,7 @@ import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
-@NodeEntity()
+@NodeEntity('Shop')
 class Shop {
   @Primary() private id: string;
   @Property() private name: string;

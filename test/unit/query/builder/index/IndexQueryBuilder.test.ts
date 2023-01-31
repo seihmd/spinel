@@ -10,7 +10,7 @@ import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStor
 import { IndexQueryBuilder } from '../../../../../src/query/builder/index/IndexQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
-@NodeEntity({
+@NodeEntity('User', {
   indexes: [
     {
       type: 'btree',
@@ -36,7 +36,7 @@ class User {
   private address: string;
 }
 
-@RelationshipEntity({
+@RelationshipEntity('FOLLOWS', {
   indexes: [
     {
       type: 'btree',

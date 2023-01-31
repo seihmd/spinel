@@ -10,7 +10,7 @@ import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStor
 import { DetachDeleteQueryBuilder } from '../../../../../src/query/builder/detachDelete/DetachDeleteQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string;

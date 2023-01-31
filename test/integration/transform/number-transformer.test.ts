@@ -23,7 +23,7 @@ describe('Number Transformer', () => {
     await neo4jFixture.close();
   });
 
-  @NodeEntity()
+  @NodeEntity('Node')
   class Node {
     @Primary()
     private id: string;

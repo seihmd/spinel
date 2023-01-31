@@ -11,7 +11,7 @@ import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
-@NodeEntity()
+@NodeEntity('Shop')
 class Shop {
   @Primary() private id: string;
   @Property() private name: string;
@@ -22,7 +22,7 @@ class Shop {
   }
 }
 
-@NodeEntity({ label: 'Customer' })
+@NodeEntity('Customer')
 class User {
   @Primary() private id: string;
   @Property() private age: number;
@@ -33,7 +33,7 @@ class User {
   }
 }
 
-@RelationshipEntity()
+@RelationshipEntity('IS_CUSTOMER')
 class IsCustomer {
   @Primary() private id: string;
   @Property() private visited: string;

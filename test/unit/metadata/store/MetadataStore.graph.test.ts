@@ -38,10 +38,10 @@ describe(`MetadataStore for GraphMetadata`, () => {
     m.setPrimary(NodeClass, new PrimaryType('p1', String), null, null);
     m.setPrimary(RelationshipClass, new PrimaryType('p1', String), null, null);
 
-    m.registerNode(NodeClass, new NodeLabel(NodeClass), [], [], []);
+    m.registerNode(NodeClass, new NodeLabel('NodeClass'), [], [], []);
     m.registerRelationship(
       RelationshipClass,
-      new RelationshipType(RelationshipClass),
+      new RelationshipType('RELATIONSHIP_CLASS'),
       []
     );
 
@@ -68,7 +68,7 @@ describe(`MetadataStore for GraphMetadata`, () => {
         new GraphNodePropertyType('p1', NodeClass),
         new NodeEntityMetadata(
           NodeClass,
-          new NodeLabel(NodeClass),
+          new NodeLabel('NodeClass'),
           nodeProperties,
           new NodeConstraints(
             [],
@@ -94,7 +94,7 @@ describe(`MetadataStore for GraphMetadata`, () => {
         new GraphRelationshipPropertyType('p2', RelationshipClass),
         new RelationshipEntityMetadata(
           RelationshipClass,
-          new RelationshipType(RelationshipClass),
+          new RelationshipType('RELATIONSHIP_CLASS'),
           relationshipProperties,
           new RelationshipConstraints([
             new RelationshipPropertyExistenceConstraint(

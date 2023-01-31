@@ -31,7 +31,7 @@ class Profile {
   tel: string;
 }
 
-@NodeEntity()
+@NodeEntity('User')
 class User {
   @Primary()
   private id: string;

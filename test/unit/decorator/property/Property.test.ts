@@ -8,7 +8,7 @@ describe('Property', () => {
   test.each([
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string = '1';
@@ -20,7 +20,7 @@ describe('Property', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string = '1';
@@ -32,7 +32,7 @@ describe('Property', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string = '1';
@@ -44,7 +44,7 @@ describe('Property', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string = '1';
@@ -59,7 +59,7 @@ describe('Property', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string = '1';
@@ -77,7 +77,7 @@ describe('Property', () => {
   });
 
   test('class-transform', () => {
-    @NodeEntity()
+    @NodeEntity('Node')
     class NodeClass {
       @Primary()
       id?: string = '1';
@@ -98,7 +98,7 @@ describe('Property', () => {
   });
 
   test('aliased class-transform', () => {
-    @NodeEntity()
+    @NodeEntity('Node')
     class NodeClass {
       @Primary()
       id?: string = '1';

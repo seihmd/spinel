@@ -10,7 +10,7 @@ import { Neo4jFixture } from '../fixtures/neo4jFixture';
 
 const neo4jFixture = Neo4jFixture.new();
 
-@NodeEntity()
+@NodeEntity('Shop')
 class Shop {
   @Primary() private id: string;
 
@@ -19,7 +19,7 @@ class Shop {
   }
 }
 
-@NodeEntity()
+@NodeEntity('Item')
 class Item {
   @Primary() private id: string;
 

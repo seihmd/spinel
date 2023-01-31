@@ -9,7 +9,7 @@ import {
 } from '../../../src';
 
 describe('instantiate', () => {
-  @NodeEntity()
+  @NodeEntity('Shop')
   class Shop {
     @Primary() private id: string;
     @Property() private name: string;
@@ -20,7 +20,7 @@ describe('instantiate', () => {
     }
   }
 
-  @NodeEntity()
+  @NodeEntity('User')
   class User {
     @Primary() private id: string;
 

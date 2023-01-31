@@ -9,7 +9,7 @@ import { getMetadataStore } from '../../../../../src/metadata/store/MetadataStor
 import { ConstraintQueryBuilder } from '../../../../../src/query/builder/constraint/ConstraintQueryBuilder';
 import { SessionProvider } from '../../../../../src/query/driver/SessionProvider';
 
-@NodeEntity({
+@NodeEntity('User', {
   unique: ['name'],
   keys: [['name', 'address']],
 })
@@ -26,7 +26,7 @@ class User {
   private address: string;
 }
 
-@RelationshipEntity()
+@RelationshipEntity('FOLLOWS')
 class Follows {
   @Primary() private id: string;
 

@@ -9,7 +9,7 @@ import { Neo4jFixture } from '../fixtures/neo4jFixture';
 const neo4jFixture = Neo4jFixture.new();
 const qd = new QueryDriver(neo4jFixture.getDriver());
 
-@NodeEntity({
+@NodeEntity('TestNode', {
   unique: ['name'],
   keys: [['name', 'address']],
   indexes: [
@@ -37,7 +37,7 @@ class TestNode {
   private address: string;
 }
 
-@RelationshipEntity({
+@RelationshipEntity('TEST_RELATIONSHIP', {
   indexes: [
     {
       type: 'btree',

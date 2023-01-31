@@ -8,7 +8,7 @@ describe('Primary', () => {
   test.each([
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary()
           id?: string;
@@ -17,7 +17,7 @@ describe('Primary', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary({})
           id?: string;
@@ -26,7 +26,7 @@ describe('Primary', () => {
     ],
     [
       () => {
-        @NodeEntity()
+        @NodeEntity('Node')
         class NodeClass {
           @Primary({ alias: 'aliasedId' })
           id?: string;
@@ -38,7 +38,7 @@ describe('Primary', () => {
   });
 
   test('class-transform', () => {
-    @NodeEntity()
+    @NodeEntity('Node')
     class NodeClass {
       @Primary()
       id?: string;
@@ -56,7 +56,7 @@ describe('Primary', () => {
   });
 
   test('aliased class-transform', () => {
-    @NodeEntity()
+    @NodeEntity('Node')
     class NodeClass {
       @Primary({ alias: 'aliasedId' })
       id?: string;
