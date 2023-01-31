@@ -1,7 +1,10 @@
 import { Driver } from 'neo4j-driver';
 import TransactionPromise from 'neo4j-driver-core/types/transaction-promise';
 import { Direction } from '../../domain/graph/Direction';
-import { ClassConstructor } from '../../domain/type/ClassConstructor';
+import {
+  ClassConstructor,
+  ObjectClassConstructor,
+} from '../../domain/type/ClassConstructor';
 import { FindQueryBuilder } from '../builder/find/FindQueryBuilder';
 import { FindOneQueryBuilder } from '../builder/findOne/FindOneQueryBuilder';
 import { QueryBuilder } from '../builder/QueryBuilder';
@@ -41,9 +44,9 @@ export class QueryDriver {
   }
 
   async detach(
-    node1: Instance,
-    node2: Instance,
-    relationship?: string | ClassConstructor<object>,
+    node1: Instance | ObjectClassConstructor,
+    node2: Instance | ObjectClassConstructor | null,
+    relationship?: string | ClassConstructor<object> | null,
     direction?: Direction
   ): Promise<void> {
     await this.builder().detach(node1, node2, relationship, direction).run();

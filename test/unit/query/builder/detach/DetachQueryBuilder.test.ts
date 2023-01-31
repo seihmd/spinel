@@ -35,8 +35,11 @@ class Followers {
 }
 
 function newQb(
-  node1: InstanceType<ClassConstructor<object>>,
-  node2: InstanceType<ClassConstructor<object>>,
+  node1: InstanceType<ClassConstructor<object>> | ClassConstructor<object>,
+  node2:
+    | InstanceType<ClassConstructor<object>>
+    | ClassConstructor<object>
+    | null,
   relationship?: string | ClassConstructor<object> | null,
   direction?: Direction
 ): DetachQueryBuilder {
@@ -83,6 +86,7 @@ describe('DetachQueryBuilder', () => {
       'MATCH (n0:User)-[r]-(n4:User) DELETE r',
       {},
     ],
+    [newQb(User, null), 'MATCH (n0:User)-[r]->() DELETE r', {}],
   ] as [DetachQueryBuilder, string, Record<string, any>][];
 
   test.each(testCases)(

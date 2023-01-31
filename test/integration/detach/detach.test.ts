@@ -98,4 +98,20 @@ describe('Detach nodes', () => {
     await query.run();
     await assertDetached();
   });
+
+  test('detach any relationships', async () => {
+    const query = qd.builder().detach(Shop, null, null, '-');
+
+    await query.run();
+    await assertDetached();
+  });
+
+  test('detach any relationships of node instance', async () => {
+    const query = qd
+      .builder()
+      .detach(new Shop(id.get('shop')), null, null, '-');
+
+    await query.run();
+    await assertDetached();
+  });
 });
