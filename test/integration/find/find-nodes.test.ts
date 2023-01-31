@@ -27,12 +27,12 @@ const qd = new QueryDriver(neo4jFixture.getDriver());
 
 describe('Find nodes', () => {
   beforeAll(async () => {
-    await neo4jFixture.addNode('Shop2', {
+    await neo4jFixture.addNode('Shop', {
       id: id.get('shop1'),
       shop_name: 'Shop1',
     });
 
-    await neo4jFixture.addNode('Shop2', {
+    await neo4jFixture.addNode('Shop', {
       id: id.get('shop2'),
       shop_name: 'Shop2',
     });
