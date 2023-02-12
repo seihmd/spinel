@@ -116,9 +116,9 @@ describe('Find N-:R-G[] graphs', () => {
       .where('shop.id=$shop.id')
       .filterBranch(
         'itemTags',
-        'shop.id=$shop.id AND [hasStock] AND .item.id=$itemId'
+        'shop.id=$shop.id AND NOT isEmpty([hasStock]) AND .item.id=$itemId'
       )
-      .filterBranch('itemTags.tags', '.id=$tagId AND [hasTag]')
+      .filterBranch('itemTags.tags', '.id=$tagId AND NOT isEmpty([hasTag])')
       .buildQuery({
         shop: { id: id.get('shop') },
         itemId: id.get('item'),
@@ -129,9 +129,9 @@ describe('Find N-:R-G[] graphs', () => {
       'MATCH (n0:Shop) ' +
         'WHERE n0.id=$shop.id ' +
         'RETURN {shop:n0{.*},itemTags:[(n0)-[b0_r2:HAS_STOCK]->(b0_n4:Item) ' +
-        'WHERE n0.id=$shop.id AND [b0_r2] AND b0_n4.id=$itemId|{item:b0_n4{.*},' +
+        'WHERE n0.id=$shop.id AND NOT isEmpty([b0_r2]) AND b0_n4.id=$itemId|{item:b0_n4{.*},' +
         'tags:[(b0_n4)-[b0_b0_r2:HAS_TAG]->(b0_b0_n4:Tag) ' +
-        'WHERE b0_b0_n4.id=$tagId AND [b0_b0_r2]|b0_b0_n4{.*}]}]} ' +
+        'WHERE b0_b0_n4.id=$tagId AND NOT isEmpty([b0_b0_r2])|b0_b0_n4{.*}]}]} ' +
         'AS _'
     );
     expect(await query.run()).toStrictEqual([
