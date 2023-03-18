@@ -6,6 +6,7 @@ import { Property } from 'decorator/property/Property';
 import { TransformerInterface } from 'metadata/schema/transformation/transformer/TransformerInterface';
 import { DateTime, Integer } from 'neo4j-driver';
 import 'reflect-metadata';
+import { DateTimeTransformer } from '../../../src';
 import { QueryDriver } from '../../../src/query/driver/QueryDriver';
 import { IdFixture } from '../fixtures/IdFixture';
 import { Neo4jFixture } from '../fixtures/neo4jFixture';
@@ -20,7 +21,7 @@ describe('Date Transformer', () => {
   const date = new Date('2000-01-02 03:04:05');
 
   beforeAll(async () => {
-    await qd.save(new Node(id.get('id'), date, date));
+    await qd.save(new Node(id.get('id'), date, date, date, date));
   });
 
   afterAll(async () => {
@@ -49,10 +50,24 @@ describe('Date Transformer', () => {
     @Property()
     private value2: Date;
 
-    constructor(id: string, value: Date, value2: Date) {
+    @Property({ transformer: new DateTimeTransformer() })
+    private value3: Date | null;
+
+    @Property({ alias: 'aliased', transformer: new DateTimeTransformer() })
+    private value4: Date | null;
+
+    constructor(
+      id: string,
+      value: Date,
+      value2: Date,
+      value3: Date,
+      value4: Date
+    ) {
       this.id = id;
       this.value = value;
       this.value2 = value2;
+      this.value3 = value3;
+      this.value4 = value4;
     }
   }
 
@@ -67,19 +82,23 @@ describe('Date Transformer', () => {
 
   test('preserve', async () => {
     const savedValue = await neo4jFixture.findNode('Node', id.get('id'));
+    const expectedDate = new DateTime(
+      int(2000),
+      int(1),
+      int(2),
+      int(3),
+      int(4),
+      int(5),
+      int(0),
+      int(new Date().getTimezoneOffset() * -60)
+    );
+
     expect(savedValue).toStrictEqual({
       id: id.get('id'),
       value: date.toString(),
-      value2: new DateTime(
-        int(2000),
-        int(1),
-        int(2),
-        int(3),
-        int(4),
-        int(5),
-        int(0),
-        int(new Date().getTimezoneOffset() * -60)
-      ),
+      value2: expectedDate,
+      value3: expectedDate,
+      aliased: expectedDate,
     });
   });
 
@@ -93,7 +112,7 @@ describe('Date Transformer', () => {
       .run();
 
     expect(result).toStrictEqual(
-      new TestGraph(new Node(id.get('id'), date, date))
+      new TestGraph(new Node(id.get('id'), date, date, date, date))
     );
   });
 });

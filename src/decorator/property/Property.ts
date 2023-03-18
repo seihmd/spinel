@@ -1,17 +1,17 @@
 import { Expose, Transform, Type } from 'class-transformer';
 
-import { getMetadataStore } from '../../metadata/store/MetadataStore';
-
 import { AnyClassConstructor } from '../../domain/type/ClassConstructor';
 import { ReflectedType } from '../../metadata/reflection/ReflectedType';
 import { Alias } from '../../metadata/schema/entity/Alias';
 import { PropertyType } from '../../metadata/schema/entity/PropertyType';
-import { TransformerInterface } from '../../metadata/schema/transformation/transformer/TransformerInterface';
 import { getDefaultTransformer } from '../../metadata/schema/transformation/transformer/getDefaultTransformer';
+import { TransformerInterface } from '../../metadata/schema/transformation/transformer/TransformerInterface';
+import { getMetadataStore } from '../../metadata/store/MetadataStore';
 
 interface PropertyOption {
   alias?: string;
   transformer?: TransformerInterface;
+  type?: Function;
   notNull?: boolean;
 }
 
@@ -32,7 +32,9 @@ export function Property(option?: PropertyOption): PropertyDecorator {
     );
 
     Transform(
-      ({ value }): unknown => {
+      (data): unknown => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+        const value = data.obj[option?.alias ?? data.key];
         return transformer.restore(value);
       },
       { toClassOnly: true }
