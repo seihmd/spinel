@@ -64,10 +64,14 @@ export class QueryDriver {
       const existingIndexNames = await builder.showIndexes().run();
 
       await Promise.all(
-        [
-          ...builder.syncConstraints(existingConstraintNames),
-          ...builder.syncIndexes(existingIndexNames),
-        ].map(async (query) => await query.run())
+        [...builder.syncConstraints(existingConstraintNames)].map(
+          async (query) => await query.run()
+        )
+      );
+      await Promise.all(
+        [...builder.syncIndexes(existingIndexNames)].map(
+          async (query) => await query.run()
+        )
       );
     });
   }
@@ -79,7 +83,7 @@ export class QueryDriver {
       await callback(new QueryDriver(this.driver, txc));
     } catch (error) {
       await txc?.rollback();
-      return;
+      throw error;
     }
     await txc.commit();
   }

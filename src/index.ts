@@ -1,11 +1,10 @@
 export { instantiate } from './api/api';
-export { configure } from './api/configure';
+export { Config } from './api/Config';
 export { getQueryDriver } from './api/getQueryDriver';
 export * from './api/errors';
 
 export { Graph } from './decorator/class/Graph';
 export { GraphFragment } from './decorator/class/GraphFragment';
-export { IndexOption } from './decorator/class/IndexOption';
 export { NodeEntity } from './decorator/class/NodeEntity';
 export { RelationshipEntity } from './decorator/class/RelationshipEntity';
 export { GraphBranch } from './decorator/property/GraphBranch';
@@ -20,4 +19,3 @@ export { DateTimeTransformer } from './metadata/schema/transformation/transforme
 export { DateTransformer } from './metadata/schema/transformation/transformer/default/DateTransformer';
 export { IntegerTransformer } from './metadata/schema/transformation/transformer/default/IntegerTransformer';
 export { NumberTransformer } from './metadata/schema/transformation/transformer/default/NumberTransformer';
-export { TransformerInterface } from './metadata/schema/transformation/transformer/TransformerInterface';
