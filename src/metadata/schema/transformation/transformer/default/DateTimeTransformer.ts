@@ -1,17 +1,17 @@
 import { DateTime } from 'neo4j-driver';
-import { DateTimeTransformerInterface } from '../DateTimeTransformerInterface';
 import { PlainDateTime } from '../../plain/PlainDateTime';
+import { DateTimeTransformerInterface } from '../DateTimeTransformerInterface';
 
 export class DateTimeTransformer implements DateTimeTransformerInterface {
   preserve(value: Date | null): DateTime<any> | null {
-    if (value === null) {
+    if (!value) {
       return null;
     }
     return DateTime.fromStandardDate(value);
   }
 
   restore(value: PlainDateTime | Date | null): Date | null {
-    if (value === null) {
+    if (!value) {
       return null;
     }
     if (value instanceof Date) {
