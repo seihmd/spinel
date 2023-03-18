@@ -1,13 +1,13 @@
-import { configure, getQueryDriver } from '../../../src';
-import { deleteConfig } from '../../../src/api/configure';
+import { getQueryDriver } from '../../../src';
+import { Config } from '../../../src/api/Config';
 
 describe('getQueryDriver', () => {
   afterEach(() => {
-    deleteConfig();
+    Config.deleteConfig();
   });
 
   test('create with setting', () => {
-    configure({
+    Config.configure({
       entities: [],
       host: 'neo4j://localhost',
       password: 'pass',

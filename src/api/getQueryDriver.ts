@@ -1,7 +1,7 @@
 import neo4j, { Driver } from 'neo4j-driver';
 import 'reflect-metadata';
 import { QueryDriver } from '../query/driver/QueryDriver';
-import { Config } from './configure';
+import { Config } from './Config';
 
 export const getQueryDriver = (): QueryDriver => {
   return new QueryDriver(newDriver());
