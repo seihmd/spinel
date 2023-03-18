@@ -124,26 +124,30 @@ describe('Transactional query', () => {
   });
 
   test('rollback', async () => {
-    await qd.transactional(async (qd) => {
-      const shopCustomer = await qd
-        .builder()
-        .findOne(ShopCustomer)
-        .where('shop.id=$shop.id')
-        .buildQuery({
-          shop: { id: id.get('shop') },
-        })
-        .run();
+    try {
+      await qd.transactional(async (qd) => {
+        const shopCustomer = await qd
+          .builder()
+          .findOne(ShopCustomer)
+          .where('shop.id=$shop.id')
+          .buildQuery({
+            shop: { id: id.get('shop') },
+          })
+          .run();
 
-      if (!shopCustomer) {
-        throw new Error('shopCustomer not found');
-      }
+        if (!shopCustomer) {
+          throw new Error('shopCustomer not found');
+        }
 
-      shopCustomer.updateShopName('updated');
+        shopCustomer.updateShopName('updated');
 
-      await qd.builder().save(shopCustomer).run();
+        await qd.builder().save(shopCustomer).run();
 
-      throw new Error('MUST ROLLBACK');
-    });
+        throw new Error('MUST ROLLBACK');
+      });
+    } catch (e) {
+      // ignore
+    }
 
     await assertGraph({
       shop: {
