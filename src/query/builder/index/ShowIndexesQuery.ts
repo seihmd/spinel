@@ -9,8 +9,12 @@ export class ShowIndexesQuery {
 
   async run(): Promise<string[]> {
     const result = await this.sessionProvider.run(this.getStatement(), {});
-    return result.records.map(
-      (result) => (result.toObject() as { name: string }).name
-    );
+    return result.records
+      .map(
+        (result) =>
+          result.toObject() as { name: string; owingConstraint: string }
+      )
+      .filter((index) => index.owingConstraint === null)
+      .map((index) => index.name);
   }
 }

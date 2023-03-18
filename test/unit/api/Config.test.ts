@@ -1,11 +1,9 @@
-import neo4j from 'neo4j-driver';
 import * as process from 'process';
-import { configure } from '../../../src';
-import { deleteConfig } from '../../../src/api/configure';
+import { Config } from '../../../src/api/Config';
 
-describe('configure', () => {
+describe('Config', () => {
   afterEach(() => {
-    deleteConfig();
+    Config.deleteConfig();
     delete process.env.SPINEL_HOST;
     delete process.env.SPINEL_USER;
     delete process.env.SPINEL_PASSWORD;
@@ -13,7 +11,7 @@ describe('configure', () => {
 
   test('create with connection setting', () => {
     expect(() => {
-      configure({
+      Config.configure({
         host: 'neo4j://example.com',
         password: 'pass',
         user: 'neo4j',
@@ -28,7 +26,7 @@ describe('configure', () => {
     process.env.SPINEL_PASSWORD = 'pass';
 
     expect(() => {
-      configure({
+      Config.configure({
         entities: [],
       });
     }).not.toThrowError();
@@ -36,7 +34,7 @@ describe('configure', () => {
 
   test('if none of the setting, Driver, or Env vars are provided, throw Error', () => {
     expect(() => {
-      configure({
+      Config.configure({
         entities: [],
       });
     }).toThrowError(
