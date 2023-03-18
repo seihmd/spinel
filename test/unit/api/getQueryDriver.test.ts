@@ -21,6 +21,6 @@ describe('getQueryDriver', () => {
   test('if not yet configured, throw Error', () => {
     expect(() => {
       getQueryDriver();
-    }).toThrowError('Spinel is not yet configured.');
+    }).toThrowError('spinel is not configured.');
   });
 });

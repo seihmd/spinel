@@ -10,28 +10,35 @@ type ArbitraryConfig = {
   entities: ClassConstructor<any>[];
 };
 
-type Config = Required<ArbitraryConfig>;
+export class Config {
+  private static config: Required<ArbitraryConfig> | null;
 
-let config: Config | null = null;
-
-export function readConfig(): Config | null {
-  return config;
-}
-
-export function deleteConfig(): void {
-  config = null;
-}
-
-export function configure(setting: ArbitraryConfig) {
-  if (config) {
-    throw new Error('Already configured');
+  private constructor() {
+    // do nothing
   }
-  config = Object.freeze({
-    entities: setting.entities,
-    host: setting.host ?? readHost(ENV_SPINEL_HOST),
-    password: setting.password ?? readPassword(ENV_SPINEL_PASSWORD),
-    user: setting.user ?? readUser(ENV_SPINEL_USER),
-  });
+
+  static configure(setting: ArbitraryConfig) {
+    if (!Config.config) {
+      Config.config = Object.freeze({
+        entities: setting.entities,
+        host: setting.host ?? readHost(ENV_SPINEL_HOST),
+        password: setting.password ?? readPassword(ENV_SPINEL_PASSWORD),
+        user: setting.user ?? readUser(ENV_SPINEL_USER),
+      });
+    }
+    return Config.config;
+  }
+
+  static deleteConfig() {
+    Config.config = null;
+  }
+
+  static readConfig() {
+    if (!Config.config) {
+      throw new Error('spinel is not configured.');
+    }
+    return Config.config;
+  }
 }
 
 function readHost(env: string): string {
